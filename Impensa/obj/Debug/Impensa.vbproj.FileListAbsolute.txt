@@ -1,0 +1,7 @@
+F:\Sachin\Dropbox\###Programming\Impensa\Backup\Impensa\obj\Debug\Impensa.vbproj.ResolveComReference.cache
+F:\Sachin\Dropbox\###Programming\Impensa\Backup\Impensa\obj\Debug\ResolveAssemblyReference.cache
+F:\Sachin\Dropbox\###Programming\Impensa\Backup\Impensa\obj\Debug\Impensa.frmChart.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Backup\Impensa\obj\Debug\Impensa.frmLogin.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Backup\Impensa\obj\Debug\Impensa.frmMain.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Backup\Impensa\obj\Debug\Impensa.Splash.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Backup\Impensa\obj\Debug\Impensa.vbproj.GenerateResource.Cache

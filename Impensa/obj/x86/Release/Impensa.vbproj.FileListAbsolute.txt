@@ -1,0 +1,17 @@
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.vbproj.ResolveComReference.cache
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\Impensa.exe
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\Impensa.pdb
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\Impensa.xml
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\itextsharp.dll
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\itextsharp.xml
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.frmChart.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.frmLogin.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.frmMain.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.Resources.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.Splash.resources
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.vbproj.GenerateResource.Cache
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.exe
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.xml
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.pdb
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\System.Windows.Forms.DataVisualization.dll
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\System.Windows.Forms.DataVisualization.xml
