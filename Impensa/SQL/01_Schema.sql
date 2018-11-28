@@ -88,3 +88,36 @@ BEGIN
 	)
 END
 GO
+
+IF NOT EXISTS(SELECT 1 
+			    FROM sys.objects O 
+					 INNER JOIN sys.columns C ON C.object_id = O.object_id
+			   WHERE O.name = 'tbl_CategoryList'
+				 AND C.name = 'bNotify'
+				 AND O.type = 'U')
+
+ALTER TABLE tbl_CategoryList ADD bNotify BIT DEFAULT 0 WITH VALUES
+GO 
+
+IF NOT EXISTS(SELECT 1 
+				FROM sys.objects O 
+					 INNER JOIN sys.columns C ON C.object_id = O.object_id
+			   WHERE O.name = 'tbl_CategoryList'
+			     AND C.name = 'iMonthlyOccurrences'
+			     AND O.type = 'U')
+
+ALTER TABLE tbl_CategoryList ADD iMonthlyOccurrences SMALLINT
+GO
+
+IF OBJECT_ID('tbl_CategoryPrevMonthOccurrences') IS NULL
+
+CREATE TABLE tbl_CategoryPrevMonthOccurrences
+(
+	hKey BIGINT IDENTITY(1,1),
+	dtMonth DATE,
+	iCategory NUMERIC(18, 0),
+	iMonthlyOccurrences SMALLINT,
+	CONSTRAINT PK_tbl_CategoryPrevMonthOccurrences_hKey PRIMARY KEY CLUSTERED (hKey ASC),
+	CONSTRAINT FK_tbl_CategoryPrevMonthOccurrences_iCategory FOREIGN KEY (iCategory) REFERENCES tbl_CategoryList(hKey)	
+)
+GO

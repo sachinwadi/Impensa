@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -71,6 +71,8 @@ Partial Class frmMain
         Me.Label22 = New System.Windows.Forms.Label()
         Me.DataGridExpSumm = New System.Windows.Forms.DataGridView()
         Me.TabExpDet = New System.Windows.Forms.TabPage()
+        Me.LstUnpaidBillsCurrentMonth = New System.Windows.Forms.ListBox()
+        Me.Label28 = New System.Windows.Forms.Label()
         Me.DataGridExpDet = New System.Windows.Forms.DataGridView()
         Me.Panel5 = New System.Windows.Forms.Panel()
         Me.Label15 = New System.Windows.Forms.Label()
@@ -146,6 +148,8 @@ Partial Class frmMain
         Me.ContextMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.tmrRefresh = New System.Windows.Forms.Timer(Me.components)
+        Me.LstUnpaidBillsPrevMonth = New System.Windows.Forms.ListBox()
+        Me.Label29 = New System.Windows.Forms.Label()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabCatList.SuspendLayout()
@@ -350,9 +354,12 @@ Partial Class frmMain
         '
         'DataGridCatList
         '
+        Me.DataGridCatList.AllowUserToResizeColumns = False
+        Me.DataGridCatList.AllowUserToResizeRows = False
         Me.DataGridCatList.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill
         Me.DataGridCatList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridCatList.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DataGridCatList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
         Me.DataGridCatList.Location = New System.Drawing.Point(3, 3)
         Me.DataGridCatList.Name = "DataGridCatList"
         Me.DataGridCatList.Size = New System.Drawing.Size(1025, 420)
@@ -387,9 +394,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend1.Name = "Legend1"
-        Legend1.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend1)
+        Legend2.Name = "Legend1"
+        Legend2.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend2)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -680,6 +687,10 @@ Partial Class frmMain
         'TabExpDet
         '
         Me.TabExpDet.AutoScroll = True
+        Me.TabExpDet.Controls.Add(Me.LstUnpaidBillsPrevMonth)
+        Me.TabExpDet.Controls.Add(Me.Label29)
+        Me.TabExpDet.Controls.Add(Me.LstUnpaidBillsCurrentMonth)
+        Me.TabExpDet.Controls.Add(Me.Label28)
         Me.TabExpDet.Controls.Add(Me.DataGridExpDet)
         Me.TabExpDet.Controls.Add(Me.Panel5)
         Me.TabExpDet.Location = New System.Drawing.Point(4, 22)
@@ -690,13 +701,39 @@ Partial Class frmMain
         Me.TabExpDet.Text = "Expenditure Details"
         Me.TabExpDet.UseVisualStyleBackColor = True
         '
+        'LstUnpaidBillsCurrentMonth
+        '
+        Me.LstUnpaidBillsCurrentMonth.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.LstUnpaidBillsCurrentMonth.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.LstUnpaidBillsCurrentMonth.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LstUnpaidBillsCurrentMonth.ForeColor = System.Drawing.Color.Red
+        Me.LstUnpaidBillsCurrentMonth.HorizontalScrollbar = True
+        Me.LstUnpaidBillsCurrentMonth.ItemHeight = 16
+        Me.LstUnpaidBillsCurrentMonth.Location = New System.Drawing.Point(836, 23)
+        Me.LstUnpaidBillsCurrentMonth.Name = "LstUnpaidBillsCurrentMonth"
+        Me.LstUnpaidBillsCurrentMonth.SelectionMode = System.Windows.Forms.SelectionMode.None
+        Me.LstUnpaidBillsCurrentMonth.Size = New System.Drawing.Size(163, 146)
+        Me.LstUnpaidBillsCurrentMonth.TabIndex = 4
+        Me.LstUnpaidBillsCurrentMonth.TabStop = False
+        '
+        'Label28
+        '
+        Me.Label28.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.Label28.AutoSize = True
+        Me.Label28.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label28.Location = New System.Drawing.Point(831, 3)
+        Me.Label28.Name = "Label28"
+        Me.Label28.Size = New System.Drawing.Size(202, 16)
+        Me.Label28.TabIndex = 3
+        Me.Label28.Text = "Current Month's Unpaid Bills"
+        '
         'DataGridExpDet
         '
         Me.DataGridExpDet.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridExpDet.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.DataGridExpDet.Dock = System.Windows.Forms.DockStyle.Left
         Me.DataGridExpDet.Location = New System.Drawing.Point(3, 3)
         Me.DataGridExpDet.Name = "DataGridExpDet"
-        Me.DataGridExpDet.Size = New System.Drawing.Size(1025, 420)
+        Me.DataGridExpDet.Size = New System.Drawing.Size(822, 420)
         Me.DataGridExpDet.TabIndex = 2
         Me.DataGridExpDet.VirtualMode = True
         '
@@ -1448,6 +1485,32 @@ Partial Class frmMain
         Me.tmrRefresh.Enabled = True
         Me.tmrRefresh.Interval = 5000
         '
+        'LstUnpaidBillsPrevMonth
+        '
+        Me.LstUnpaidBillsPrevMonth.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.LstUnpaidBillsPrevMonth.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.LstUnpaidBillsPrevMonth.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LstUnpaidBillsPrevMonth.ForeColor = System.Drawing.Color.Red
+        Me.LstUnpaidBillsPrevMonth.HorizontalScrollbar = True
+        Me.LstUnpaidBillsPrevMonth.ItemHeight = 16
+        Me.LstUnpaidBillsPrevMonth.Location = New System.Drawing.Point(836, 206)
+        Me.LstUnpaidBillsPrevMonth.Name = "LstUnpaidBillsPrevMonth"
+        Me.LstUnpaidBillsPrevMonth.SelectionMode = System.Windows.Forms.SelectionMode.None
+        Me.LstUnpaidBillsPrevMonth.Size = New System.Drawing.Size(163, 146)
+        Me.LstUnpaidBillsPrevMonth.TabIndex = 6
+        Me.LstUnpaidBillsPrevMonth.TabStop = False
+        '
+        'Label29
+        '
+        Me.Label29.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.Label29.AutoSize = True
+        Me.Label29.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label29.Location = New System.Drawing.Point(831, 184)
+        Me.Label29.Name = "Label29"
+        Me.Label29.Size = New System.Drawing.Size(189, 16)
+        Me.Label29.TabIndex = 5
+        Me.Label29.Text = "Prev. Month's Unpaid Bills"
+        '
         'frmMain
         '
         Me.AcceptButton = Me.btnSubmit
@@ -1482,6 +1545,7 @@ Partial Class frmMain
         Me.Panel8.PerformLayout()
         CType(Me.DataGridExpSumm, System.ComponentModel.ISupportInitialize).EndInit()
         Me.TabExpDet.ResumeLayout(False)
+        Me.TabExpDet.PerformLayout()
         CType(Me.DataGridExpDet, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel5.ResumeLayout(False)
         Me.Panel5.PerformLayout()
@@ -1644,5 +1708,9 @@ Partial Class frmMain
     Friend WithEvents chkStartImport As System.Windows.Forms.CheckBox
     Friend WithEvents chkShowLabel As System.Windows.Forms.CheckBox
     Friend WithEvents tmrRefresh As System.Windows.Forms.Timer
+    Friend WithEvents Label28 As System.Windows.Forms.Label
+    Friend WithEvents LstUnpaidBillsCurrentMonth As System.Windows.Forms.ListBox
+    Friend WithEvents LstUnpaidBillsPrevMonth As System.Windows.Forms.ListBox
+    Friend WithEvents Label29 As System.Windows.Forms.Label
 
 End Class

@@ -1489,7 +1489,6 @@ Public Class frmMain
             End Using
 
             DataGridCatList.DataSource = dt
-
             DataGridCatList.DefaultCellStyle.WrapMode = DataGridViewTriState.True
             DataGridCatList.Columns("bDelete").DisplayIndex = 0
             DataGridCatList.Columns("hKey").Visible = False
@@ -1503,6 +1502,13 @@ Public Class frmMain
             CType(DataGridCatList.Columns("sNotes"), DataGridViewTextBoxColumn).MaxInputLength = 500
             DataGridCatList.Columns("IsObsolete").HeaderText = "Do Not Use"
             DataGridCatList.Columns("IsObsolete").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+            DataGridCatList.Columns("IsObsolete").DisplayIndex = 6
+            DataGridCatList.Columns("bNotify").HeaderText = "Notify Unpaid"
+            DataGridCatList.Columns("bNotify").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+            DataGridCatList.Columns("iMonthlyOccurrences").HeaderText = "Monthly Occurrences"
+            DataGridCatList.Columns("iMonthlyOccurrences").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter
+            CType(DataGridCatList.Columns("iMonthlyOccurrences"), DataGridViewTextBoxColumn).MaxInputLength = 2
+            DataGridCatList.Columns("iMonthlyOccurrences").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
 
             For i As Integer = 0 To DataGridCatList.Columns.Count - 1
                 DataGridCatList.Columns(i).SortMode = DataGridViewColumnSortMode.NotSortable
@@ -2131,6 +2137,8 @@ Public Class frmMain
             Call ShowTDLableDetails()
             Call PopulateCategoryGrid()
             Call PopulateThresholdMonthCombo()
+            Call PopulateUnpaidBillsCurrentMonth()
+            Call PopulateUnpaidBillsPreviousMonth()
 
             If ThresholdCurrentMonthIndex <> -1 Then
                 ThresholdMonth = cmbThrMonth.Items(ThresholdCurrentMonthIndex).Key
@@ -2223,11 +2231,84 @@ Public Class frmMain
             NotifyIcon.ShowBalloonTip(100)
         End If
     End Sub
+
+    Private Sub PopulateUnpaidBillsCurrentMonth()
+        Try
+            Using Connection = GetConnection()
+                dt = New DataTable
+                da = New SqlDataAdapter("EXEC sp_GetUnpaidBillsCurrentMonth", Connection)
+                da.Fill(dt)
+            End Using
+
+            LstUnpaidBillsCurrentMonth.Items.Clear()
+
+            If dt.Rows.Count = 0 Then
+                Dim dr As DataRow = dt.NewRow()
+                dr("UnpaidCategory") = "No Unpaid Bills"
+                LstUnpaidBillsCurrentMonth.Items.Add(dr.Item("UnpaidCategory").ToString)
+            Else
+                UnpaidBills = True
+            End If
+
+
+            For Each dr As DataRow In dt.Rows
+                LstUnpaidBillsCurrentMonth.Items.Add(dr.Item("UnpaidCategory").ToString)
+            Next
+
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        End Try
+
+    End Sub
+
+    Private Sub PopulateUnpaidBillsPreviousMonth()
+        Try
+            Using Connection = GetConnection()
+                dt = New DataTable
+                da = New SqlDataAdapter("EXEC sp_GetUnpaidBillsPreviousMonth", Connection)
+                da.Fill(dt)
+            End Using
+
+            LstUnpaidBillsPrevMonth.Items.Clear()
+
+            If dt.Rows.Count = 0 Then
+                Dim dr As DataRow = dt.NewRow()
+                dr("UnpaidCategory") = "No Unpaid Bills"
+                LstUnpaidBillsPrevMonth.Items.Add(dr.Item("UnpaidCategory").ToString)
+            Else
+                UnpaidBills = True
+            End If
+
+
+            For Each dr As DataRow In dt.Rows
+                LstUnpaidBillsPrevMonth.Items.Add(dr.Item("UnpaidCategory").ToString)
+            Next
+
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        End Try
+
+    End Sub
+
+    Private Sub InsertCategoryPrevMonthOccurrences()
+        Try
+            Using Connection = GetConnection()
+                Cmd = New SqlCommand()
+                Cmd.Connection = Connection
+                Cmd.CommandText = "EXEC sp_InsertCategoryPrevMonthOccurrences"
+                Cmd.ExecuteNonQuery()
+            End Using
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        End Try
+    End Sub
+
 #End Region
 
 #Region "Control Events"
 
 #Region "frmMain Events"
+
     Private Sub frmMain_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
             DataGridExpDet.Controls.Clear()
@@ -2285,6 +2366,10 @@ Public Class frmMain
             Call CheckOpenYears()
             Call CheckCurrentMonthThresholds()
 
+            If (CDate(LastUsedTimeStamp).Month <> DateTime.Today.Month) Then
+                Call InsertCategoryPrevMonthOccurrences()
+            End If
+
             If CStr(LastACRefreshDate) Is Nothing OrElse LastACRefreshDate <= New DateTime(Today.Year, 1, 1) Then
                 Call RefreshAutoCompleteDictionary()
             End If
@@ -2300,6 +2385,7 @@ Public Class frmMain
             RchTB_YTDTicker.Left = Me.Width
             RchTB_YTDTicker.Visible = True
             tmrTicker.Start()
+            LastUsedTimeStamp = DateTime.Now
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
@@ -2835,6 +2921,12 @@ Public Class frmMain
     Private Sub DataGridCatList_CellValueChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridCatList.CellValueChanged
         If e.RowIndex >= 0 AndAlso e.ColumnIndex >= 0 Then
             DataGridCatList(e.ColumnIndex, e.RowIndex).Style.BackColor = Color.LightCyan
+        End If
+    End Sub
+
+    Private Sub DataGridCatList_EditingControlShowing(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewEditingControlShowingEventArgs) Handles DataGridCatList.EditingControlShowing
+        If DataGridCatList.CurrentCell.ColumnIndex = DataGridCatList.Columns("iMonthlyOccurrences").Index Then
+            AddHandler CType(e.Control, TextBox).KeyPress, AddressOf DataGridCatList_MonthlyOccurrences_TextBox_keyPress
         End If
     End Sub
 #End Region
@@ -3417,7 +3509,9 @@ Public Class frmMain
         End If
     End Sub
 
-
+    Private Sub tmrRefresh_Tick(ByVal sender As Object, ByVal e As System.EventArgs) Handles tmrRefresh.Tick
+        Call ShowErrorsAndExceptions()
+    End Sub
 
     Private Sub chkLBYears_ItemCheck(ByVal sender As Object, ByVal e As System.Windows.Forms.ItemCheckEventArgs) Handles chkLBYears.ItemCheck
         If e.NewValue = CheckState.Unchecked AndAlso chkLBYears.CheckedItems.Count = 1 Then
@@ -3527,10 +3621,17 @@ Public Class frmMain
             End If
         End If
     End Sub
-#End Region
-#End Region
 
-    Private Sub tmrRefresh_Tick(ByVal sender As Object, ByVal e As System.EventArgs) Handles tmrRefresh.Tick
-        Call ShowErrorsAndExceptions()
+    Private Sub DataGridCatList_MonthlyOccurrences_TextBox_keyPress(ByVal sender As Object, ByVal e As KeyPressEventArgs)
+
+        If Char.IsDigit(CChar(CStr(e.KeyChar))) = False Then e.Handled = True
+
+        If Char.IsDigit(CChar(CStr(e.KeyChar))) Then
+            If CInt(CStr(e.KeyChar)) = 0 Then
+                e.Handled = True
+            End If
+        End If
     End Sub
+#End Region
+#End Region
 End Class

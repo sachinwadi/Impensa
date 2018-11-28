@@ -1139,7 +1139,7 @@ BEGIN
 		BEGIN     
 		  IF (SELECT COUNT(*)   
 			   FROM tbl_ExpenditureDet E INNER JOIN tbl_CategoryList C ON C.hKey = E.iCategory   
-			  WHERE E.dtDate = @dtDate AND C.sCategory = @sCategory AND E.dAmount =  @dAmount AND ISNULL(E.sNotes,'') =  ISNULL(@sNotes,'')) > 0  
+			  WHERE E.dtDate = @dtDate AND C.sCategory = @sCategory AND E.dAmount =  @dAmount /*AND ISNULL(E.sNotes,'') =  ISNULL(@sNotes,'') */) > 0  
 		  BEGIN  
 		   UPDATE Temp_ImportData  
 			  SET sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' skipped. Record was already imported.',  
@@ -1178,5 +1178,73 @@ BEGIN
 	UPDATE Temp_ImportData SET iDelete = 1
 
 	SELECT dtDate [Date], sCategory [Category], dAmount [Amount], sNotes [Notes], sImportComments FROM Temp_ImportData			
+END
+GO
+
+IF OBJECT_ID('sp_GetUnpaidBillsCurrentMonth') IS NOT NULL 
+DROP PROCEDURE sp_GetUnpaidBillsCurrentMonth
+GO
+
+CREATE PROCEDURE sp_GetUnpaidBillsCurrentMonth
+AS
+BEGIN
+	DECLARE @StartOfMonth DATE,
+			@EndOfMonth DATE
+
+	SET @StartOfMonth = CONVERT(DATE, DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0))
+	SET @EndOfMonth = CONVERT(DATE, DATEADD(MONTH,1+DATEDIFF(MONTH,0,GETDATE()),-1))
+
+	SELECT C.sCategory + ' (' + CONVERT(VARCHAR, COUNT(C.iMonthlyOccurrences - E.iCategory)) + '/' + CONVERT(VARCHAR, C.iMonthlyOccurrences) + ')' UnpaidCategory
+	  FROM tbl_CategoryList C 
+		   LEFT JOIN tbl_ExpenditureDet E ON C.hKey = E.iCategory AND E.dtDate BETWEEN  @StartOfMonth AND @EndOfMonth
+     WHERE C.IsObsolete = 0
+	   AND C.bNotify = 1
+     GROUP BY C.sCategory, C.iMonthlyOccurrences
+    HAVING C.iMonthlyOccurrences > COUNT(E.iCategory)
+END
+GO
+
+IF OBJECT_ID('sp_GetUnpaidBillsPreviousMonth') IS NOT NULL 
+DROP PROCEDURE sp_GetUnpaidBillsPreviousMonth
+GO
+
+CREATE PROCEDURE sp_GetUnpaidBillsPreviousMonth
+AS
+BEGIN
+	DECLARE @StartOfPrevMonth DATE,
+			@EndOfPrevMonth DATE
+
+	SET @StartOfPrevMonth = CONVERT(DATE,DATEADD(MM, DATEDIFF(MM, 0, GETDATE())-1, 0))
+	SET @EndOfPrevMonth = CONVERT(DATE,DATEADD(MS, -3, DATEADD(MM, DATEDIFF(MM, 0, GETDATE()) , 0)))
+
+	SELECT C.sCategory + ' (' + CONVERT(VARCHAR, COUNT(C1.iMonthlyOccurrences - E.iCategory)) + '/' + CONVERT(VARCHAR, C1.iMonthlyOccurrences) + ')' UnpaidCategory
+	  FROM tbl_CategoryList C
+		   INNER JOIN  tbl_CategoryPrevMonthOccurrences C1 ON C.hKey = C1.iCategory
+		   LEFT JOIN tbl_ExpenditureDet E ON C.hKey = E.iCategory AND E.dtDate BETWEEN  @StartOfPrevMonth AND @EndOfPrevMonth
+     WHERE C.IsObsolete = 0
+	   AND C.bNotify = 1
+     GROUP BY C.sCategory, C1.iMonthlyOccurrences
+    HAVING C1.iMonthlyOccurrences > COUNT(E.iCategory)
+END
+GO
+
+IF OBJECT_ID('sp_InsertCategoryPrevMonthOccurrences') IS NOT NULL
+DROP PROCEDURE sp_InsertCategoryPrevMonthOccurrences
+GO
+
+CREATE PROCEDURE sp_InsertCategoryPrevMonthOccurrences
+AS
+BEGIN
+	DECLARE @PrevMonth DATE
+	
+	SET @PrevMonth = CONVERT(DATE,DATEADD(MM, DATEDIFF(MM, 0, GETDATE())-1, 0))
+
+	TRUNCATE TABLE tbl_CategoryPrevMonthOccurrences
+	
+	INSERT INTO tbl_CategoryPrevMonthOccurrences(dtMonth, iCategory, iMonthlyOccurrences)
+	SELECT @PrevMonth, C.hKey, C.iMonthlyOccurrences
+	  FROM tbl_CategoryList C
+	 WHERE C.IsObsolete = 0
+	   AND C.bNotify = 1
 END
 GO

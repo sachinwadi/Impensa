@@ -56,6 +56,24 @@ Public Class clsLib
 
 #Region "Properties"
 
+    Public Shared Property LastUsedTimeStamp() As Date
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "LastUsedTimeStamp", Nothing)
+        End Get
+        Set(ByVal value As Date)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "LastUsedTimeStamp", value)
+        End Set
+    End Property
+
+    Public Shared Property UnpaidBills() As Boolean
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "Unpaid Bills", Nothing)
+        End Get
+        Set(ByVal value As Boolean)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "Unpaid Bills", value)
+        End Set
+    End Property
+
     Public Shared Property EnableImport() As Boolean
         Get
             Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "Enable Import", Nothing)
@@ -443,8 +461,6 @@ Public Class clsLib
         Dim Workbooks As excel.Workbooks = Nothing
 
         Try
-            ImportExceptionOccurred = False
-
             If (Not IsWorkbookAccessible(DataFile)) Then Exit Sub
 
             Using OleDBConn = New OleDbConnection("provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & DataFile & ";Extended Properties=""Excel 12.0 Macro; HDR=YES; IMEX=1""")
@@ -556,7 +572,7 @@ Public Class clsLib
 
             End Try
             
-
+            ImportExceptionOccurred = False
         Catch ex As Exception
             ImportExceptionOccurred = True
             Call GenerateErrorLog(ex.Message)
