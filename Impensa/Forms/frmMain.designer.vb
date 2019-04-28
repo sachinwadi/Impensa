@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -71,6 +71,8 @@ Partial Class frmMain
         Me.Label22 = New System.Windows.Forms.Label()
         Me.DataGridExpSumm = New System.Windows.Forms.DataGridView()
         Me.TabExpDet = New System.Windows.Forms.TabPage()
+        Me.LstUnpaidBillsPrevMonth = New System.Windows.Forms.ListBox()
+        Me.Label29 = New System.Windows.Forms.Label()
         Me.LstUnpaidBillsCurrentMonth = New System.Windows.Forms.ListBox()
         Me.Label28 = New System.Windows.Forms.Label()
         Me.DataGridExpDet = New System.Windows.Forms.DataGridView()
@@ -148,8 +150,7 @@ Partial Class frmMain
         Me.ContextMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.tmrRefresh = New System.Windows.Forms.Timer(Me.components)
-        Me.LstUnpaidBillsPrevMonth = New System.Windows.Forms.ListBox()
-        Me.Label29 = New System.Windows.Forms.Label()
+        Me.btnExport = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabCatList.SuspendLayout()
@@ -394,9 +395,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend2.Name = "Legend1"
-        Legend2.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend2)
+        Legend3.Name = "Legend1"
+        Legend3.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend3)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -701,6 +702,32 @@ Partial Class frmMain
         Me.TabExpDet.Text = "Expenditure Details"
         Me.TabExpDet.UseVisualStyleBackColor = True
         '
+        'LstUnpaidBillsPrevMonth
+        '
+        Me.LstUnpaidBillsPrevMonth.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.LstUnpaidBillsPrevMonth.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.LstUnpaidBillsPrevMonth.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.LstUnpaidBillsPrevMonth.ForeColor = System.Drawing.Color.Red
+        Me.LstUnpaidBillsPrevMonth.HorizontalScrollbar = True
+        Me.LstUnpaidBillsPrevMonth.ItemHeight = 16
+        Me.LstUnpaidBillsPrevMonth.Location = New System.Drawing.Point(836, 206)
+        Me.LstUnpaidBillsPrevMonth.Name = "LstUnpaidBillsPrevMonth"
+        Me.LstUnpaidBillsPrevMonth.SelectionMode = System.Windows.Forms.SelectionMode.None
+        Me.LstUnpaidBillsPrevMonth.Size = New System.Drawing.Size(163, 146)
+        Me.LstUnpaidBillsPrevMonth.TabIndex = 6
+        Me.LstUnpaidBillsPrevMonth.TabStop = False
+        '
+        'Label29
+        '
+        Me.Label29.Anchor = System.Windows.Forms.AnchorStyles.Top
+        Me.Label29.AutoSize = True
+        Me.Label29.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label29.Location = New System.Drawing.Point(831, 184)
+        Me.Label29.Name = "Label29"
+        Me.Label29.Size = New System.Drawing.Size(189, 16)
+        Me.Label29.TabIndex = 5
+        Me.Label29.Text = "Prev. Month's Unpaid Bills"
+        '
         'LstUnpaidBillsCurrentMonth
         '
         Me.LstUnpaidBillsCurrentMonth.Anchor = System.Windows.Forms.AnchorStyles.Top
@@ -780,6 +807,7 @@ Partial Class frmMain
         'btnSave
         '
         Me.btnSave.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnSave.Enabled = False
         Me.btnSave.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.btnSave.Location = New System.Drawing.Point(209, 462)
         Me.btnSave.Name = "btnSave"
@@ -1197,7 +1225,7 @@ Partial Class frmMain
         Me.chkShowAllDet.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.chkShowAllDet.AutoSize = True
         Me.chkShowAllDet.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkShowAllDet.Location = New System.Drawing.Point(625, 466)
+        Me.chkShowAllDet.Location = New System.Drawing.Point(796, 466)
         Me.chkShowAllDet.Name = "chkShowAllDet"
         Me.chkShowAllDet.Size = New System.Drawing.Size(218, 17)
         Me.chkShowAllDet.TabIndex = 13
@@ -1231,7 +1259,7 @@ Partial Class frmMain
         Me.pnlHighlight.Controls.Add(Me.btnHighlight)
         Me.pnlHighlight.Controls.Add(Me.Label20)
         Me.pnlHighlight.Controls.Add(Me.txtHighlight)
-        Me.pnlHighlight.Location = New System.Drawing.Point(380, 455)
+        Me.pnlHighlight.Location = New System.Drawing.Point(551, 455)
         Me.pnlHighlight.Name = "pnlHighlight"
         Me.pnlHighlight.Size = New System.Drawing.Size(240, 39)
         Me.pnlHighlight.TabIndex = 14
@@ -1485,31 +1513,17 @@ Partial Class frmMain
         Me.tmrRefresh.Enabled = True
         Me.tmrRefresh.Interval = 5000
         '
-        'LstUnpaidBillsPrevMonth
+        'btnExport
         '
-        Me.LstUnpaidBillsPrevMonth.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.LstUnpaidBillsPrevMonth.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.LstUnpaidBillsPrevMonth.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.LstUnpaidBillsPrevMonth.ForeColor = System.Drawing.Color.Red
-        Me.LstUnpaidBillsPrevMonth.HorizontalScrollbar = True
-        Me.LstUnpaidBillsPrevMonth.ItemHeight = 16
-        Me.LstUnpaidBillsPrevMonth.Location = New System.Drawing.Point(836, 206)
-        Me.LstUnpaidBillsPrevMonth.Name = "LstUnpaidBillsPrevMonth"
-        Me.LstUnpaidBillsPrevMonth.SelectionMode = System.Windows.Forms.SelectionMode.None
-        Me.LstUnpaidBillsPrevMonth.Size = New System.Drawing.Size(163, 146)
-        Me.LstUnpaidBillsPrevMonth.TabIndex = 6
-        Me.LstUnpaidBillsPrevMonth.TabStop = False
-        '
-        'Label29
-        '
-        Me.Label29.Anchor = System.Windows.Forms.AnchorStyles.Top
-        Me.Label29.AutoSize = True
-        Me.Label29.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label29.Location = New System.Drawing.Point(831, 184)
-        Me.Label29.Name = "Label29"
-        Me.Label29.Size = New System.Drawing.Size(189, 16)
-        Me.Label29.TabIndex = 5
-        Me.Label29.Text = "Prev. Month's Unpaid Bills"
+        Me.btnExport.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnExport.Enabled = False
+        Me.btnExport.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.btnExport.Location = New System.Drawing.Point(380, 462)
+        Me.btnExport.Name = "btnExport"
+        Me.btnExport.Size = New System.Drawing.Size(165, 23)
+        Me.btnExport.TabIndex = 22
+        Me.btnExport.Text = "Export To PDF"
+        Me.btnExport.UseVisualStyleBackColor = True
         '
         'frmMain
         '
@@ -1517,6 +1531,7 @@ Partial Class frmMain
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1250, 577)
+        Me.Controls.Add(Me.btnExport)
         Me.Controls.Add(Me.chkShowAllDet)
         Me.Controls.Add(Me.Panel10)
         Me.Controls.Add(Me.StatusStrip)
@@ -1712,5 +1727,6 @@ Partial Class frmMain
     Friend WithEvents LstUnpaidBillsCurrentMonth As System.Windows.Forms.ListBox
     Friend WithEvents LstUnpaidBillsPrevMonth As System.Windows.Forms.ListBox
     Friend WithEvents Label29 As System.Windows.Forms.Label
+    Friend WithEvents btnExport As System.Windows.Forms.Button
 
 End Class

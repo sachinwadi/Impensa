@@ -703,7 +703,7 @@ Public Class frmMain
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
-            btnSave.Enabled = True
+            btnExport.Enabled = True
         End Try
     End Sub '33
 
@@ -790,12 +790,12 @@ Public Class frmMain
 
     Private Sub ExportGridToPDF()
         Try
-            btnSave.Enabled = False
+            btnExport.Enabled = False
 
             TabControl1.Enabled = False
             Panel5.BringToFront()
             Panel5.Visible = True
-            Label15.Text = "Exporting Grid To PDF..."
+            Label15.Text = "Exporting To PDF..."
             Application.DoEvents()
             
             'Creating iTextSharp Table from the DataTable data
@@ -879,7 +879,7 @@ Public Class frmMain
         Finally
             Panel5.SendToBack()
             Panel5.Visible = False
-            btnSave.Enabled = True
+            btnExport.Enabled = True
             TabControl1.Enabled = True
         End Try
     End Sub
@@ -2124,6 +2124,7 @@ Public Class frmMain
             Panel5.Visible = True
             Panel1.Enabled = False
             btnSave.Enabled = False
+            btnExport.Enabled = False
             Application.DoEvents()
 
             If Not CallSearchFunction Then
@@ -2167,6 +2168,7 @@ Public Class frmMain
             TabControl1.Enabled = True
             Panel1.Enabled = True
             btnSave.Enabled = True
+            btnExport.Enabled = True
         End Try
 
     End Sub '20
@@ -2422,8 +2424,6 @@ Public Class frmMain
             Call RefreshGrids()
         ElseIf TabControl1.SelectedTab.Name = "TabThreshold" Then
             Call SaveThresholds()
-        ElseIf TabControl1.SelectedTab.Name = "TabExpSumm" Then
-            Call ExportGridToPDF()
         End If
     End Sub
 
@@ -2520,6 +2520,10 @@ Public Class frmMain
         Panel5.Visible = False
         TabControl1.Enabled = True
 
+    End Sub
+
+    Private Sub btnExport_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnExport.Click
+        Call ExportGridToPDF()
     End Sub
 #End Region
 
@@ -3388,7 +3392,8 @@ Public Class frmMain
         Try
             LastTabIndex = TabControl1.SelectedIndex
 
-            btnSave.Enabled = True
+            btnSave.Enabled = False
+            btnExport.Enabled = False
             btnSave.Text = "Save"
             btnGo.Enabled = False
             Panel1.Enabled = False
@@ -3412,6 +3417,8 @@ Public Class frmMain
                 tslblRecdCnt.Visible = True
                 tslblSeperator2.Visible = True
                 Panel1.Enabled = True
+                btnExport.Enabled = True
+                btnSave.Enabled = True
             End If
 
             If TabControl1.SelectedTab.Name = "TabCatList" Then
@@ -3424,6 +3431,7 @@ Public Class frmMain
                 tslblRecdCnt.Text = "Total Records Displayed: #" & (DataGridCatList.Rows.Count - 1)
                 tslblRecdCnt.Visible = True
                 tslblSeperator2.Visible = True
+                btnSave.Enabled = True
             End If
 
             If TabControl1.SelectedTab.Name = "TabExpSumm" Then
@@ -3433,7 +3441,7 @@ Public Class frmMain
                 HighlightAmt = IIf(SummaryType = En_SummaryType.Monthly, HighlightSummMonthly, HighlightSummYearly)
                 pnlHighlight.Visible = True
                 btnSave.Enabled = False
-                btnSave.Text = "Export Grid To PDF"
+                btnExport.Enabled = False
                 tslblRecdCnt.Text = "Total Records Displayed: #" & IIf((DataGridExpSumm.Rows.Count - 1) < 0, 0, (DataGridExpSumm.Rows.Count - 1))
                 tslblRecdCnt.Visible = True
                 tslblSeperator2.Visible = True
@@ -3462,6 +3470,7 @@ Public Class frmMain
                 rbOpenYr.Checked = False
                 rbCloseYr.Checked = False
                 cmbSelectYear.Enabled = False
+                btnSave.Enabled = True
             End If
 
             If TabControl1.SelectedTab.Name = "TabThreshold" Then
@@ -3471,6 +3480,8 @@ Public Class frmMain
                 tslblRecdCnt.LinkBehavior = LinkBehavior.SystemDefault
                 tslblRecdCnt.Visible = True
                 tslblSeperator2.Visible = True
+                btnExport.Enabled = True
+                btnSave.Enabled = True
 
                 If ThresholdCurrentMonthIndex <> -1 Then
                     tsCmbBudgetBuckets.Visible = True
