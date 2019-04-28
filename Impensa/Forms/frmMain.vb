@@ -37,7 +37,7 @@ Public Class frmMain
         UnderBudgetCats = 3
     End Enum
 #End Region
-    
+
 #Region "Variables"
     Private da As SqlDataAdapter
     Private dt As DataTable
@@ -172,6 +172,7 @@ Public Class frmMain
             DataGridExpDet.Columns("Date").DefaultCellStyle.Format = "dd/MM/yyyy"
 
             DataGridExpDet.Columns("Notes").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft
+            DataGridExpDet.Columns("sCategory").HeaderText = "Category"
 
             tslblRecdCnt.Text = "Total Records Displayed: #" & dtDetailGrid.Select("hKey IS NOT NULL").ToArray.Count
             tslblSeperator2.Text = "||"
@@ -786,102 +787,6 @@ Public Class frmMain
                 da.Fill(dtBudget)
             End Using
         End If
-    End Sub
-
-    Private Sub ExportGridToPDF()
-        Try
-            btnExport.Enabled = False
-
-            TabControl1.Enabled = False
-            Panel5.BringToFront()
-            Panel5.Visible = True
-            Label15.Text = "Exporting To PDF..."
-            Application.DoEvents()
-            
-            'Creating iTextSharp Table from the DataTable data
-            Dim pdfTable As New PdfPTable(DataGridExpSumm.ColumnCount - 2)
-            pdfTable.DefaultCell.Padding = 3
-            pdfTable.DefaultCell.BorderWidth = 1
-            pdfTable.HorizontalAlignment = Element.ALIGN_LEFT
-            pdfTable.WidthPercentage = 100.0F
-
-            'Adding Header row
-            For Each column As DataGridViewColumn In DataGridExpSumm.Columns
-                If DataGridExpSumm.Columns(column.Index).Visible Then
-                    Dim cell As New PdfPCell(New Phrase(New Chunk(column.HeaderText, FontFactory.GetFont(ImpensaFont.FontFamily.ToString, Nothing, True, ImpensaFont.Size, DataGridExpSumm.Columns(column.Index).HeaderCell.InheritedStyle.Font.Style, New iTextSharp.text.BaseColor(DataGridExpSumm.Columns(column.Index).HeaderCell.InheritedStyle.ForeColor)))))
-                    cell.BackgroundColor = New iTextSharp.text.BaseColor(DataGridExpSumm.BackgroundColor.ToArgb)
-                    cell.VerticalAlignment = Element.ALIGN_MIDDLE
-
-                    Select Case DataGridExpSumm.Columns(column.Index).HeaderCell.InheritedStyle.Alignment
-                        Case DataGridViewContentAlignment.MiddleLeft : cell.HorizontalAlignment = Element.ALIGN_LEFT
-                        Case DataGridViewContentAlignment.MiddleRight : cell.HorizontalAlignment = Element.ALIGN_RIGHT
-                        Case Else : cell.HorizontalAlignment = Element.ALIGN_LEFT
-                    End Select
-
-                    pdfTable.AddCell(cell)
-                End If
-            Next
-
-            Dim CellVal As String
-            'Adding DataRow
-            For Each row As DataGridViewRow In DataGridExpSumm.Rows
-                For Each cell As DataGridViewCell In row.Cells
-                    If DataGridExpSumm.Columns(cell.ColumnIndex).Visible Then
-                        If Not cell.Value Is DBNull.Value Then
-                            CellVal = IIf(IsNumeric(cell.Value), Format(cell.Value, "#,##0.00").ToString, cell.Value.ToString())
-                            Dim PDFCellDet As New PdfPCell(New Phrase(New Chunk(CellVal, FontFactory.GetFont(ImpensaFont.FontFamily.ToString, Nothing, True, ImpensaFont.Size, cell.InheritedStyle.Font.Style, New iTextSharp.text.BaseColor(cell.InheritedStyle.ForeColor.ToArgb)))))
-                            PDFCellDet.BackgroundColor = New iTextSharp.text.BaseColor(cell.InheritedStyle.BackColor.ToArgb)
-                            PDFCellDet.VerticalAlignment = Element.ALIGN_MIDDLE
-
-                            Select Case cell.InheritedStyle.Alignment
-                                Case DataGridViewContentAlignment.MiddleLeft : PDFCellDet.HorizontalAlignment = Element.ALIGN_LEFT
-                                Case DataGridViewContentAlignment.MiddleRight : PDFCellDet.HorizontalAlignment = Element.ALIGN_RIGHT
-                                Case Else : PDFCellDet.HorizontalAlignment = Element.ALIGN_LEFT
-                            End Select
-
-                            pdfTable.AddCell(PDFCellDet)
-                        End If
-                    End If
-                Next
-            Next
-
-            If pdfTable.Rows.Count > 0 Then
-                'Exporting to PDF
-                Dim FileName As String = Path.GetTempPath & "Summary_" & cmbSummaryType.Text & ".pdf"
-
-                If Not ExportPDFProcessID = Nothing Then
-                    If Process.GetProcesses.Any(Function(x) x.Id = ExportPDFProcessID) Then
-                        Process.GetProcessById(ExportPDFProcessID).Kill()
-                        ExportPDFProcessID = Nothing
-                        Threading.Thread.Sleep(100)
-                    End If
-                End If
-
-                If File.Exists(FileName) Then File.Delete(FileName)
-
-                Using stream As New FileStream(FileName, FileMode.Create)
-                    Dim pdfDoc As New Document(PageSize.A2, 10.0F, 10.0F, 0.0F, 0.0F)
-                    PdfWriter.GetInstance(pdfDoc, stream)
-                    pdfDoc.Open()
-                    pdfDoc.Add(New Phrase(cmbSummaryType.Text & " Summary"))
-                    pdfDoc.Add(pdfTable)
-                    pdfDoc.Close()
-                    stream.Close()
-                End Using
-
-                Dim proc As New Process
-                proc.StartInfo.FileName = FileName
-                proc.Start()
-                ExportPDFProcessID = proc.Id
-            End If
-        Catch ex As Exception
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-        Finally
-            Panel5.SendToBack()
-            Panel5.Visible = False
-            btnExport.Enabled = True
-            TabControl1.Enabled = True
-        End Try
     End Sub
 #End Region
 
@@ -1897,7 +1802,7 @@ Public Class frmMain
 #End Region
 
 #Region "Ticker"
-    
+
     Private Sub ShowErrorsAndExceptions()
         Dim AlertText As String = Nothing
 
@@ -2305,6 +2210,111 @@ Public Class frmMain
         End Try
     End Sub
 
+    Private Sub ExportGridToPDF(ByVal dataGridViewObj As DataGridView)
+        Dim visibleColumns As Integer = 0
+        Dim columnsNotToExport As String() = {"bDelete", "iCategory"}
+        Dim invisibleColumnIncludeInExport As String() = {"sCategory"}
+
+        Try
+            btnExport.Enabled = False
+
+            TabControl1.Enabled = False
+            Panel5.BringToFront()
+            Panel5.Visible = True
+            Label15.Text = "Exporting To PDF..."
+            Application.DoEvents()
+
+            'Get count of desired columns in a grid
+            For Each column As DataGridViewColumn In dataGridViewObj.Columns
+                If (column.Visible Or Array.IndexOf(invisibleColumnIncludeInExport, column.Name) >= 0) And Array.IndexOf(columnsNotToExport, column.Name) = -1 Then visibleColumns += 1
+            Next
+
+            'Creating iTextSharp Table from the DataTable data
+            Dim pdfTable As New PdfPTable(visibleColumns)
+            pdfTable.DefaultCell.Padding = 3
+            pdfTable.DefaultCell.BorderWidth = 1
+            pdfTable.HorizontalAlignment = Element.ALIGN_LEFT
+            pdfTable.WidthPercentage = 100.0F
+
+            'Adding Header row
+            For Each column As DataGridViewColumn In dataGridViewObj.Columns
+                If (column.Visible Or Array.IndexOf(invisibleColumnIncludeInExport, column.Name) >= 0) And Array.IndexOf(columnsNotToExport, column.Name) = -1 Then
+                    Dim cell As New PdfPCell(New Phrase(New Chunk(column.HeaderText, FontFactory.GetFont(ImpensaFont.FontFamily.ToString, Nothing, True, ImpensaFont.Size, dataGridViewObj.Columns(column.Index).HeaderCell.InheritedStyle.Font.Style, New iTextSharp.text.BaseColor(dataGridViewObj.Columns(column.Index).HeaderCell.InheritedStyle.ForeColor)))))
+                    cell.BackgroundColor = New iTextSharp.text.BaseColor(dataGridViewObj.BackgroundColor.ToArgb)
+                    cell.VerticalAlignment = Element.ALIGN_MIDDLE
+
+                    Select Case dataGridViewObj.Columns(column.Index).HeaderCell.InheritedStyle.Alignment
+                        Case DataGridViewContentAlignment.MiddleLeft : cell.HorizontalAlignment = Element.ALIGN_LEFT
+                        Case DataGridViewContentAlignment.MiddleRight : cell.HorizontalAlignment = Element.ALIGN_RIGHT
+                        Case Else : cell.HorizontalAlignment = Element.ALIGN_LEFT
+                    End Select
+
+                    pdfTable.AddCell(cell)
+                End If
+            Next
+
+            Dim cellVal As String
+            Dim value As Object
+
+            'Adding DataRow
+            For Each row As DataGridViewRow In dataGridViewObj.Rows
+                For Each cell As DataGridViewCell In row.Cells
+                    If (dataGridViewObj.Columns(cell.ColumnIndex).Visible Or Array.IndexOf(invisibleColumnIncludeInExport, dataGridViewObj.Columns(cell.ColumnIndex).Name) >= 0) And Array.IndexOf(columnsNotToExport, dataGridViewObj.Columns(cell.ColumnIndex).Name) = -1 Then
+                        value = IIf(cell.Value Is DBNull.Value, String.Empty, cell.Value)
+                        cellVal = IIf(IsNumeric(value), Format(value, "#,##0.00").ToString, value.ToString())
+                        Dim PDFCellDet As New PdfPCell(New Phrase(New Chunk(cellVal, FontFactory.GetFont(ImpensaFont.FontFamily.ToString, Nothing, True, ImpensaFont.Size, cell.InheritedStyle.Font.Style, New iTextSharp.text.BaseColor(cell.InheritedStyle.ForeColor.ToArgb)))))
+                        PDFCellDet.BackgroundColor = New iTextSharp.text.BaseColor(cell.InheritedStyle.BackColor.ToArgb)
+                        PDFCellDet.VerticalAlignment = Element.ALIGN_MIDDLE
+
+                        Select Case cell.InheritedStyle.Alignment
+                            Case DataGridViewContentAlignment.MiddleLeft : PDFCellDet.HorizontalAlignment = Element.ALIGN_LEFT
+                            Case DataGridViewContentAlignment.MiddleRight : PDFCellDet.HorizontalAlignment = Element.ALIGN_RIGHT
+                            Case Else : PDFCellDet.HorizontalAlignment = Element.ALIGN_LEFT
+                        End Select
+
+                        pdfTable.AddCell(PDFCellDet)
+                    End If
+                Next
+            Next
+
+            If pdfTable.Rows.Count > 0 Then
+                'Exporting to PDF
+                Dim FileName As String = Path.GetTempPath & "Impensa_" & Date.Now.ToString("ddMMyyyyHHmmss") & ".pdf"
+
+                If Not ExportPDFProcessID = Nothing Then
+                    If Process.GetProcesses.Any(Function(x) x.Id = ExportPDFProcessID) Then
+                        Process.GetProcessById(ExportPDFProcessID).Kill()
+                        ExportPDFProcessID = Nothing
+                        Threading.Thread.Sleep(100)
+                    End If
+                End If
+
+                If File.Exists(FileName) Then File.Delete(FileName)
+
+                Using stream As New FileStream(FileName, FileMode.Create)
+                    Dim pdfDoc As New Document(PageSize.A4, 10.0F, 10.0F, 0.0F, 0.0F)
+                    PdfWriter.GetInstance(pdfDoc, stream)
+                    pdfDoc.Open()
+                    pdfDoc.Add(New Phrase("Impensa"))
+                    pdfDoc.Add(pdfTable)
+                    pdfDoc.Close()
+                    stream.Close()
+                End Using
+
+                Dim proc As New Process
+                proc.StartInfo.FileName = FileName
+                proc.Start()
+                ExportPDFProcessID = proc.Id
+            End If
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        Finally
+            Panel5.SendToBack()
+            Panel5.Visible = False
+            btnExport.Enabled = True
+            TabControl1.Enabled = True
+        End Try
+    End Sub
 #End Region
 
 #Region "Control Events"
@@ -2523,7 +2533,13 @@ Public Class frmMain
     End Sub
 
     Private Sub btnExport_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnExport.Click
-        Call ExportGridToPDF()
+        If TabControl1.SelectedTab.Name = "TabExpDet" Then
+            Call ExportGridToPDF(DataGridExpDet)
+        ElseIf TabControl1.SelectedTab.Name = "TabExpSumm" Then
+            Call ExportGridToPDF(DataGridExpSumm)
+        ElseIf TabControl1.SelectedTab.Name = "TabThreshold" Then
+            Call ExportGridToPDF(DataGridThrLimits)
+        End If
     End Sub
 #End Region
 

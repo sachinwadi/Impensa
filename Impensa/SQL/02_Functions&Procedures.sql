@@ -184,7 +184,7 @@ BEGIN
 			CASE WHEN (X.hKey = 999999999 AND X.dtDate != '2100-01-01') THEN 'TOTAL' 
 				 WHEN (X.hKey = 999999999 AND X.dtDate = '2100-01-01') THEN 'GRAND TOTAL'
 				 ELSE CONVERT(VARCHAR,X.dtDate,103) 
-			END [Date], X.dAmount Amount, X.sNotes Notes, X.iCategory, X.sCategory, X.IsReadOnly, X.IsDummy, 0 [IsDummyRowAdded]  
+			END [Date], X.dAmount Amount, X.iCategory, X.sCategory, X.sNotes Notes, X.IsReadOnly, X.IsDummy, 0 [IsDummyRowAdded]  
 	  FROM (SELECT 1 [Sort], E.hKey, E.dtDate, C.sCategory, E.dAmount, E.sNotes, E.iCategory, ISNULL(Y.IsYrClosed, 0) [IsReadOnly], 0 [IsDummy] 
 			  FROM tbl_ExpenditureDet E 
 			       INNER JOIN tbl_CategoryList C ON C.hKey = E.iCategory
