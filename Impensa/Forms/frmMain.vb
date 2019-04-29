@@ -14,27 +14,36 @@ Imports iTextSharp.text.pdf
 
 Public Class frmMain
 #Region "Enums"
-    Private Enum En_CSVCreationFrequency
+    Private Enum CSVCreationFrequency
         Monthly = 0
         Annually = 1
         Adhoc = 2
     End Enum
 
-    Private Enum En_ToDate
+    Private Enum ToDate
         MTD = 0
         YTD = 1
     End Enum
 
-    Private Enum En_Period
+    Private Enum Period
         CurrentMonth = 0
         CurrentYear = 1
         BookStart = 2
     End Enum
 
-    Private Enum En_BudgetBuckets
+    Private Enum BudgetBuckets
         OverBudgetCats = 1
         AtParCats = 2
         UnderBudgetCats = 3
+    End Enum
+
+    Private Enum Tabs
+        TabDetails
+        TabSummary
+        TabCharts
+        TabBudget
+        TabCategories
+        TabSettings
     End Enum
 #End Region
 
@@ -440,7 +449,7 @@ Public Class frmMain
 
     Private Sub RefreshAutoCompleteDictionary()
         Try
-            TabControl1.Enabled = False
+            ImpensaTabControl.Enabled = False
             Panel5.BringToFront()
             Panel5.Visible = True
             Label15.Text = "Rebuilding AutoComplete Dictionary..."
@@ -457,7 +466,7 @@ Public Class frmMain
         Finally
             Panel5.SendToBack()
             Panel5.Visible = False
-            TabControl1.Enabled = True
+            ImpensaTabControl.Enabled = True
         End Try
     End Sub '44
 
@@ -471,24 +480,34 @@ Public Class frmMain
         Dim procName As String = ""
         Dim dtGridSummary As DataTable
         Try
+            If SummaryType = SummaryTypes.AllInOne Then
+                pnlHighlight.Visible = False
+            Else
+                pnlHighlight.Visible = True
+            End If
+
             DataGridExpSumm.DataSource = Nothing
             DataGridExpSumm.Controls.Clear()
             Label15.Text = "Loading Summary..."
             Application.DoEvents()
 
-            If SummaryType = En_SummaryType.Monthly Then
+            If SummaryType = SummaryTypes.Monthly Then
                 procName = "sp_GetExpenditureSummary_Monthly"
-            ElseIf SummaryType = En_SummaryType.Yearly OrElse SummaryType = En_SummaryType.Variance Then
+            ElseIf SummaryType = SummaryTypes.Yearly OrElse SummaryType = SummaryTypes.Variance Then
                 procName = "sp_GetExpenditureSummary_Yearly"
-            ElseIf SummaryType = En_SummaryType.RunningTotals Then
+            ElseIf SummaryType = SummaryTypes.RunningTotals Then
                 procName = "sp_GetExpenditureSummary_RunningTotals"
+            ElseIf SummaryType = SummaryTypes.AllInOne Then
+                procName = "sp_GetExpenditureSummary_AllInOne"
             End If
 
             Using Connection = GetConnection()
-                If SummaryType = En_SummaryType.RunningTotals Then
+                If SummaryType = SummaryTypes.RunningTotals Then
                     strSQL = "Execute " & procName & " '" & dtpFrom & "', '" & dtpTo & "', " & cmbCatListRunTot.SelectedItem.key & ", " & Month(Today) & ", '" & SearchStr & "', 0"
-                ElseIf SummaryType = En_SummaryType.Variance Then
+                ElseIf SummaryType = SummaryTypes.Variance Then
                     strSQL = "Execute " & procName & " '" & dtpFrom & "', '" & dtpTo & "', '" & Categories & "', '" & SearchStr & "', '" & ChkLBYearsItemsList & "'"
+                ElseIf SummaryType = SummaryTypes.AllInOne Then
+                    strSQL = "Execute " & procName & " '" & dtpRecdKeeping.Value.Date & "', '" & Categories & "', '" & SearchStr & "'"
                 Else
                     strSQL = "Execute " & procName & " '" & dtpFrom & "', '" & dtpTo & "', '" & Categories & "', '" & SearchStr & "'"
                 End If
@@ -499,11 +518,11 @@ Public Class frmMain
 
             If dtGridSummary.Rows.Count > 0 Then
 
-                If TabControl1.SelectedTab.Name = "TabExpSumm" Then
+                If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) Then
                     tslblRecdCnt.Text = "Total Records Displayed: #" & dtGridSummary.Select("Sort = 1").ToArray.Count
                 End If
 
-                If SummaryType = En_SummaryType.RunningTotals Then
+                If SummaryType = SummaryTypes.RunningTotals Then
                     Using Connection = GetConnection()
                         da = New SqlDataAdapter("SELECT Y.iMonth 'iCategory', Datename(M, CONVERT(DATE, '1900-' + CONVERT(VARCHAR, Y.iMonth) + '-01')) 'Category' FROM (SELECT TOP(12) ROW_NUMBER() OVER(ORDER BY NAME) iMonth FROM sys.objects)Y", Connection)
                         dt = New DataTable
@@ -538,36 +557,40 @@ Public Class frmMain
 
                 Dim ColTotal As Double = 0
 
-                For Each dr As DataGridViewRow In DataGridExpSumm.Rows
-                    ColTotal = 0
+                If Not SummaryType = SummaryTypes.AllInOne Then
+                    For Each dr As DataGridViewRow In DataGridExpSumm.Rows
+                        ColTotal = 0
 
-                    If SummaryType = En_SummaryType.Variance Then
-                        ColTotal = Math.Abs(dr.Cells(CategoryColIndex + 1).Value - dr.Cells(CategoryColIndex + 2).Value)
-                    Else
-                        For i = (CategoryColIndex + 1) To DataGridExpSumm.Columns.Count - 2
-                            If Not dr.Cells(i).Value Is DBNull.Value Then
-                                ColTotal += dr.Cells(i).Value
-                            End If
-                        Next
-                    End If
+                        If SummaryType = SummaryTypes.Variance Then
+                            ColTotal = Math.Abs(dr.Cells(CategoryColIndex + 1).Value - dr.Cells(CategoryColIndex + 2).Value)
+                        Else
+                            For i = (CategoryColIndex + 1) To DataGridExpSumm.Columns.Count - 2
+                                If Not dr.Cells(i).Value Is DBNull.Value Then
+                                    ColTotal += dr.Cells(i).Value
+                                End If
+                            Next
+                        End If
 
 
-                    If Not dr.Cells("Sort").Value = 3 Then
-                        dr.Cells("TOTAL").Value = ColTotal
-                    Else
-                        dr.Cells("TOTAL").Value = DBNull.Value
-                    End If
+                        If Not dr.Cells("Sort").Value = 3 Then
+                            dr.Cells("TOTAL").Value = ColTotal
+                        Else
+                            dr.Cells("TOTAL").Value = DBNull.Value
+                        End If
 
-                    If dr.Cells("Sort").Value = 3 Then
-                        RunTotRowIndex = dr.Index
-                    End If
+                        If dr.Cells("Sort").Value = 3 Then
+                            RunTotRowIndex = dr.Index
+                        End If
 
-                    If SummaryType = En_SummaryType.RunningTotals AndAlso dr.Cells("Sort").Value = 4 Then
-                        RunTotalMonth = dr.Cells("Category").Value
-                    End If
-                Next
+                        If SummaryType = SummaryTypes.RunningTotals AndAlso dr.Cells("Sort").Value = 4 Then
+                            RunTotalMonth = dr.Cells("Category").Value
+                        End If
+                    Next
+                Else
+                    DataGridExpSumm.Columns("Total").Visible = False
+                End If
 
-                If SummaryType = En_SummaryType.RunningTotals Then
+                If SummaryType = SummaryTypes.RunningTotals Then
                     Dim StartMergeColIndex As Int32 = 2
                     Dim MC As MergedCell
 
@@ -584,7 +607,7 @@ Public Class frmMain
                 End If
 
                 If DataGridExpSumm.Columns.Count > 0 Then
-                    If SummaryType = En_SummaryType.Variance Then
+                    If SummaryType = SummaryTypes.Variance Then
                         DataGridExpSumm.Columns("TOTAL").HeaderText = "Variance"
                     Else
                         DataGridExpSumm.Columns("TOTAL").HeaderText = "Total"
@@ -593,7 +616,7 @@ Public Class frmMain
                     DataGridExpSumm.Columns("iCategory").Visible = False
                 End If
             Else
-                If TabControl1.SelectedTab.Name = "TabExpSumm" Then
+                If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) Then
                     tslblRecdCnt.Text = "Total Records Displayed: #0"
                 End If
             End If
@@ -610,7 +633,7 @@ Public Class frmMain
                 Label15.Text = "Styling Summary Grid..."
                 Application.DoEvents()
 
-                If SummaryType = En_SummaryType.Variance Then
+                If SummaryType = SummaryTypes.Variance Then
                     For Each dr As DataGridViewRow In DataGridExpSumm.Rows
                         dr.Cells("TOTAL").Style.BackColor = Color.LightYellow
 
@@ -676,15 +699,15 @@ Public Class frmMain
                     DataGridExpSumm.Columns("Category").Frozen = True
                 End If
 
-                Dim RowCnt As Int32 = IIf(SummaryType = En_SummaryType.RunningTotals, DataGridExpSumm.Rows.Count - 4, DataGridExpSumm.Rows.Count - 2)
+                Dim RowCnt As Int32 = IIf(SummaryType = SummaryTypes.RunningTotals, DataGridExpSumm.Rows.Count - 4, DataGridExpSumm.Rows.Count - 2)
 
                 For i As Integer = 0 To RowCnt
                     For j As Integer = (CategoryColIndex + 1) To DataGridExpSumm.Columns.Count - 2
                         DataGridExpSumm.Rows(i).Cells(j).Style.ForeColor = Nothing
                         If Not DataGridExpSumm.Rows(i).Cells(j).Value Is DBNull.Value Then
                             DataGridExpSumm.Rows(i).Cells(j).Style.BackColor = Nothing
-                            If DataGridExpSumm.Rows(i).Cells(j).Value > IIf(SummaryType = En_SummaryType.Monthly OrElse SummaryType = En_SummaryType.RunningTotals, HighlightSummMonthly, HighlightSummYearly) Then
-                                DataGridExpSumm.Rows(i).Cells(j).Style.BackColor = Highlighter
+                            If DataGridExpSumm.Rows(i).Cells(j).Value > IIf(SummaryType = SummaryTypes.Monthly OrElse SummaryType = SummaryTypes.RunningTotals, HighlightSummMonthly, HighlightSummYearly) Then
+                                DataGridExpSumm.Rows(i).Cells(j).Style.BackColor = IIf(SummaryType = SummaryTypes.AllInOne, Nothing, Highlighter)
                             ElseIf DataGridExpSumm.Rows(i).Cells(j).Value = 0 Then
                                 DataGridExpSumm.Rows(i).Cells(j).Style.ForeColor = Color.Gray
                             End If
@@ -692,7 +715,7 @@ Public Class frmMain
                     Next
                 Next
 
-                If Not SummaryType = En_SummaryType.RunningTotals Then
+                If Not (SummaryType = SummaryTypes.RunningTotals Or SummaryType = SummaryTypes.AllInOne) Then
                     Call GetBudgets()
 
                     If dtBudget.Rows.Count > 0 Then
@@ -718,7 +741,7 @@ Public Class frmMain
                 For ColId As Integer = CategoryColIndex + 1 To TotalColIndex - 1
                     ApplyColorFormatting = True
 
-                    If SummaryType = En_SummaryType.Monthly Then
+                    If SummaryType = SummaryTypes.Monthly Then
                         If Month(CDate(DataGridExpSumm.Columns(ColId).HeaderText)) = Month(CDate(dtpFrom)) _
                                 AndAlso Year(CDate(DataGridExpSumm.Columns(ColId).HeaderText)) = Year(CDate(dtpFrom)) _
                                 AndAlso CDate(dtpFrom).Day <> 1 Then
@@ -729,7 +752,7 @@ Public Class frmMain
                                 AndAlso Month(CDate(dtpTo)) <> Today.Month Then
                             ApplyColorFormatting = False
                         End If
-                    ElseIf SummaryType = En_SummaryType.Yearly Then
+                    ElseIf SummaryType = SummaryTypes.Yearly Then
                         If CDate(dtpFrom) > New DateTime(DataGridExpSumm.Columns(ColId).HeaderText, 1, 1) Then
                             ApplyColorFormatting = False
                         ElseIf CDate(dtpTo) < New DateTime(DataGridExpSumm.Columns(ColId).HeaderText, 12, 31) AndAlso CDate(dtpTo).Year <> Today.Year Then
@@ -775,9 +798,9 @@ Public Class frmMain
                 Call SetDefaultPropValue()
             End If
 
-            If SummaryType = En_SummaryType.Monthly Then
+            If SummaryType = SummaryTypes.Monthly Then
                 strSQL = "Execute sp_GetExpenditureSummaryBudget_Monthly '" & dtpFrom & "', '" & dtpTo & "', '" & Categories & "'"
-            ElseIf SummaryType = En_SummaryType.Yearly OrElse SummaryType = En_SummaryType.Variance Then
+            ElseIf SummaryType = SummaryTypes.Yearly OrElse SummaryType = SummaryTypes.Variance Then
                 strSQL = "Execute sp_GetExpenditureSummaryBudget_Yearly '" & dtpFrom & "', '" & dtpTo & "', '" & Categories & "', '" & ChkLBYearsItemsList & "'"
             End If
 
@@ -886,7 +909,7 @@ Public Class frmMain
         Return dt
     End Function '40
 
-    Private Sub PopulateThresholdGrid(Optional ByVal P_BudgetBuckets As En_BudgetBuckets = 0)
+    Private Sub PopulateThresholdGrid(Optional ByVal P_BudgetBuckets As BudgetBuckets = 0)
         Dim dr As DataRow
         Dim dv As New DataView
         Dim ThrAmtTotal As Double = 0
@@ -908,11 +931,11 @@ Public Class frmMain
 
             dv.RowFilter = Nothing
 
-            If P_BudgetBuckets = En_BudgetBuckets.OverBudgetCats Then
+            If P_BudgetBuckets = BudgetBuckets.OverBudgetCats Then
                 dv.RowFilter = "DifferenceSign > 0"
-            ElseIf P_BudgetBuckets = En_BudgetBuckets.AtParCats Then
+            ElseIf P_BudgetBuckets = BudgetBuckets.AtParCats Then
                 dv.RowFilter = "DifferenceSign = 0"
-            ElseIf P_BudgetBuckets = En_BudgetBuckets.UnderBudgetCats Then
+            ElseIf P_BudgetBuckets = BudgetBuckets.UnderBudgetCats Then
                 dv.RowFilter = "DifferenceSign < 0"
             End If
 
@@ -985,8 +1008,8 @@ Public Class frmMain
             DataGridThrLimits.Columns("Difference").ReadOnly = True
 
             Call FormatDataGridThrLimits()
-            Call BuildExpenseTicker(En_ToDate.YTD)
-            Call BuildExpenseTicker(En_ToDate.MTD)
+            Call BuildExpenseTicker(ToDate.YTD)
+            Call BuildExpenseTicker(ToDate.MTD)
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
@@ -1113,14 +1136,14 @@ Public Class frmMain
             YrTo = Year(CDate(dtpTo))
         End If
 
-        If SummaryType = En_SummaryType.Variance Then
+        If SummaryType = SummaryTypes.Variance Then
             chkLBVarComparision.Items.Clear()
         Else
             chkLBYears.Items.Clear()
         End If
 
         For i As Integer = 0 To YrTo - YrFrom
-            If SummaryType = En_SummaryType.Variance Then
+            If SummaryType = SummaryTypes.Variance Then
                 chkLBVarComparision.Items.Add(YrFrom + i, True)
             Else
                 chkLBYears.Items.Add(YrFrom + i, True)
@@ -1580,7 +1603,7 @@ Public Class frmMain
                             da.Fill(dt)
 
                             If dt.Rows.Count > 0 Then
-                                Call CreateCSV(dt, "Data_" & OpenYrs(i) & "Y#.csv", En_CSVCreationFrequency.Annually)
+                                Call CreateCSV(dt, "Data_" & OpenYrs(i) & "Y#.csv", CSVCreationFrequency.Annually)
                             End If
                         End Using
                     End If
@@ -1626,7 +1649,7 @@ Public Class frmMain
                         da.Fill(dt)
 
                         If dt.Rows.Count > 0 Then
-                            Call CreateCSV(dt, "Data_" & cmbSelectYear.SelectedValue & "Y#.csv", En_CSVCreationFrequency.Annually)
+                            Call CreateCSV(dt, "Data_" & cmbSelectYear.SelectedValue & "Y#.csv", CSVCreationFrequency.Annually)
                         End If
                     End If
                 End Using
@@ -1650,7 +1673,7 @@ Public Class frmMain
         dtPickerFrom.Value = Now.AddDays((Now.Day - 1) * -1).Date 'First Day Of Current Month
         dtPickerTo.Value = DateTime.Today
         Call PopulatePeriodCombo()
-        cmbPeriod.SelectedIndex = En_Period.CurrentMonth
+        cmbPeriod.SelectedIndex = Period.CurrentMonth
         txtSearch.Text = DefaultSearchStr
         txtSearch.ForeColor = Color.DarkGray
         'Call GetNonObseletCategoriesList()
@@ -1685,7 +1708,7 @@ Public Class frmMain
         cmbSummaryType.SelectedIndex = 0
         cmbCatListRunTot.SelectedIndex = -1
         cmbCatListRunTot.Enabled = False
-        SummaryType = En_SummaryType.Monthly
+        SummaryType = SummaryTypes.Monthly
         HighlightDetail = IIf(HighlightDetail_Orig Is Nothing, 1000, HighlightDetail_Orig)
         HighlightSummMonthly = IIf(HighlightSummMonthly_Orig Is Nothing, 3000, HighlightSummMonthly_Orig)
         HighlightSummYearly = IIf(HighlightSummYearly_Orig Is Nothing, 25000, HighlightSummYearly_Orig)
@@ -1705,14 +1728,14 @@ Public Class frmMain
 #End Region
 
 #Region "CSV"
-    Private Sub CreateCSV(ByVal P_dt As DataTable, ByVal P_FileName As String, ByVal P_Frequency As En_CSVCreationFrequency)
+    Private Sub CreateCSV(ByVal P_dt As DataTable, ByVal P_FileName As String, ByVal P_Frequency As CSVCreationFrequency)
         Dim CSVHeader As String = "Date, Category, Amount, Notes"
         Dim CurrentLine As String = ""
         Dim FilePath As String = CSVBackupPath + "\" + P_FileName
 
         Try
             If File.Exists(FilePath) Then
-                If P_Frequency = En_CSVCreationFrequency.Annually Or P_Frequency = En_CSVCreationFrequency.Adhoc Then
+                If P_Frequency = CSVCreationFrequency.Annually Or P_Frequency = CSVCreationFrequency.Adhoc Then
                     File.Delete(FilePath)
                 Else
                     Exit Sub
@@ -1764,7 +1787,7 @@ Public Class frmMain
         End Using
 
         If dt.Rows.Count > 0 Then
-            Call CreateCSV(dt, "Data_" & DateAndTime.MonthName((DatePart(DateInterval.Month, DateTime.Today) - 1)) & Year(DateTime.Today) & "M#.csv", En_CSVCreationFrequency.Monthly)
+            Call CreateCSV(dt, "Data_" & DateAndTime.MonthName((DatePart(DateInterval.Month, DateTime.Today) - 1)) & Year(DateTime.Today) & "M#.csv", CSVCreationFrequency.Monthly)
         End If
     End Sub '29
 
@@ -1792,7 +1815,7 @@ Public Class frmMain
 
                         If dt.Rows.Count > 0 Then
                             Call CreateCSV(dt, "Data_" & DateAndTime.MonthName(DatePart(DateInterval.Month, CDate(drGrid("Date")))) _
-                                               & DatePart(DateInterval.Year, CDate(drGrid("Date"))) & "M#.csv", En_CSVCreationFrequency.Adhoc)
+                                               & DatePart(DateInterval.Year, CDate(drGrid("Date"))) & "M#.csv", CSVCreationFrequency.Adhoc)
                         End If
                     End If
                 End If
@@ -1833,7 +1856,7 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub BuildExpenseTicker(ByVal P_ToDateFactor As En_ToDate)
+    Private Sub BuildExpenseTicker(ByVal P_ToDateFactor As ToDate)
         Dim Params As SqlParameter
         Dim Comm As SqlCommand
         Dim strTicker As String = ""
@@ -1842,12 +1865,12 @@ Public Class frmMain
                 Comm = New SqlCommand("sp_GetExpensesTicker", Connection)
                 Comm.CommandType = CommandType.StoredProcedure
 
-                Params = New SqlParameter("@P_FromDate", IIf(P_ToDateFactor = En_ToDate.MTD, New DateTime(Today.Year, Today.Month, 1), New DateTime(Today.Year, 1, 1)))
+                Params = New SqlParameter("@P_FromDate", IIf(P_ToDateFactor = ToDate.MTD, New DateTime(Today.Year, Today.Month, 1), New DateTime(Today.Year, 1, 1)))
                 Params.Direction = ParameterDirection.Input
                 Params.DbType = DbType.Date
                 Comm.Parameters.Add(Params)
 
-                Params = New SqlParameter("@P_ToDate", IIf(P_ToDateFactor = En_ToDate.MTD, New DateTime(Today.Year, Today.Month, 1).AddMonths(1).AddDays(-1), New DateTime(Today.Year, 12, 31)))
+                Params = New SqlParameter("@P_ToDate", IIf(P_ToDateFactor = ToDate.MTD, New DateTime(Today.Year, Today.Month, 1).AddMonths(1).AddDays(-1), New DateTime(Today.Year, 12, 31)))
                 Params.Direction = ParameterDirection.Input
                 Params.DbType = DbType.Date
                 Comm.Parameters.Add(Params)
@@ -1861,7 +1884,7 @@ Public Class frmMain
                 strTicker = strTicker & dr("Category") & " - Rs. " & Format(dr("Amount"), "#,##0.00") & " / Rs. " & Format(dr("TAmount"), "#,##0.00") & ";" & Space(5)
             Next
 
-            If P_ToDateFactor = En_ToDate.MTD Then
+            If P_ToDateFactor = ToDate.MTD Then
                 RchTB_MTDTicker.Text = strTicker
                 Dim g As Graphics = RchTB_MTDTicker.CreateGraphics
                 Dim sz As SizeF = TextRenderer.MeasureText(g, RchTB_MTDTicker.Text, RchTB_MTDTicker.Font, RchTB_MTDTicker.ClientSize, TextFormatFlags.SingleLine)
@@ -1875,7 +1898,7 @@ Public Class frmMain
                 RchTB_YTDTicker.Width = CInt(Math.Ceiling(sz.Width))
             End If
 
-            If P_ToDateFactor = En_ToDate.MTD Then
+            If P_ToDateFactor = ToDate.MTD Then
                 Call SetTickerTextColor(RchTB_MTDTicker, dt)
             Else
                 Call SetTickerTextColor(RchTB_YTDTicker, dt)
@@ -1937,11 +1960,11 @@ Public Class frmMain
 
     Private Sub SetPeriodComboIndex()
         If dtPickerFrom.Value.Date = Now.AddDays((Now.Day - 1) * -1).Date AndAlso dtPickerTo.Value.Date = Today.Date Then
-            cmbPeriod.SelectedIndex = En_Period.CurrentMonth
+            cmbPeriod.SelectedIndex = Period.CurrentMonth
         ElseIf dtPickerFrom.Value.Date = New DateTime(Year(Today), 1, 1) AndAlso dtPickerTo.Value.Date = Today.Date Then
-            cmbPeriod.SelectedIndex = En_Period.CurrentYear
+            cmbPeriod.SelectedIndex = Period.CurrentYear
         ElseIf dtPickerFrom.Value.Date = RecordKeepingStartDate AndAlso dtPickerTo.Value.Date = Today.Date Then
-            cmbPeriod.SelectedIndex = En_Period.BookStart
+            cmbPeriod.SelectedIndex = Period.BookStart
         Else
             cmbPeriod.SelectedIndex = -1
         End If
@@ -2009,9 +2032,9 @@ Public Class frmMain
 
     Private Function ShowUnsavedDataWarning(ByVal sMessage As String) As Windows.Forms.DialogResult
         Dim Result As Windows.Forms.DialogResult
-        If (TabControl1.TabPages(LastTabIndex).Name = "TabExpDet" AndAlso (Not DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
-        (TabControl1.TabPages(LastTabIndex).Name = "TabThreshold" AndAlso (Not DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
-        (TabControl1.TabPages(LastTabIndex).Name = "TabCatList" AndAlso (Not DirectCast(DataGridCatList.DataSource, DataTable).GetChanges Is Nothing)) Then
+        If (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) AndAlso (Not DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
+        (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) AndAlso (Not DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
+        (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabCategories) AndAlso (Not DirectCast(DataGridCatList.DataSource, DataTable).GetChanges Is Nothing)) Then
             If ImpensaActionAlert(sMessage, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) = Windows.Forms.DialogResult.Cancel Then
                 Result = Windows.Forms.DialogResult.Cancel
             Else
@@ -2024,7 +2047,7 @@ Public Class frmMain
 
     Private Sub RefreshGrids()
         Try
-            TabControl1.Enabled = False
+            ImpensaTabControl.Enabled = False
             Panel5.BringToFront()
             Panel5.Visible = True
             Panel1.Enabled = False
@@ -2037,7 +2060,7 @@ Public Class frmMain
                 Call SetDefaultPropValue()
             End If
 
-            If TabControl1.SelectedIndex <> 0 Then TabControl1.SelectedIndex = 0
+            If ImpensaTabControl.SelectedIndex <> 0 Then ImpensaTabControl.SelectedIndex = 0
 
             Call ResetAllTabs()
             Call ShowTDLableDetails()
@@ -2062,15 +2085,15 @@ Public Class frmMain
                 Call SetDefaultPropValue()
             End If
 
-            Call BuildExpenseTicker(En_ToDate.MTD)
-            Call BuildExpenseTicker(En_ToDate.YTD)
+            Call BuildExpenseTicker(ToDate.MTD)
+            Call BuildExpenseTicker(ToDate.YTD)
             Call PopulateExpenditureSummaryGrid()
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Panel5.SendToBack()
             Panel5.Visible = False
-            TabControl1.Enabled = True
+            ImpensaTabControl.Enabled = True
             Panel1.Enabled = True
             btnSave.Enabled = True
             btnExport.Enabled = True
@@ -2218,7 +2241,7 @@ Public Class frmMain
         Try
             btnExport.Enabled = False
 
-            TabControl1.Enabled = False
+            ImpensaTabControl.Enabled = False
             Panel5.BringToFront()
             Panel5.Visible = True
             Label15.Text = "Exporting To PDF..."
@@ -2312,7 +2335,7 @@ Public Class frmMain
             Panel5.SendToBack()
             Panel5.Visible = False
             btnExport.Enabled = True
-            TabControl1.Enabled = True
+            ImpensaTabControl.Enabled = True
         End Try
     End Sub
 #End Region
@@ -2336,7 +2359,7 @@ Public Class frmMain
             dtpFrom = dtPickerFrom.Value.Date.ToString("yyyy-MM-dd")
             dtpTo = dtPickerTo.Value.Date.ToString("yyyy-MM-dd")
             dtpRecdKeeping.MaxDate = DateTime.Today
-            SummaryType = En_SummaryType.Monthly
+            SummaryType = SummaryTypes.Monthly
             txtHighlight.Text = HighlightDetail
             ImpensaFont = New System.Drawing.Font("Microsoft Sans Serif", 10)
             cmbSelectChart.Items.Clear()
@@ -2350,10 +2373,11 @@ Public Class frmMain
             cmbSummaryType.Items.Clear()
             cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(0, "Monthly"))
             cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(1, "Yearly"))
-            cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(2, "Running Totals"))
+            cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(2, "All In One"))
+            cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(3, "Running Totals"))
 
             If CDate(dtpFrom) = New DateTime(Year(CDate(dtpFrom)), 1, 1) AndAlso CDate(dtpTo) = New DateTime(Year(CDate(dtpTo)), 12, 31) AndAlso Year(CDate(dtpFrom)) <> Year(CDate(dtpTo)) Then
-                cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(3, "Variance Comparision"))
+                cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(4, "Variance Comparision"))
             End If
 
             cmbSummaryType.DisplayMember = "Value"
@@ -2424,15 +2448,15 @@ Public Class frmMain
 
 #Region "Button Events"
     Private Sub btnSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnSave.Click
-        If TabControl1.SelectedTab.Name = "TabExpDet" Then
+        If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) Then
             Call SaveNotes(DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges)
             Call SaveExpenses()
-        ElseIf TabControl1.SelectedTab.Name = "TabCatList" Then
+        ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabCategories) Then
             Call SaveCategories()
-        ElseIf TabControl1.SelectedTab.Name = "TabFunctions" Then
+        ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSettings) Then
             Call SaveConfig()
             Call RefreshGrids()
-        ElseIf TabControl1.SelectedTab.Name = "TabThreshold" Then
+        ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
             Call SaveThresholds()
         End If
     End Sub
@@ -2469,14 +2493,14 @@ Public Class frmMain
             Call SetDefaultPropValue()
             Call BuildYearsListString()
 
-            If cmbSummaryType.Items.Count = 4 Then
-                If cmbSummaryType.Items(3).Equals("Variance Comparision") Then
-                    cmbSummaryType.Items.RemoveAt(3)
+            If cmbSummaryType.Items.Count = 5 Then
+                If cmbSummaryType.Items(4).Equals("Variance Comparision") Then
+                    cmbSummaryType.Items.RemoveAt(4)
                 End If
             End If
 
-            If CDate(dtpFrom) = New DateTime(Year(CDate(dtpFrom)), 1, 1) AndAlso CDate(dtpTo) = New DateTime(Year(CDate(dtpTo)), 12, 31) AndAlso Year(CDate(dtpFrom)) <> Year(CDate(dtpTo)) AndAlso Not cmbSummaryType.Items.Contains(New KeyValuePair(Of Integer, String)(3, "Variance Comparision")) Then
-                cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(3, "Variance Comparision"))
+            If CDate(dtpFrom) = New DateTime(Year(CDate(dtpFrom)), 1, 1) AndAlso CDate(dtpTo) = New DateTime(Year(CDate(dtpTo)), 12, 31) AndAlso Year(CDate(dtpFrom)) <> Year(CDate(dtpTo)) AndAlso Not cmbSummaryType.Items.Contains(New KeyValuePair(Of Integer, String)(4, "Variance Comparision")) Then
+                cmbSummaryType.Items.Add(New KeyValuePair(Of Integer, String)(4, "Variance Comparision"))
             End If
 
             Call RefreshGrids()
@@ -2493,7 +2517,7 @@ Public Class frmMain
 
     Private Sub btnHighlight_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnHighlight.Click
         If Not txtHighlight Is Nothing Then
-            If TabControl1.SelectedTab.Name = "TabExpDet" Then
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) Then
                 HighlightDetail = txtHighlight.Text
                 If CallSearchFunction Then
                     Call FormatSearchResults()
@@ -2501,10 +2525,10 @@ Public Class frmMain
                     Call FormatDetailGrid()
                 End If
 
-            ElseIf TabControl1.SelectedTab.Name = "TabExpSumm" Then
-                If SummaryType = En_SummaryType.Monthly OrElse SummaryType = En_SummaryType.RunningTotals Then
+            ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) Then
+                If SummaryType = SummaryTypes.Monthly OrElse SummaryType = SummaryTypes.RunningTotals Then
                     HighlightSummMonthly = txtHighlight.Text
-                ElseIf SummaryType = En_SummaryType.Yearly Then
+                ElseIf SummaryType = SummaryTypes.Yearly Then
                     HighlightSummYearly = txtHighlight.Text
                 End If
                 Call FormatSummaryGrid()
@@ -2521,23 +2545,23 @@ Public Class frmMain
 
         ChkLBYearsItemsList = strYearsList.Substring(0, Len(strYearsList) - 1)
 
-        TabControl1.Enabled = False
+        ImpensaTabControl.Enabled = False
         Panel5.BringToFront()
         Panel5.Visible = True
         Call PopulateExpenditureSummaryGrid()
         Call FormatSummaryGrid()
         Panel5.SendToBack()
         Panel5.Visible = False
-        TabControl1.Enabled = True
+        ImpensaTabControl.Enabled = True
 
     End Sub
 
     Private Sub btnExport_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnExport.Click
-        If TabControl1.SelectedTab.Name = "TabExpDet" Then
+        If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) Then
             Call ExportGridToPDF(DataGridExpDet)
-        ElseIf TabControl1.SelectedTab.Name = "TabExpSumm" Then
+        ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) Then
             Call ExportGridToPDF(DataGridExpSumm)
-        ElseIf TabControl1.SelectedTab.Name = "TabThreshold" Then
+        ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
             Call ExportGridToPDF(DataGridThrLimits)
         End If
     End Sub
@@ -2736,7 +2760,7 @@ Public Class frmMain
         Dim v_dtTo As String = dtPickerTo.Value.Date.ToString("yyyy-MM-dd")
 
         If DataGridExpSumm.Cursor = Cursors.Hand Then
-            If SummaryType = En_SummaryType.Monthly Then
+            If SummaryType = SummaryTypes.Monthly Then
                 If CStr(CDate(v_dtFrom).Year) & "-" & CStr(CDate(v_dtFrom).Month) = CStr(CDate(v_dtTo).Year) & "-" & CStr(CDate(v_dtTo).Month) Then
                     'No change to v_dtFrom, v_dtTo
                 ElseIf Month(CDate(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText)) = Month(CDate(v_dtFrom)) AndAlso Year(CDate(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText)) = Year(CDate(v_dtFrom)) Then 'First Month: 'No Change to v_dtFrom
@@ -2749,7 +2773,7 @@ Public Class frmMain
                     v_dtFrom = New DateTime(CDate(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText).Year, CDate(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText).Month, 1).ToString("yyyy-MM-dd")
                     v_dtTo = New DateTime(CDate(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText).Year, CDate(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText).Month, 1).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")
                 End If
-            ElseIf SummaryType = En_SummaryType.Yearly Then
+            ElseIf SummaryType = SummaryTypes.Yearly Then
                 If CStr(CDate(v_dtFrom).Year) & "-" & CStr(CDate(v_dtFrom).Month) = CStr(CDate(v_dtTo).Year) & "-" & CStr(CDate(v_dtTo).Month) Then
                     'No change to v_dtFrom, v_dtTo
                 ElseIf DataGridExpSumm.Columns(e.ColumnIndex).HeaderText = Year(CDate(v_dtFrom)) Then 'First Year: 'No change to v_dtFrom
@@ -2760,7 +2784,7 @@ Public Class frmMain
                     v_dtFrom = New DateTime(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText, 1, 1).ToString("yyyy-MM-dd")
                     v_dtTo = New DateTime(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText, 12, 31).ToString("yyyy-MM-dd")
                 End If
-            ElseIf SummaryType = En_SummaryType.RunningTotals Then
+            ElseIf SummaryType = SummaryTypes.RunningTotals Then
                 If CStr(CDate(v_dtFrom).Year) & "-" & CStr(CDate(v_dtFrom).Month) = CStr(CDate(v_dtTo).Year) & "-" & CStr(CDate(v_dtTo).Month) Then
                     'No change to v_dtFrom, v_dtTo
                 ElseIf DataGridExpSumm("iCategory", e.RowIndex).Value = Month(CDate(v_dtFrom)) AndAlso DataGridExpSumm.Columns(e.ColumnIndex).HeaderText = Year(CDate(v_dtFrom)) Then 'First Year: 'No change to v_dtFrom
@@ -2773,12 +2797,21 @@ Public Class frmMain
                     v_dtFrom = New DateTime(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText, DataGridExpSumm("iCategory", e.RowIndex).Value, 1).ToString("yyyy-MM-dd")
                     v_dtTo = New DateTime(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText, DataGridExpSumm("iCategory", e.RowIndex).Value, 1).AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd")
                 End If
-            ElseIf SummaryType = En_SummaryType.Variance Then
+            ElseIf SummaryType = SummaryTypes.Variance Then
                 v_dtFrom = New DateTime(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText, 1, 1).ToString("yyyy-MM-dd")
                 v_dtTo = New DateTime(DataGridExpSumm.Columns(e.ColumnIndex).HeaderText, 12, 31).ToString("yyyy-MM-dd")
+            ElseIf SummaryType = SummaryTypes.AllInOne And DataGridExpSumm.Columns(e.ColumnIndex).HeaderText = "MTD" Then
+                v_dtFrom = New DateTime(Date.Now.Year, Date.Now.Month, 1).ToString("yyyy-MM-dd")
+                v_dtTo = Date.Now.Date.ToString("yyyy-MM-dd")
+            ElseIf SummaryType = SummaryTypes.AllInOne And DataGridExpSumm.Columns(e.ColumnIndex).HeaderText = "YTD" Then
+                v_dtFrom = New DateTime(Date.Now.Year, 1, 1).ToString("yyyy-MM-dd")
+                v_dtTo = Date.Now.Date.ToString("yyyy-MM-dd")
+            ElseIf SummaryType = SummaryTypes.AllInOne And DataGridExpSumm.Columns(e.ColumnIndex).HeaderText = "ITD" Then
+                v_dtFrom = dtpRecdKeeping.Value.ToString("yyyy-MM-dd")
+                v_dtTo = Date.Now.Date.ToString("yyyy-MM-dd")
             End If
 
-            If SummaryType = En_SummaryType.RunningTotals Then
+            If SummaryType = SummaryTypes.RunningTotals Then
                 Categories = cmbCatListRunTot.SelectedItem.value
             Else
                 Categories = DataGridExpSumm("Category", e.RowIndex).Value
@@ -2790,7 +2823,7 @@ Public Class frmMain
             CallSearchFunction = True
             Call PopulateSearchResults()
 
-            TabControl1.SelectedTab = TabExpDet
+            ImpensaTabControl.SelectedTab = TabDetails
 
             chkShowAllDet.Visible = True
             chkShowAllDet.Enabled = True
@@ -2808,7 +2841,7 @@ Public Class frmMain
                 If DataGridExpSumm.Columns(e.ColumnIndex).Index > DataGridExpSumm.Columns("Category").Index AndAlso DataGridExpSumm.Columns(e.ColumnIndex).Index < (DataGridExpSumm.Columns.Count - 1) Then
 
                     If SearchStr Is Nothing Then
-                        If Not SummaryType = En_SummaryType.RunningTotals Then
+                        If Not (SummaryType = SummaryTypes.RunningTotals Or SummaryType = SummaryTypes.AllInOne) Then
                             If Not dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is Nothing Then
                                 If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 AndAlso dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
                                     If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
@@ -2853,12 +2886,12 @@ Public Class frmMain
     End Sub
 
     Private Sub DataGridExpSumm_CellBeginEdit(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellCancelEventArgs) Handles DataGridExpSumm.CellBeginEdit
-        If Not (SummaryType = En_SummaryType.RunningTotals AndAlso DataGridExpSumm("Sort", e.RowIndex).Value = 4 AndAlso DataGridExpSumm.CurrentCell.ColumnIndex = DataGridExpSumm.Columns("Category").Index) Then
+        If Not (SummaryType = SummaryTypes.RunningTotals AndAlso DataGridExpSumm("Sort", e.RowIndex).Value = 4 AndAlso DataGridExpSumm.CurrentCell.ColumnIndex = DataGridExpSumm.Columns("Category").Index) Then
             e.Cancel = True
             Exit Sub
         End If
 
-        If SummaryType = En_SummaryType.RunningTotals Then
+        If SummaryType = SummaryTypes.RunningTotals Then
             If (DataGridExpSumm.Focused And DataGridExpSumm.CurrentCell.ColumnIndex = DataGridExpSumm.Columns("Category").Index) Then
                 cmbMonth.Location = DataGridExpSumm.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, False).Location
                 cmbMonth.Size = DataGridExpSumm.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, False).Size
@@ -2876,7 +2909,7 @@ Public Class frmMain
     End Sub
 
     Private Sub DataGridExpSumm_CellEndEdit(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridExpSumm.CellEndEdit
-        If SummaryType = En_SummaryType.RunningTotals Then
+        If SummaryType = SummaryTypes.RunningTotals Then
             If (DataGridExpSumm.Focused And DataGridExpSumm.CurrentCell.ColumnIndex = DataGridExpSumm.Columns("Category").Index) Then
                 DataGridExpSumm.CurrentCell.Value = CType(cmbMonth.SelectedItem, DataRowView).Row.ItemArray(1)
                 cmbMonth.Visible = False
@@ -2885,7 +2918,7 @@ Public Class frmMain
     End Sub
 
     Private Sub DataGridExpSumm_EditingControlShowing(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewEditingControlShowingEventArgs) Handles DataGridExpSumm.EditingControlShowing
-        If SummaryType = En_SummaryType.RunningTotals And DataGridExpSumm.CurrentCell.RowIndex = RunTotRowIndex + 1 Then
+        If SummaryType = SummaryTypes.RunningTotals And DataGridExpSumm.CurrentCell.RowIndex = RunTotRowIndex + 1 Then
             If CmbMonthCurrentIndex = -1 Then
                 cmbMonth.SelectedIndex = Month("1900-" & RunTotalMonth & "-01") - 1
             Else
@@ -3022,7 +3055,7 @@ Public Class frmMain
 
 #Region "ComboBox Events"
     Private Sub cmbMonth_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbMonth.SelectionChangeCommitted
-        If SummaryType = En_SummaryType.RunningTotals AndAlso DataGridExpSumm.CurrentCell.ColumnIndex = DataGridExpSumm.Columns("Category").Index AndAlso DataGridExpSumm.CurrentCell.RowIndex = RunTotRowIndex + 1 Then
+        If SummaryType = SummaryTypes.RunningTotals AndAlso DataGridExpSumm.CurrentCell.ColumnIndex = DataGridExpSumm.Columns("Category").Index AndAlso DataGridExpSumm.CurrentCell.RowIndex = RunTotRowIndex + 1 Then
             Dim strSQL As String = ""
             Dim ColTotal As Double = 0
             If Not cmbMonth Is Nothing Then
@@ -3164,16 +3197,16 @@ Public Class frmMain
         btnVarCompare.Enabled = False
         chkLBVarComparision.Items.Clear()
 
-        If SummaryType = En_SummaryType.Monthly Then
+        If SummaryType = SummaryTypes.Monthly Then
             txtHighlight.Text = HighlightSummMonthly
-        ElseIf SummaryType = En_SummaryType.Yearly Then
+        ElseIf SummaryType = SummaryTypes.Yearly Then
             txtHighlight.Text = HighlightSummYearly
-        ElseIf SummaryType = En_SummaryType.RunningTotals Then
+        ElseIf SummaryType = SummaryTypes.RunningTotals Then
             txtHighlight.Text = HighlightSummMonthly
             cmbCatListRunTot.Enabled = True
             DataGridExpSumm.Columns.Clear()
             DataGridExpSumm.DataSource = Nothing
-        ElseIf SummaryType = En_SummaryType.Variance Then
+        ElseIf SummaryType = SummaryTypes.Variance Then
             Call BuildYearsListString()
             txtHighlight.Text = HighlightSummYearly
             DataGridExpSumm.Columns.Clear()
@@ -3183,15 +3216,15 @@ Public Class frmMain
             If chkLBVarComparision.Items.Count >= 2 Then btnVarCompare.Enabled = True
         End If
 
-        If Not (SummaryType = En_SummaryType.RunningTotals OrElse SummaryType = En_SummaryType.Variance) Then
-            TabControl1.Enabled = False
+        If Not (SummaryType = SummaryTypes.RunningTotals OrElse SummaryType = SummaryTypes.Variance) Then
+            ImpensaTabControl.Enabled = False
             Panel5.BringToFront()
             Panel5.Visible = True
             Call PopulateExpenditureSummaryGrid()
             Call FormatSummaryGrid()
             Panel5.SendToBack()
             Panel5.Visible = False
-            TabControl1.Enabled = True
+            ImpensaTabControl.Enabled = True
         End If
     End Sub
 
@@ -3202,11 +3235,11 @@ Public Class frmMain
     End Sub
 
     Private Sub cmbPeriod_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbPeriod.SelectionChangeCommitted
-        If cmbPeriod.SelectedIndex = En_Period.CurrentMonth Then
+        If cmbPeriod.SelectedIndex = Period.CurrentMonth Then
             dtPickerFrom.Value = Now.AddDays((Now.Day - 1) * -1) 'First Day Of Current Month
-        ElseIf cmbPeriod.SelectedIndex = En_Period.CurrentYear Then
+        ElseIf cmbPeriod.SelectedIndex = Period.CurrentYear Then
             dtPickerFrom.Value = Convert.ToDateTime("01/01/" & Year(Now))
-        ElseIf cmbPeriod.SelectedIndex = En_Period.BookStart Then
+        ElseIf cmbPeriod.SelectedIndex = Period.BookStart Then
             dtPickerFrom.Value = RecordKeepingStartDate
         End If
 
@@ -3389,24 +3422,24 @@ Public Class frmMain
     End Sub
 
     Private Sub tsMenuAPCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuAPCats.Click
-        Call PopulateThresholdGrid(En_BudgetBuckets.AtParCats)
+        Call PopulateThresholdGrid(BudgetBuckets.AtParCats)
     End Sub
 
     Private Sub tsMenuOBCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuOBCats.Click
-        Call PopulateThresholdGrid(En_BudgetBuckets.OverBudgetCats)
+        Call PopulateThresholdGrid(BudgetBuckets.OverBudgetCats)
     End Sub
 
     Private Sub tsMenuUBCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuUBCats.Click
-        Call PopulateThresholdGrid(En_BudgetBuckets.UnderBudgetCats)
+        Call PopulateThresholdGrid(BudgetBuckets.UnderBudgetCats)
     End Sub
 #End Region
 
 #Region "Other Control Events"
-    Private Sub TabControl1_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles TabControl1.SelectedIndexChanged
+    Private Sub TabControl1_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles ImpensaTabControl.SelectedIndexChanged
         Dim HighlightAmt As Long
 
         Try
-            LastTabIndex = TabControl1.SelectedIndex
+            LastTabIndex = ImpensaTabControl.SelectedIndex
 
             btnSave.Enabled = False
             btnExport.Enabled = False
@@ -3422,7 +3455,7 @@ Public Class frmMain
             pnlHighlight.Visible = False
             tsCmbBudgetBuckets.Visible = False
 
-            If TabControl1.SelectedTab.Name = "TabExpDet" Then
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) Then
                 HighlightAmt = HighlightDetail
                 txtHighlight.Text = HighlightAmt
                 pnlHighlight.Visible = True
@@ -3437,7 +3470,7 @@ Public Class frmMain
                 btnSave.Enabled = True
             End If
 
-            If TabControl1.SelectedTab.Name = "TabCatList" Then
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabCategories) Then
                 For Each dr As DataGridViewRow In DataGridCatList.Rows
                     dr.HeaderCell.Value = ""
                     If dr.Cells("CanDelete").Value = 0 And Not dr.Cells("hKey").Value Is Nothing Then
@@ -3450,11 +3483,11 @@ Public Class frmMain
                 btnSave.Enabled = True
             End If
 
-            If TabControl1.SelectedTab.Name = "TabExpSumm" Then
-                TabControl1.Enabled = False
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) Then
+                ImpensaTabControl.Enabled = False
                 Panel5.BringToFront()
                 Panel5.Visible = True
-                HighlightAmt = IIf(SummaryType = En_SummaryType.Monthly, HighlightSummMonthly, HighlightSummYearly)
+                HighlightAmt = IIf(SummaryType = SummaryTypes.Monthly, HighlightSummMonthly, HighlightSummYearly)
                 pnlHighlight.Visible = True
                 btnSave.Enabled = False
                 btnExport.Enabled = False
@@ -3465,7 +3498,7 @@ Public Class frmMain
                 Call FormatSummaryGrid()
             End If
 
-            If TabControl1.SelectedTab.Name = "TabAnalysis" Then
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabCharts) Then
                 If InStr("Chart MTD, Chart YTD, Chart BKSDTD", SelectChartCombo) > 0 Then SelectChartCombo = Nothing
 
                 Call BuildYearsListString()
@@ -3482,14 +3515,14 @@ Public Class frmMain
                 End If
             End If
 
-            If TabControl1.SelectedTab.Name = "TabFunctions" Then
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSettings) Then
                 rbOpenYr.Checked = False
                 rbCloseYr.Checked = False
                 cmbSelectYear.Enabled = False
                 btnSave.Enabled = True
             End If
 
-            If TabControl1.SelectedTab.Name = "TabThreshold" Then
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
                 Call FormatDataGridThrLimits()
                 tslblRecdCnt.Text = "Total Records Displayed: #" & (DataGridThrLimits.Rows.Count - 1)
                 tslblRecdCnt.IsLink = True
@@ -3503,16 +3536,23 @@ Public Class frmMain
                     tsCmbBudgetBuckets.Visible = True
                 End If
             End If
+
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) And SummaryType = SummaryTypes.AllInOne Then
+                pnlHighlight.Visible = False
+            Else
+                pnlHighlight.Visible = True
+            End If
+
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Panel5.SendToBack()
             Panel5.Visible = False
-            TabControl1.Enabled = True
+            ImpensaTabControl.Enabled = True
         End Try
     End Sub
 
-    Private Sub TabControl1_Selecting(ByVal sender As Object, ByVal e As System.Windows.Forms.TabControlCancelEventArgs) Handles TabControl1.Selecting
+    Private Sub TabControl1_Selecting(ByVal sender As Object, ByVal e As System.Windows.Forms.TabControlCancelEventArgs) Handles ImpensaTabControl.Selecting
         If ShowUnsavedDataWarning("You have unsaved data in the grid(s). Navigating away or refreshing grid may cause you to loose unsaved data. Continue?") = Windows.Forms.DialogResult.Cancel Then
             e.Cancel = True
         End If

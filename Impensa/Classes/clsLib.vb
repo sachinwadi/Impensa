@@ -15,13 +15,14 @@ Imports System.Runtime.InteropServices
 
 Public Class clsLib
 #Region "Enums"
-    Public Enum En_SummaryType
+    Public Enum SummaryTypes
         Monthly = 0
         Yearly = 1
-        RunningTotals = 2
-        Variance = 3
+        AllInOne = 2
+        RunningTotals = 3
+        Variance = 4
     End Enum
-#End Region   
+#End Region
 
 #Region "Variables"
     Private Shared _cmbListing As Object
@@ -413,11 +414,11 @@ Public Class clsLib
         End Set
     End Property
 
-    Public Shared Property SummaryType() As En_SummaryType
+    Public Shared Property SummaryType() As SummaryTypes
         Get
             Return _SummaryType
         End Get
-        Set(ByVal value As En_SummaryType)
+        Set(ByVal value As SummaryTypes)
             _SummaryType = value
         End Set
     End Property

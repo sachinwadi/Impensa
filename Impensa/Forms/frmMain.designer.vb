@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -39,9 +39,9 @@ Partial Class frmMain
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.dtPickerFrom = New System.Windows.Forms.DateTimePicker()
-        Me.TabCatList = New System.Windows.Forms.TabPage()
+        Me.TabCategories = New System.Windows.Forms.TabPage()
         Me.DataGridCatList = New System.Windows.Forms.DataGridView()
-        Me.TabAnalysis = New System.Windows.Forms.TabPage()
+        Me.TabCharts = New System.Windows.Forms.TabPage()
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.Chart_Analysis = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.Panel2 = New System.Windows.Forms.Panel()
@@ -60,7 +60,7 @@ Partial Class frmMain
         Me.Label5 = New System.Windows.Forms.Label()
         Me.cmbListing = New System.Windows.Forms.ComboBox()
         Me.cmbSelectChart = New System.Windows.Forms.ComboBox()
-        Me.TabExpSumm = New System.Windows.Forms.TabPage()
+        Me.TabSummary = New System.Windows.Forms.TabPage()
         Me.Panel8 = New System.Windows.Forms.Panel()
         Me.Label19 = New System.Windows.Forms.Label()
         Me.cmbSummaryType = New System.Windows.Forms.ComboBox()
@@ -70,7 +70,7 @@ Partial Class frmMain
         Me.cmbCatListRunTot = New System.Windows.Forms.ComboBox()
         Me.Label22 = New System.Windows.Forms.Label()
         Me.DataGridExpSumm = New System.Windows.Forms.DataGridView()
-        Me.TabExpDet = New System.Windows.Forms.TabPage()
+        Me.TabDetails = New System.Windows.Forms.TabPage()
         Me.LstUnpaidBillsPrevMonth = New System.Windows.Forms.ListBox()
         Me.Label29 = New System.Windows.Forms.Label()
         Me.LstUnpaidBillsCurrentMonth = New System.Windows.Forms.ListBox()
@@ -81,14 +81,14 @@ Partial Class frmMain
         Me.Label14 = New System.Windows.Forms.Label()
         Me.PictureBox2 = New System.Windows.Forms.PictureBox()
         Me.btnSave = New System.Windows.Forms.Button()
-        Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.TabThreshold = New System.Windows.Forms.TabPage()
+        Me.ImpensaTabControl = New System.Windows.Forms.TabControl()
+        Me.TabBudget = New System.Windows.Forms.TabPage()
         Me.Panel7 = New System.Windows.Forms.Panel()
         Me.DataGridThrLimits = New System.Windows.Forms.DataGridView()
         Me.Panel6 = New System.Windows.Forms.Panel()
         Me.cmbThrMonth = New System.Windows.Forms.ComboBox()
         Me.Label17 = New System.Windows.Forms.Label()
-        Me.TabFunctions = New System.Windows.Forms.TabPage()
+        Me.TabSettings = New System.Windows.Forms.TabPage()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.txtReminder = New System.Windows.Forms.TextBox()
         Me.chkShowReminder = New System.Windows.Forms.CheckBox()
@@ -153,25 +153,25 @@ Partial Class frmMain
         Me.btnExport = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabCatList.SuspendLayout()
+        Me.TabCategories.SuspendLayout()
         CType(Me.DataGridCatList, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabAnalysis.SuspendLayout()
+        Me.TabCharts.SuspendLayout()
         Me.Panel4.SuspendLayout()
         CType(Me.Chart_Analysis, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel2.SuspendLayout()
-        Me.TabExpSumm.SuspendLayout()
+        Me.TabSummary.SuspendLayout()
         Me.Panel8.SuspendLayout()
         CType(Me.DataGridExpSumm, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabExpDet.SuspendLayout()
+        Me.TabDetails.SuspendLayout()
         CType(Me.DataGridExpDet, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel5.SuspendLayout()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabControl1.SuspendLayout()
-        Me.TabThreshold.SuspendLayout()
+        Me.ImpensaTabControl.SuspendLayout()
+        Me.TabBudget.SuspendLayout()
         Me.Panel7.SuspendLayout()
         CType(Me.DataGridThrLimits, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel6.SuspendLayout()
-        Me.TabFunctions.SuspendLayout()
+        Me.TabSettings.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         CType(Me.pbCredit, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox6.SuspendLayout()
@@ -293,7 +293,6 @@ Partial Class frmMain
         '
         'LstCategory
         '
-        Me.LstCategory.CheckOnClick = True
         Me.LstCategory.FormattingEnabled = True
         Me.LstCategory.Location = New System.Drawing.Point(13, 225)
         Me.LstCategory.Name = "LstCategory"
@@ -342,16 +341,16 @@ Partial Class frmMain
         Me.dtPickerFrom.Size = New System.Drawing.Size(100, 20)
         Me.dtPickerFrom.TabIndex = 0
         '
-        'TabCatList
+        'TabCategories
         '
-        Me.TabCatList.BackColor = System.Drawing.Color.Transparent
-        Me.TabCatList.Controls.Add(Me.DataGridCatList)
-        Me.TabCatList.Location = New System.Drawing.Point(4, 22)
-        Me.TabCatList.Name = "TabCatList"
-        Me.TabCatList.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabCatList.Size = New System.Drawing.Size(1031, 426)
-        Me.TabCatList.TabIndex = 5
-        Me.TabCatList.Text = "Categories"
+        Me.TabCategories.BackColor = System.Drawing.Color.Transparent
+        Me.TabCategories.Controls.Add(Me.DataGridCatList)
+        Me.TabCategories.Location = New System.Drawing.Point(4, 22)
+        Me.TabCategories.Name = "TabCategories"
+        Me.TabCategories.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabCategories.Size = New System.Drawing.Size(1031, 426)
+        Me.TabCategories.TabIndex = 5
+        Me.TabCategories.Text = "Categories"
         '
         'DataGridCatList
         '
@@ -367,17 +366,17 @@ Partial Class frmMain
         Me.DataGridCatList.TabIndex = 4
         Me.DataGridCatList.TabStop = False
         '
-        'TabAnalysis
+        'TabCharts
         '
-        Me.TabAnalysis.Controls.Add(Me.Panel4)
-        Me.TabAnalysis.Controls.Add(Me.Panel2)
-        Me.TabAnalysis.Location = New System.Drawing.Point(4, 22)
-        Me.TabAnalysis.Name = "TabAnalysis"
-        Me.TabAnalysis.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabAnalysis.Size = New System.Drawing.Size(1031, 426)
-        Me.TabAnalysis.TabIndex = 2
-        Me.TabAnalysis.Text = "Graphical Analysis"
-        Me.TabAnalysis.UseVisualStyleBackColor = True
+        Me.TabCharts.Controls.Add(Me.Panel4)
+        Me.TabCharts.Controls.Add(Me.Panel2)
+        Me.TabCharts.Location = New System.Drawing.Point(4, 22)
+        Me.TabCharts.Name = "TabCharts"
+        Me.TabCharts.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabCharts.Size = New System.Drawing.Size(1031, 426)
+        Me.TabCharts.TabIndex = 2
+        Me.TabCharts.Text = "Graphical Analysis"
+        Me.TabCharts.UseVisualStyleBackColor = True
         '
         'Panel4
         '
@@ -395,9 +394,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend3.Name = "Legend1"
-        Legend3.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend3)
+        Legend1.Name = "Legend1"
+        Legend1.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend1)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -576,18 +575,18 @@ Partial Class frmMain
         Me.cmbSelectChart.Size = New System.Drawing.Size(244, 21)
         Me.cmbSelectChart.TabIndex = 0
         '
-        'TabExpSumm
+        'TabSummary
         '
-        Me.TabExpSumm.AutoScroll = True
-        Me.TabExpSumm.Controls.Add(Me.Panel8)
-        Me.TabExpSumm.Controls.Add(Me.DataGridExpSumm)
-        Me.TabExpSumm.Location = New System.Drawing.Point(4, 22)
-        Me.TabExpSumm.Name = "TabExpSumm"
-        Me.TabExpSumm.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabExpSumm.Size = New System.Drawing.Size(1031, 426)
-        Me.TabExpSumm.TabIndex = 1
-        Me.TabExpSumm.Text = "Expenditure Summary"
-        Me.TabExpSumm.UseVisualStyleBackColor = True
+        Me.TabSummary.AutoScroll = True
+        Me.TabSummary.Controls.Add(Me.Panel8)
+        Me.TabSummary.Controls.Add(Me.DataGridExpSumm)
+        Me.TabSummary.Location = New System.Drawing.Point(4, 22)
+        Me.TabSummary.Name = "TabSummary"
+        Me.TabSummary.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabSummary.Size = New System.Drawing.Size(1031, 426)
+        Me.TabSummary.TabIndex = 1
+        Me.TabSummary.Text = "Expenditure Summary"
+        Me.TabSummary.UseVisualStyleBackColor = True
         '
         'Panel8
         '
@@ -685,22 +684,22 @@ Partial Class frmMain
         Me.DataGridExpSumm.TabIndex = 0
         Me.DataGridExpSumm.VirtualMode = True
         '
-        'TabExpDet
+        'TabDetails
         '
-        Me.TabExpDet.AutoScroll = True
-        Me.TabExpDet.Controls.Add(Me.LstUnpaidBillsPrevMonth)
-        Me.TabExpDet.Controls.Add(Me.Label29)
-        Me.TabExpDet.Controls.Add(Me.LstUnpaidBillsCurrentMonth)
-        Me.TabExpDet.Controls.Add(Me.Label28)
-        Me.TabExpDet.Controls.Add(Me.DataGridExpDet)
-        Me.TabExpDet.Controls.Add(Me.Panel5)
-        Me.TabExpDet.Location = New System.Drawing.Point(4, 22)
-        Me.TabExpDet.Name = "TabExpDet"
-        Me.TabExpDet.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabExpDet.Size = New System.Drawing.Size(1031, 426)
-        Me.TabExpDet.TabIndex = 0
-        Me.TabExpDet.Text = "Expenditure Details"
-        Me.TabExpDet.UseVisualStyleBackColor = True
+        Me.TabDetails.AutoScroll = True
+        Me.TabDetails.Controls.Add(Me.LstUnpaidBillsPrevMonth)
+        Me.TabDetails.Controls.Add(Me.Label29)
+        Me.TabDetails.Controls.Add(Me.LstUnpaidBillsCurrentMonth)
+        Me.TabDetails.Controls.Add(Me.Label28)
+        Me.TabDetails.Controls.Add(Me.DataGridExpDet)
+        Me.TabDetails.Controls.Add(Me.Panel5)
+        Me.TabDetails.Location = New System.Drawing.Point(4, 22)
+        Me.TabDetails.Name = "TabDetails"
+        Me.TabDetails.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabDetails.Size = New System.Drawing.Size(1031, 426)
+        Me.TabDetails.TabIndex = 0
+        Me.TabDetails.Text = "Expenditure Details"
+        Me.TabDetails.UseVisualStyleBackColor = True
         '
         'LstUnpaidBillsPrevMonth
         '
@@ -816,33 +815,33 @@ Partial Class frmMain
         Me.btnSave.Text = "Save"
         Me.btnSave.UseVisualStyleBackColor = True
         '
-        'TabControl1
+        'ImpensaTabControl
         '
-        Me.TabControl1.Controls.Add(Me.TabExpDet)
-        Me.TabControl1.Controls.Add(Me.TabExpSumm)
-        Me.TabControl1.Controls.Add(Me.TabAnalysis)
-        Me.TabControl1.Controls.Add(Me.TabThreshold)
-        Me.TabControl1.Controls.Add(Me.TabCatList)
-        Me.TabControl1.Controls.Add(Me.TabFunctions)
-        Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TabControl1.Location = New System.Drawing.Point(0, 0)
-        Me.TabControl1.Margin = New System.Windows.Forms.Padding(0)
-        Me.TabControl1.Name = "TabControl1"
-        Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(1039, 452)
-        Me.TabControl1.TabIndex = 4
+        Me.ImpensaTabControl.Controls.Add(Me.TabDetails)
+        Me.ImpensaTabControl.Controls.Add(Me.TabSummary)
+        Me.ImpensaTabControl.Controls.Add(Me.TabCharts)
+        Me.ImpensaTabControl.Controls.Add(Me.TabBudget)
+        Me.ImpensaTabControl.Controls.Add(Me.TabCategories)
+        Me.ImpensaTabControl.Controls.Add(Me.TabSettings)
+        Me.ImpensaTabControl.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ImpensaTabControl.Location = New System.Drawing.Point(0, 0)
+        Me.ImpensaTabControl.Margin = New System.Windows.Forms.Padding(0)
+        Me.ImpensaTabControl.Name = "ImpensaTabControl"
+        Me.ImpensaTabControl.SelectedIndex = 0
+        Me.ImpensaTabControl.Size = New System.Drawing.Size(1039, 452)
+        Me.ImpensaTabControl.TabIndex = 4
         '
-        'TabThreshold
+        'TabBudget
         '
-        Me.TabThreshold.Controls.Add(Me.Panel7)
-        Me.TabThreshold.Controls.Add(Me.Panel6)
-        Me.TabThreshold.Location = New System.Drawing.Point(4, 22)
-        Me.TabThreshold.Name = "TabThreshold"
-        Me.TabThreshold.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabThreshold.Size = New System.Drawing.Size(1031, 426)
-        Me.TabThreshold.TabIndex = 7
-        Me.TabThreshold.Text = "Monthly Budget"
-        Me.TabThreshold.UseVisualStyleBackColor = True
+        Me.TabBudget.Controls.Add(Me.Panel7)
+        Me.TabBudget.Controls.Add(Me.Panel6)
+        Me.TabBudget.Location = New System.Drawing.Point(4, 22)
+        Me.TabBudget.Name = "TabBudget"
+        Me.TabBudget.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabBudget.Size = New System.Drawing.Size(1031, 426)
+        Me.TabBudget.TabIndex = 7
+        Me.TabBudget.Text = "Monthly Budget"
+        Me.TabBudget.UseVisualStyleBackColor = True
         '
         'Panel7
         '
@@ -892,22 +891,22 @@ Partial Class frmMain
         Me.Label17.TabIndex = 0
         Me.Label17.Text = "Month"
         '
-        'TabFunctions
+        'TabSettings
         '
-        Me.TabFunctions.Controls.Add(Me.GroupBox1)
-        Me.TabFunctions.Controls.Add(Me.pbCredit)
-        Me.TabFunctions.Controls.Add(Me.GroupBox6)
-        Me.TabFunctions.Controls.Add(Me.GroupBox5)
-        Me.TabFunctions.Controls.Add(Me.GroupBox4)
-        Me.TabFunctions.Controls.Add(Me.GroupBox3)
-        Me.TabFunctions.Controls.Add(Me.GroupBox2)
-        Me.TabFunctions.Location = New System.Drawing.Point(4, 22)
-        Me.TabFunctions.Name = "TabFunctions"
-        Me.TabFunctions.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabFunctions.Size = New System.Drawing.Size(1031, 426)
-        Me.TabFunctions.TabIndex = 6
-        Me.TabFunctions.Text = "Settings"
-        Me.TabFunctions.UseVisualStyleBackColor = True
+        Me.TabSettings.Controls.Add(Me.GroupBox1)
+        Me.TabSettings.Controls.Add(Me.pbCredit)
+        Me.TabSettings.Controls.Add(Me.GroupBox6)
+        Me.TabSettings.Controls.Add(Me.GroupBox5)
+        Me.TabSettings.Controls.Add(Me.GroupBox4)
+        Me.TabSettings.Controls.Add(Me.GroupBox3)
+        Me.TabSettings.Controls.Add(Me.GroupBox2)
+        Me.TabSettings.Location = New System.Drawing.Point(4, 22)
+        Me.TabSettings.Name = "TabSettings"
+        Me.TabSettings.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabSettings.Size = New System.Drawing.Size(1031, 426)
+        Me.TabSettings.TabIndex = 6
+        Me.TabSettings.Text = "Settings"
+        Me.TabSettings.UseVisualStyleBackColor = True
         '
         'GroupBox1
         '
@@ -1199,7 +1198,7 @@ Partial Class frmMain
                     Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Panel3.Controls.Add(Me.TabControl1)
+        Me.Panel3.Controls.Add(Me.ImpensaTabControl)
         Me.Panel3.Location = New System.Drawing.Point(209, 0)
         Me.Panel3.Name = "Panel3"
         Me.Panel3.Size = New System.Drawing.Size(1041, 454)
@@ -1548,30 +1547,30 @@ Partial Class frmMain
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabCatList.ResumeLayout(False)
+        Me.TabCategories.ResumeLayout(False)
         CType(Me.DataGridCatList, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabAnalysis.ResumeLayout(False)
+        Me.TabCharts.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         CType(Me.Chart_Analysis, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
-        Me.TabExpSumm.ResumeLayout(False)
+        Me.TabSummary.ResumeLayout(False)
         Me.Panel8.ResumeLayout(False)
         Me.Panel8.PerformLayout()
         CType(Me.DataGridExpSumm, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabExpDet.ResumeLayout(False)
-        Me.TabExpDet.PerformLayout()
+        Me.TabDetails.ResumeLayout(False)
+        Me.TabDetails.PerformLayout()
         CType(Me.DataGridExpDet, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel5.ResumeLayout(False)
         Me.Panel5.PerformLayout()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabControl1.ResumeLayout(False)
-        Me.TabThreshold.ResumeLayout(False)
+        Me.ImpensaTabControl.ResumeLayout(False)
+        Me.TabBudget.ResumeLayout(False)
         Me.Panel7.ResumeLayout(False)
         CType(Me.DataGridThrLimits, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel6.ResumeLayout(False)
         Me.Panel6.PerformLayout()
-        Me.TabFunctions.ResumeLayout(False)
+        Me.TabSettings.ResumeLayout(False)
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         CType(Me.pbCredit, System.ComponentModel.ISupportInitialize).EndInit()
@@ -1607,13 +1606,13 @@ Partial Class frmMain
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents btnSubmit As System.Windows.Forms.Button
     'Friend WithEvents DataGridView1 As System.Windows.Forms.DataGridView
-    Friend WithEvents TabCatList As System.Windows.Forms.TabPage
+    Friend WithEvents TabCategories As System.Windows.Forms.TabPage
     Friend WithEvents DataGridCatList As System.Windows.Forms.DataGridView
-    Friend WithEvents TabAnalysis As System.Windows.Forms.TabPage
-    Friend WithEvents TabExpSumm As System.Windows.Forms.TabPage
-    Friend WithEvents TabExpDet As System.Windows.Forms.TabPage
+    Friend WithEvents TabCharts As System.Windows.Forms.TabPage
+    Friend WithEvents TabSummary As System.Windows.Forms.TabPage
+    Friend WithEvents TabDetails As System.Windows.Forms.TabPage
     Friend WithEvents btnSave As System.Windows.Forms.Button
-    Friend WithEvents TabControl1 As System.Windows.Forms.TabControl
+    Friend WithEvents ImpensaTabControl As System.Windows.Forms.TabControl
     Friend WithEvents DataGridExpSumm As System.Windows.Forms.DataGridView
     Friend WithEvents Chart_Analysis As System.Windows.Forms.DataVisualization.Charting.Chart
     Friend WithEvents Panel2 As System.Windows.Forms.Panel
@@ -1630,7 +1629,7 @@ Partial Class frmMain
     Friend WithEvents Label9 As System.Windows.Forms.Label
     Friend WithEvents txtSearch As System.Windows.Forms.TextBox
     Friend WithEvents Label10 As System.Windows.Forms.Label
-    Friend WithEvents TabFunctions As System.Windows.Forms.TabPage
+    Friend WithEvents TabSettings As System.Windows.Forms.TabPage
     Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
     Friend WithEvents Label11 As System.Windows.Forms.Label
     Friend WithEvents txtHighlightDet As System.Windows.Forms.TextBox
@@ -1655,7 +1654,7 @@ Partial Class frmMain
     Friend WithEvents cmbSort As System.Windows.Forms.ComboBox
     Friend WithEvents chkSort As System.Windows.Forms.CheckBox
     Friend WithEvents pbCredit As System.Windows.Forms.PictureBox
-    Friend WithEvents TabThreshold As System.Windows.Forms.TabPage
+    Friend WithEvents TabBudget As System.Windows.Forms.TabPage
     Friend WithEvents Panel6 As System.Windows.Forms.Panel
     Friend WithEvents cmbThrMonth As System.Windows.Forms.ComboBox
     Friend WithEvents Label17 As System.Windows.Forms.Label

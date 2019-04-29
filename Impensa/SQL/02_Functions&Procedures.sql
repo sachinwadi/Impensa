@@ -33,6 +33,7 @@ BEGIN
 	RETURN       
 END 
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('Fn_ListObsoleteCategories') IS NOT NULL 
 DROP FUNCTION Fn_ListObsoleteCategories
@@ -47,6 +48,7 @@ WITH ENCRYPTION AS
 		     WHERE e.dtDate NOT BETWEEN @P_FromDate AND @P_ToDate
 		       AND c.IsObsolete = 1)
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('Fn_GetAllMonthsList') IS NOT NULL 
 DROP FUNCTION Fn_GetAllMonthsList
@@ -92,22 +94,23 @@ BEGIN
 			ELSE
 				SET @EndMonth = 'Dec'
 			
-			Insert @MonthsList (sItemsList, dtFirstDay)
+			INSERT @MonthsList (sItemsList, dtFirstDay)
 			SELECT 'Year ' + Convert(VARCHAR,(@StartingYear + @CounterYears))+ ' (' + @BeginMonth + '-'+ @EndMonth +')', CONVERT(DATE, Convert(VARCHAR,(@StartingYear + @CounterYears)) + '-12-31')
 			
 			SET @CounterYears = @CounterYears + 1
 		Continue
 	End
 	
-	Insert @MonthsList (sItemsList, dtFirstDay)
+	INSERT @MonthsList (sItemsList, dtFirstDay)
 	SELECT 'Entire Selected Period', '2100-01-01'
 			
 	RETURN
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('Fn_dAmount') IS NOT NULL 
-DROP FUNCTION Fn_dAmount
+	DROP FUNCTION Fn_dAmount
 GO
 
 CREATE FUNCTION Fn_dAmount(@P_sNotes VARCHAR(500), @P_SearchStr VARCHAR(500), @P_dAmount MONEY)
@@ -133,9 +136,10 @@ BEGIN
 	RETURN @Amount
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('Fn_GetTDTotal') IS NOT NULL 
-DROP FUNCTION Fn_GetTDTotal
+	DROP FUNCTION Fn_GetTDTotal
 GO
 
 CREATE FUNCTION Fn_GetTDTotal(@P_BKStartDate DATE)
@@ -150,6 +154,7 @@ BEGIN
 	RETURN 
 END
 GO
+/*############################################################################################################################################################*/
 
 IF Object_id('Fn_DataStore') IS NOT NULL
   DROP FUNCTION Fn_DataStore
@@ -171,9 +176,10 @@ WITH ENCRYPTION AS
               AND E.iCategory = CASE WHEN @P_iCategory = 0 THEN e.iCategory ELSE @P_iCategory END
               AND ISNULL(E.sNotes, '') LIKE '%' + CASE WHEN ISNULL (@P_SearchStr, '') = '' THEN ISNULL(E.sNotes, '') ELSE Fn.items END + '%')
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetExpenditureDetails') IS NOT NULL 
-DROP PROCEDURE sp_GetExpenditureDetails
+	DROP PROCEDURE sp_GetExpenditureDetails
 GO
   
 CREATE PROCEDURE sp_GetExpenditureDetails (@P_FromDate DATE, @P_ToDate DATE, @P_Category VARCHAR(MAX))  
@@ -214,56 +220,11 @@ BEGIN
 	 ORDER BY ISNULL(dtDate,'2100-01-01') ,ISNULL(X.hKey,999999999),X.Sort
 END
 GO
+/*############################################################################################################################################################*/
 
 IF Object_id('sp_GetExpenditureSummary_Monthly') IS NOT NULL
   DROP PROCEDURE sp_GetExpenditureSummary_Monthly
 GO
-
---CREATE PROCEDURE sp_GetExpenditureSummary_Monthly(@P_FromDate  DATE, @P_ToDate DATE, @P_Category  VARCHAR(MAX), @P_SearchStr VARCHAR(500))
---WITH ENCRYPTION AS
---  BEGIN
---      DECLARE @col1 VARCHAR(MAX), @sql VARCHAR(MAX), @col2 VARCHAR(MAX), @col3 VARCHAR(MAX)
-
---	  SELECT DISTINCT DATEADD(dd, -( DAY(E.dtDate) - 1 ), E.dtDate) dtDate INTO #Temp
---        FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, 0, @P_SearchStr, 0) E
---       WHERE 1 = CASE
---                      WHEN LEN(ISNULL(@P_Category, '')) > 0 AND CHARINDEX(E.sCategory, ISNULL(@P_Category, '')) > 0 THEN 1
---                      WHEN LEN(ISNULL(@P_Category, '')) = 0 THEN 1
---                      ELSE 0
---                  END
-                  	
---      SET @col1 = STUFF((SELECT ',ISNULL([' + DATENAME(MONTH, dtDate) + '-' + CONVERT(VARCHAR, YEAR(dtDate)) + '],0) [' + DATENAME(MONTH, dtDate) + '-' + CONVERT(VARCHAR, YEAR(dtDate)) + ']' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col1 = @col1 + ',[TOTAL]'
-      
---      SET @col2 = STUFF((SELECT ',[' + DATENAME(MONTH, dtDate) + '-' + CONVERT(VARCHAR, YEAR(dtDate)) + ']' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col2 = @col2 + ',[TOTAL]'
-      
---      SET @col3 = STUFF((SELECT ',SUM([' + DATENAME(MONTH, dtDate) + '-' + CONVERT(VARCHAR, YEAR(dtDate)) + '])' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col3 = @col3 + ',SUM([TOTAL])'
-      
---      SET @sql = 'SELECT 1 Sort, iCategory, Category, <@col1> FROM (SELECT DATENAME(MONTH,dtDate) +''-''+  CONVERT(VARCHAR,YEAR(E.dtDate)) dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'', 0, ''<@P_SearchStr>'', 0) E'
---                 + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
---                 + ' RIGHT JOIN (SELECT c1.sCategory Category, c1.hKey iCategory FROM tbl_CategoryList c1 LEFT JOIN dbo.Fn_ListObsoleteCategories(''<@P_FromDate>'', ''<@P_ToDate>'') Fn ON c1.hKey = Fn.iCategory WHERE Fn.iCategory IS NULL'
---                 + ' AND 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(C1.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END)c ON c.iCategory = X.hKey'
---                 + ' PIVOT (SUM(x.dAmount) FOR X.dtDate in (<@col2>)) AS pvt'
---	             + ' UNION ALL'
---	             + ' SELECT 2 Sort, 999, ''TOTAL'', <@col3>' 
---                 + ' FROM (SELECT DATENAME(MONTH, E.dtDate) +''-''+  CONVERT(VARCHAR,YEAR(E.dtDate)) dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'', 0, ''<@P_SearchStr>'', 0) E' 
---                 + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
---				 + ' PIVOT (SUM(x.dAmount) FOR X.dtDate in (<@col2>)) AS pvt' +
---	             + ' ORDER BY sort,category'
-
---	  SET @sql = REPLACE(@sql, '<@col1>',        @col1)
---	  SET @sql = REPLACE(@sql, '<@col2>',        @col2)
---	  SET @sql = REPLACE(@sql, '<@col3>',        @col3)
---	  SET @sql = REPLACE(@sql, '<@P_FromDate>',  @P_FromDate)
---	  SET @sql = REPLACE(@sql, '<@P_ToDate>',    @P_ToDate)
---	  SET @sql = REPLACE(@sql, '<@P_Category>',  @P_Category)
---	  SET @sql = REPLACE(@sql, '<@P_SearchStr>', @P_SearchStr)
-
---      EXEC (@sql)
---  END
---GO
 
 CREATE PROCEDURE sp_GetExpenditureSummary_Monthly(@P_FromDate  DATE, @P_ToDate DATE, @P_Category  VARCHAR(MAX), @P_SearchStr VARCHAR(500), @P_SummaryType AS CHAR(3) = 'SUM')
 WITH ENCRYPTION AS
@@ -313,60 +274,11 @@ WITH ENCRYPTION AS
       EXEC (@sql)
   END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetExpenditureSummary_Yearly') IS NOT NULL
   DROP PROCEDURE sp_GetExpenditureSummary_Yearly
 GO
-
---CREATE PROCEDURE sp_GetExpenditureSummary_Yearly(@P_FromDate DATE, @P_ToDate DATE, @P_Category VARCHAR(MAX), @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX) = NULL)
---WITH ENCRYPTION AS
---  BEGIN
---      DECLARE @col1 VARCHAR(MAX), @sql VARCHAR(MAX), @col2 VARCHAR(MAX), @col3 VARCHAR(MAX)
-      
---      SELECT DISTINCT CONVERT(VARCHAR, YEAR(E.dtDate)) dtDate INTO #Temp
---        FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, 0, @P_SearchStr, 0) E
---       WHERE 1 = CASE WHEN ISNULL(@P_Years,'') = '' THEN 1 
---                      WHEN (ISNULL(@P_Years,'') != '' AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), @P_Years) > 0) THEN 1 
---                      ELSE 0 
---                  END
---			 AND 1 = CASE WHEN LEN(ISNULL(@P_Category, '')) > 0 AND CHARINDEX(E.sCategory, ISNULL(@P_Category, '')) > 0 THEN 1
---                          WHEN LEN(ISNULL(@P_Category, '')) = 0 THEN 1
---                          ELSE 0 
---                     END
-
---      SET @col1 = STUFF((SELECT ',ISNULL([' + dtDate + '],0) [' + dtDate + ']' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col1 = @col1 + ',[TOTAL]'
-      
---      SET @col2 = STUFF((SELECT ',[' + dtDate + ']' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col2 = @col2 + ',[TOTAL]'
-      
---      SET @col3 = STUFF((SELECT ',SUM([' + dtDate + '])' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col3 = @col3 + ',SUM([TOTAL])'
-      
---      SET @sql = 'SELECT 1 Sort, iCategory, Category, <@col1>'
---                 + ' FROM (SELECT CONVERT(VARCHAR, YEAR(dtDate)) dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'', 0, ''<@P_SearchStr>'', 0) E'
---                 + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
---                 + ' RIGHT JOIN (SELECT c1.sCategory Category, c1.hKey iCategory FROM tbl_CategoryList c1 LEFT JOIN dbo.Fn_ListObsoleteCategories(''<@P_FromDate>'', ''<@P_ToDate>'') Fn ON c1.hKey = Fn.iCategory WHERE Fn.iCategory IS NULL'
---                 + ' AND 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(C1.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END)c ON c.iCategory = X.hKey'
---                 + ' PIVOT (SUM(x.dAmount) FOR X.dtDate in (<@col2>)) AS pvt'
---	             + ' UNION ALL'
---	             + ' SELECT 2 Sort, NULL, ''TOTAL'', <@col3>'
---                 + ' FROM (SELECT CONVERT(VARCHAR, YEAR(dtDate)) dtdate, E.sCategory Category ,dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'', 0, ''<@P_SearchStr>'', 0) E'
---                 + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
---	             + ' PIVOT (SUM(x.dAmount) FOR X.dtDate in (<@col2>)) AS pvt' 
---	             + ' ORDER BY sort,category'
-
---	  SET @sql = REPLACE(@sql, '<@col1>', @col1)
---	  SET @sql = REPLACE(@sql, '<@col2>', @col2)
---	  SET @sql = REPLACE(@sql, '<@col3>', @col3)
---	  SET @sql = REPLACE(@sql, '<@P_FromDate>', @P_FromDate)
---	  SET @sql = REPLACE(@sql, '<@P_ToDate>', @P_ToDate)
---	  SET @sql = REPLACE(@sql, '<@P_Category>', @P_Category)
---	  SET @sql = REPLACE(@sql, '<@P_SearchStr>', @P_SearchStr)
-	 
---      EXEC(@sql)
---  END
---GO
 
 CREATE PROCEDURE sp_GetExpenditureSummary_Yearly(@P_FromDate DATE, @P_ToDate DATE, @P_Category VARCHAR(MAX), @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX) = NULL, @P_SummaryType AS CHAR(3) = 'SUM')
 WITH ENCRYPTION AS
@@ -403,7 +315,7 @@ WITH ENCRYPTION AS
       IF @P_SummaryType != 'CNT'
 		SET @sql = @sql
 	             + ' UNION ALL'
-	             + ' SELECT 2 Sort, NULL, ''TOTAL'', <@col3>'
+	             + ' SELECT 2 Sort, 999, ''TOTAL'', <@col3>'
                  + ' FROM (SELECT CONVERT(VARCHAR, YEAR(dtDate)) dtdate, E.sCategory Category ,dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'', 0, ''<@P_SearchStr>'', 0) E'
                  + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
 	             + ' PIVOT (SUM(x.dAmount) FOR X.dtDate in (<@col2>)) AS pvt' 
@@ -420,73 +332,11 @@ WITH ENCRYPTION AS
       EXEC(@sql)
   END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetExpenditureSummary_RunningTotals') IS NOT NULL
   DROP PROCEDURE sp_GetExpenditureSummary_RunningTotals
 GO
-
---CREATE PROCEDURE sp_GetExpenditureSummary_RunningTotals(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_iMonth INTEGER, @P_SearchStr VARCHAR(500), @P_ShowOnlyRunningTotal BIT = 0)
---WITH ENCRYPTION AS
---  BEGIN
---      DECLARE @col1 VARCHAR(MAX), @sql VARCHAR(MAX), @col2 VARCHAR(MAX), @col3 VARCHAR(MAX), @col4 VARCHAR(MAX), @RowCount INTEGER
-
---	  SELECT DISTINCT CONVERT(VARCHAR, YEAR(dtDate)) dtDate INTO #Temp FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, @P_iCategory, @P_SearchStr, 0) E
-
---      SET @col1 = STUFF((SELECT ',ISNULL([' + dtDate + '],0) [' + dtDate + ']' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col1 = @col1 + ',[TOTAL]'
-      
---      SET @col2 = STUFF((SELECT ',[' + dtDate + ']' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col2 = @col2 + ',[TOTAL]'
-      
---      SET @col3 = STUFF((SELECT ', SUM([' + dtDate + ']) [' + dtDate + ']' FROM #Temp FOR XML PATH('')), 1, 1, '')
---      SET @col3 = @col3 + ',SUM([TOTAL]) [TOTAL]'
-      
---      SET @RowCount = (SELECT COUNT(DISTINCT CONVERT(VARCHAR, YEAR(dtDate))) cnt FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, @P_iCategory, @P_SearchStr, 0))
-      
---      SET @col4 = LEFT(REPLICATE('NULL, ', @RowCount + 1), LEN(REPLICATE('NULL, ', @RowCount + 1)) - 1)
-      
---      SET @sql = 'SELECT 1 Sort, iMonth [iCategory], dtMonth [Category], <@col1>'
---                 + ' FROM ( SELECT CONVERT(VARCHAR, YEAR(dtDate)) dtYear, Month(dtDate) #Month, dbo.Fn_damount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'', <@P_iCategory>, ''<@P_SearchStr>'', 0) E ) AS X'
---                 + ' RIGHT JOIN (SELECT Datename(M, CONVERT(DATE, ''1900-'' + CONVERT(VARCHAR, Y.iMonth) + ''-01'')) dtMonth, Y.iMonth FROM (SELECT TOP(12) ROW_NUMBER() OVER(ORDER BY NAME) iMonth FROM sys.objects)Y)Z ON X.#Month = Z.iMonth'
---			     + ' PIVOT(SUM(X.dAmount) FOR X.dtYear IN (<@col2>)) AS PVT WHERE <@P_ShowOnlyRunningTotal> = 0 
-
---				UNION ALL
-				
---				SELECT X.* FROM (
---				SELECT 2 Sort, NULL [iCategory], ''TOTAL'' [Category], <@col3>' 
---                 + ' FROM (SELECT CONVERT(VARCHAR, YEAR(dtDate)) dtYear, Month(dtDate) #Month, dbo.Fn_damount(E.sNotes, E.items, E.dAmount) dAmount'
---				 + ' FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'',<@P_iCategory>, ''<@P_SearchStr>'', 0) E ) AS X'
---                 + ' RIGHT JOIN (SELECT Datename(M, CONVERT(DATE, ''1900-'' + CONVERT(VARCHAR, Y.iMonth) + ''-01'')) dtMonth, Y.iMonth FROM (SELECT TOP(12) ROW_NUMBER() OVER(ORDER BY NAME) iMonth FROM sys.objects)Y)Z ON X.#Month = Z.iMonth'
---				 + ' PIVOT(SUM(X.dAmount) FOR X.dtYear IN (<@col2>)) AS PVT ) X WHERE <@P_ShowOnlyRunningTotal> = 0 
-				
---				UNION ALL
-				
---				SELECT 3 Sort, NULL, NULL, <@col4> FROM (SELECT 1 [X]) X WHERE <@P_ShowOnlyRunningTotal> = 0
-				
---				UNION ALL
-				
---				SELECT 4 Sort, <@P_iMonth>, Datename(M, CONVERT(DATE, ''1900-<@P_iMonth>-01'')), <@col3>'
---                 + ' FROM (SELECT CONVERT(VARCHAR, YEAR(dtDate)) dtYear, Month(dtDate) #Month, CASE WHEN Month(dtDate) <= <@P_iMonth>'
---                 + ' THEN dbo.Fn_damount(E.sNotes, E.items, E.dAmount) ELSE 0 END dAmount'
---				 + ' FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'',<@P_iCategory>, ''<@P_SearchStr>'', 0) E ) AS X'
---                 + ' RIGHT JOIN (SELECT Datename(M, CONVERT(DATE, ''1900-'' + CONVERT(VARCHAR, Y.iMonth) + ''-01'')) dtMonth, Y.iMonth FROM (SELECT TOP(12) ROW_NUMBER() OVER(ORDER BY NAME) iMonth FROM sys.objects)Y)Z ON X.#Month = Z.iMonth'
---			     + ' PIVOT(SUM(X.dAmount) FOR X.dtYear IN (<@col2>)) AS PVT'
---				 + ' ORDER BY Sort, iMonth'
-	 
---	 SET @sql = REPLACE(@sql, '<@col1>', @col1)
---	 SET @sql = REPLACE(@sql, '<@col2>', @col2)
---	 SET @sql = REPLACE(@sql, '<@col3>', @col3)
---	 SET @sql = REPLACE(@sql, '<@col4>', @col4)
---	 SET @sql = REPLACE(@sql, '<@P_FromDate>', @P_FromDate)
---	 SET @sql = REPLACE(@sql, '<@P_ToDate>', @P_ToDate)
---	 SET @sql = REPLACE(@sql, '<@P_iCategory>', @P_iCategory)
---	 SET @sql = REPLACE(@sql, '<@P_iMonth>', @P_iMonth)
---	 SET @sql = REPLACE(@sql, '<@P_SearchStr>', @P_SearchStr)
---	 SET @sql = REPLACE(@sql, '<@P_ShowOnlyRunningTotal>', @P_ShowOnlyRunningTotal)
-	 
---     EXEC(@sql)
---  END
---GO
 
 CREATE PROCEDURE sp_GetExpenditureSummary_RunningTotals(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_iMonth INTEGER, @P_SearchStr VARCHAR(500), @P_ShowOnlyRunningTotal BIT = 0, @P_SummaryType AS CHAR(3) = 'SUM')
 WITH ENCRYPTION AS
@@ -550,6 +400,7 @@ WITH ENCRYPTION AS
      EXEC(@sql)
   END
 GO
+/*############################################################################################################################################################*/
 
 IF Object_id('sp_GetExpenditureSummaryBudget_Monthly') IS NOT NULL
   DROP PROCEDURE sp_GetExpenditureSummaryBudget_Monthly
@@ -638,6 +489,7 @@ WITH ENCRYPTION AS
       EXEC (@sql +' SELECT * FROM #Temp2;')
   END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetExpenditureSummaryBudget_Yearly') IS NOT NULL
   DROP PROCEDURE sp_GetExpenditureSummaryBudget_Yearly
@@ -735,6 +587,7 @@ WITH ENCRYPTION AS
       EXEC(@sql + 'SELECT * FROM #Temp2;')
   END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('Fn_GetChartData_Categorywise') IS NOT NULL 
 DROP FUNCTION Fn_GetChartData_Categorywise
@@ -747,9 +600,10 @@ RETURN (SELECT CASE WHEN X.[Month] IS NULL THEN 'TOTAL' ELSE X.[Month] END [Mont
 SELECT DATENAME(mm,dtdate) [Month], SUM(dAmount) Amount FROM tbl_ExpenditureDet E INNER JOIN tbl_CategoryList C ON C.hKey = E.iCategory WHERE C.sCategory = @P_Category
 group BY DATENAME(mm,dtdate) WITH ROLLUP ) X)
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetChartData_1') IS NOT NULL 
-DROP PROCEDURE sp_GetChartData_1
+	DROP PROCEDURE sp_GetChartData_1
 GO
 
 CREATE PROCEDURE sp_GetChartData_1(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX))
@@ -770,9 +624,10 @@ BEGIN
      ORDER BY Y.iYear, Y.iMonth
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetChartData_2') IS NOT NULL 
-DROP PROCEDURE sp_GetChartData_2
+	DROP PROCEDURE sp_GetChartData_2
 GO
 
 CREATE PROCEDURE sp_GetChartData_2(@P_FromDate DATE, @P_ToDate DATE, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX))
@@ -790,9 +645,10 @@ BEGIN
 	 ORDER BY C.sCategory
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetChartData_3') IS NOT NULL 
-DROP PROCEDURE sp_GetChartData_3
+	DROP PROCEDURE sp_GetChartData_3
 GO
 
 CREATE PROCEDURE sp_GetChartData_3(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX), @P_PeriodLimit BIT = 0)
@@ -843,9 +699,10 @@ BEGIN
 	EXEC(@Sql)
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetChartData_3B') IS NOT NULL 
-DROP PROCEDURE sp_GetChartData_3B
+	DROP PROCEDURE sp_GetChartData_3B
 GO
 
 CREATE PROCEDURE sp_GetChartData_3B(@P_FromDate DATE, @P_ToDate DATE, @P_iMonth INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX), @P_PeriodLimit BIT = 0)
@@ -880,9 +737,10 @@ BEGIN
 	EXEC (@sql)
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetChartData_4') IS NOT NULL 
-DROP PROCEDURE sp_GetChartData_4
+	DROP PROCEDURE sp_GetChartData_4
 GO
 
 CREATE PROCEDURE sp_GetChartData_4(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX), @P_PeriodLimit BIT = 0)
@@ -895,9 +753,10 @@ BEGIN
 	 GROUP BY CONVERT(VARCHAR, YEAR(E.dtDate))
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_PopulateSelectYearCombo') IS NOT NULL 
-DROP PROCEDURE sp_PopulateSelectYearCombo
+	DROP PROCEDURE sp_PopulateSelectYearCombo
 GO
 
 CREATE PROCEDURE sp_PopulateSelectYearCombo(@P_StartDate DATE, @P_IsYrClosed BIT = 0)
@@ -920,9 +779,10 @@ BEGIN
 	SELECT Year# FROM tbl_EOY WHERE IsYrClosed = @P_IsYrClosed AND Year# >= YEAR(@P_StartDate) ORDER BY Year#
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_SearchExpenses') IS NOT NULL 
-DROP PROCEDURE sp_SearchExpenses
+	DROP PROCEDURE sp_SearchExpenses
 GO
 
 CREATE PROCEDURE sp_SearchExpenses(@P_FromDate DATE, @P_ToDate DATE, @P_Category VARCHAR(MAX), @P_SearchStr VARCHAR(500))  
@@ -993,9 +853,10 @@ AS
 				 END, Y.Sort, Y.sCategory, Y.dtDateOrderBy
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetExpensesThresholds') IS NOT NULL 
-DROP PROCEDURE sp_GetExpensesThresholds
+	DROP PROCEDURE sp_GetExpensesThresholds
 GO
 
 CREATE PROCEDURE sp_GetExpensesThresholds(@P_FromDate DATE, @P_ToDate DATE)
@@ -1045,9 +906,10 @@ BEGIN
 	ORDER BY X.sCategory
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetExpensesTicker') IS NOT NULL 
-DROP PROCEDURE sp_GetExpensesTicker
+	DROP PROCEDURE sp_GetExpensesTicker
 GO
 
 CREATE PROCEDURE sp_GetExpensesTicker(@P_FromDate DATE, @P_ToDate DATE)
@@ -1075,9 +937,10 @@ BEGIN
    ORDER BY C.sCategory
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_ImportData') IS NOT NULL 
-DROP PROCEDURE sp_ImportData
+	DROP PROCEDURE sp_ImportData
 GO
 
 CREATE PROCEDURE sp_ImportData
@@ -1180,9 +1043,10 @@ BEGIN
 	SELECT dtDate [Date], sCategory [Category], dAmount [Amount], sNotes [Notes], sImportComments FROM Temp_ImportData			
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetUnpaidBillsCurrentMonth') IS NOT NULL 
-DROP PROCEDURE sp_GetUnpaidBillsCurrentMonth
+	DROP PROCEDURE sp_GetUnpaidBillsCurrentMonth
 GO
 
 CREATE PROCEDURE sp_GetUnpaidBillsCurrentMonth
@@ -1203,9 +1067,10 @@ BEGIN
     HAVING C.iMonthlyOccurrences > COUNT(E.iCategory)
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetUnpaidBillsPreviousMonth') IS NOT NULL 
-DROP PROCEDURE sp_GetUnpaidBillsPreviousMonth
+	DROP PROCEDURE sp_GetUnpaidBillsPreviousMonth
 GO
 
 CREATE PROCEDURE sp_GetUnpaidBillsPreviousMonth
@@ -1227,9 +1092,10 @@ BEGIN
     HAVING C1.iMonthlyOccurrences > COUNT(E.iCategory)
 END
 GO
+/*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_InsertCategoryPrevMonthOccurrences') IS NOT NULL
-DROP PROCEDURE sp_InsertCategoryPrevMonthOccurrences
+	DROP PROCEDURE sp_InsertCategoryPrevMonthOccurrences
 GO
 
 CREATE PROCEDURE sp_InsertCategoryPrevMonthOccurrences
@@ -1248,3 +1114,78 @@ BEGIN
 	   AND C.bNotify = 1
 END
 GO
+/*############################################################################################################################################################*/
+
+IF Object_id('sp_GetExpenditureSummary_AllInOne') IS NOT NULL
+  DROP PROCEDURE sp_GetExpenditureSummary_AllInOne
+GO
+
+CREATE PROCEDURE sp_GetExpenditureSummary_AllInOne(@P_InceptionDate DATE, @P_Category  VARCHAR(MAX), @P_SearchStr VARCHAR(500), @P_SummaryType AS CHAR(3) = 'SUM')
+WITH ENCRYPTION AS
+  BEGIN
+	DECLARE	@sql VARCHAR(MAX),
+			@FromDate DATE,
+			@ToDate DATE
+	
+	CREATE TABLE #MTD(iCategory NUMERIC(18,0), MTD MONEY)
+	CREATE TABLE #YTD(iCategory NUMERIC(18,0), YTD MONEY)
+	CREATE TABLE #ITD(iCategory NUMERIC(18,0), ITD MONEY)
+	CREATE TABLE #Temp(Sort INT, iCategory NUMERIC(18,0), sCategory VARCHAR(100), dAmount MONEY, Total MONEY)
+	
+	--MTD
+	SET	@FromDate = DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0) --First Day of Current Month
+	SET @ToDate = GETDATE()
+	
+	INSERT INTO #Temp EXEC sp_GetExpenditureSummary_Monthly @FromDate, @ToDate, @P_Category, @P_SearchStr, @P_SummaryType
+	INSERT INTO #MTD(iCategory, MTD) SELECT iCategory, dAmount FROM #Temp
+	
+	--YTD
+	SET	@FromDate = CONVERT(DATE, '01-01-'+CONVERT(VARCHAR, YEAR(GETDATE()))) --First Day of current year
+	
+	TRUNCATE TABLE #Temp
+	
+	INSERT INTO #Temp EXEC sp_GetExpenditureSummary_Yearly @FromDate, @ToDate, @P_Category, @P_SearchStr, NULL, @P_SummaryType
+	INSERT INTO #YTD(iCategory, YTD) SELECT iCategory, dAmount FROM #Temp
+
+	TRUNCATE TABLE #Temp
+
+	--ITD
+    SET @sql = 'SELECT 1 Sort, iCategory, Category, ITD, [TOTAL] FROM (SELECT ''ITD'' dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_InceptionDate>'', ''<@ToDate>'', 0, ''<@P_SearchStr>'', 0) E'
+               + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
+               + ' RIGHT JOIN (SELECT c1.sCategory Category, c1.hKey iCategory FROM tbl_CategoryList c1 LEFT JOIN dbo.Fn_ListObsoleteCategories(''<@P_InceptionDate>'', ''<@ToDate>'') Fn ON c1.hKey = Fn.iCategory WHERE Fn.iCategory IS NULL'
+               + ' AND 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(C1.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END)c ON c.iCategory = X.hKey'
+               + ' PIVOT (' + CASE @P_SummaryType WHEN 'CNT' THEN 'COUNT' ELSE 'SUM' END + '(x.dAmount) FOR X.dtDate in (ITD, [TOTAL])) AS pvt'
+		             
+    IF @P_SummaryType != 'CNT'
+		SET @sql = @sql
+	             + ' UNION ALL'
+	             + ' SELECT 2 Sort, 999, ''TOTAL'', SUM(ITD), SUM([TOTAL])' 
+                 + ' FROM (SELECT ''ITD'' dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_InceptionDate>'', ''<@ToDate>'', 0, ''<@P_SearchStr>'', 0) E' 
+                 + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
+				 + ' PIVOT (SUM(x.dAmount) FOR X.dtDate in (ITD, [TOTAL])) AS pvt' +
+	             + ' ORDER BY sort,category'
+
+	  SET @sql = REPLACE(@sql, '<@P_InceptionDate>', @P_InceptionDate)
+	  SET @sql = REPLACE(@sql, '<@ToDate>', @ToDate)
+	  SET @sql = REPLACE(@sql, '<@P_Category>', @P_Category)
+	  SET @sql = REPLACE(@sql, '<@P_SearchStr>', @P_SearchStr)
+	
+		print @sql
+	
+	  INSERT INTO #Temp EXEC (@sql)
+	  INSERT INTO #ITD(iCategory, ITD) SELECT iCategory, dAmount FROM #Temp
+	  
+	  SELECT CASE I.iCategory WHEN 999 THEN 2 ELSE 1 END Sort,
+			 I.iCategory,
+			 CASE I.iCategory WHEN 999 THEN 'TOTAL' ELSE C.sCategory END Category,
+			 ISNULL(M.MTD, 0) MTD,
+			 ISNULL(Y.YTD, 0) YTD,
+			 ISNULL(I.ITD, 0) ITD,
+			 NULL [TOTAL]
+	    FROM #ITD I 
+			 LEFT JOIN #YTD Y ON I.iCategory = Y.iCategory
+			 LEFT JOIN #MTD M ON M.iCategory = Y.iCategory
+			 LEFT JOIN tbl_CategoryList C ON C.hKey = I.iCategory 
+  END
+GO
+/*############################################################################################################################################################*/
