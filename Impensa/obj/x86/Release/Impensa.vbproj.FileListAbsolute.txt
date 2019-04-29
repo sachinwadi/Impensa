@@ -15,4 +15,3 @@ F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.xml
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.pdb
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\System.Windows.Forms.DataVisualization.dll
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Release\System.Windows.Forms.DataVisualization.xml
-F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Release\Impensa.vbprojResolveAssemblyReference.cache
