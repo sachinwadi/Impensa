@@ -126,6 +126,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
+    <Compile Include="Classes\EmailGenerator.vb" />
     <Compile Include="Forms\frmChart.Designer.vb">
       <DependentUpon>frmChart.vb</DependentUpon>
     </Compile>
