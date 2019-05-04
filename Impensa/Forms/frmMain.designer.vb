@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -164,6 +164,7 @@ Partial Class frmMain
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.tmrRefresh = New System.Windows.Forms.Timer(Me.components)
         Me.btnExport = New System.Windows.Forms.Button()
+        Me.chkIncludeExpSummary = New System.Windows.Forms.CheckBox()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabCategories.SuspendLayout()
@@ -408,9 +409,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend2.Name = "Legend1"
-        Legend2.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend2)
+        Legend1.Name = "Legend1"
+        Legend1.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend1)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -931,7 +932,7 @@ Partial Class frmMain
         Me.gbEmailConfig.Controls.Add(Me.chkSendEmails)
         Me.gbEmailConfig.Location = New System.Drawing.Point(343, 239)
         Me.gbEmailConfig.Name = "gbEmailConfig"
-        Me.gbEmailConfig.Size = New System.Drawing.Size(423, 165)
+        Me.gbEmailConfig.Size = New System.Drawing.Size(423, 180)
         Me.gbEmailConfig.TabIndex = 9
         Me.gbEmailConfig.TabStop = False
         '
@@ -939,6 +940,7 @@ Partial Class frmMain
         '
         Me.grpEmailSettings.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.grpEmailSettings.Controls.Add(Me.chkIncludeExpSummary)
         Me.grpEmailSettings.Controls.Add(Me.txtEmailPassword)
         Me.grpEmailSettings.Controls.Add(Me.txtEmailTo)
         Me.grpEmailSettings.Controls.Add(Me.txtSmtpPort)
@@ -949,11 +951,11 @@ Partial Class frmMain
         Me.grpEmailSettings.Controls.Add(Me.Label32)
         Me.grpEmailSettings.Controls.Add(Me.Label31)
         Me.grpEmailSettings.Controls.Add(Me.Label35)
-        Me.grpEmailSettings.Location = New System.Drawing.Point(13, 24)
+        Me.grpEmailSettings.Location = New System.Drawing.Point(13, 25)
         Me.grpEmailSettings.Margin = New System.Windows.Forms.Padding(0)
         Me.grpEmailSettings.Name = "grpEmailSettings"
         Me.grpEmailSettings.Padding = New System.Windows.Forms.Padding(0)
-        Me.grpEmailSettings.Size = New System.Drawing.Size(404, 127)
+        Me.grpEmailSettings.Size = New System.Drawing.Size(404, 149)
         Me.grpEmailSettings.TabIndex = 1
         Me.grpEmailSettings.TabStop = False
         '
@@ -961,7 +963,7 @@ Partial Class frmMain
         '
         Me.txtEmailPassword.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtEmailPassword.Location = New System.Drawing.Point(83, 33)
+        Me.txtEmailPassword.Location = New System.Drawing.Point(83, 52)
         Me.txtEmailPassword.Name = "txtEmailPassword"
         Me.txtEmailPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
         Me.txtEmailPassword.Size = New System.Drawing.Size(318, 20)
@@ -971,7 +973,7 @@ Partial Class frmMain
         '
         Me.txtEmailTo.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtEmailTo.Location = New System.Drawing.Point(83, 102)
+        Me.txtEmailTo.Location = New System.Drawing.Point(83, 121)
         Me.txtEmailTo.Name = "txtEmailTo"
         Me.txtEmailTo.Size = New System.Drawing.Size(318, 20)
         Me.txtEmailTo.TabIndex = 8
@@ -980,7 +982,7 @@ Partial Class frmMain
         '
         Me.txtSmtpPort.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtSmtpPort.Location = New System.Drawing.Point(83, 79)
+        Me.txtSmtpPort.Location = New System.Drawing.Point(83, 98)
         Me.txtSmtpPort.Name = "txtSmtpPort"
         Me.txtSmtpPort.Size = New System.Drawing.Size(318, 20)
         Me.txtSmtpPort.TabIndex = 7
@@ -989,7 +991,7 @@ Partial Class frmMain
         '
         Me.txtSmtpHost.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtSmtpHost.Location = New System.Drawing.Point(83, 56)
+        Me.txtSmtpHost.Location = New System.Drawing.Point(83, 75)
         Me.txtSmtpHost.Name = "txtSmtpHost"
         Me.txtSmtpHost.Size = New System.Drawing.Size(318, 20)
         Me.txtSmtpHost.TabIndex = 6
@@ -998,7 +1000,7 @@ Partial Class frmMain
         '
         Me.txtEmailFrom.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtEmailFrom.Location = New System.Drawing.Point(83, 10)
+        Me.txtEmailFrom.Location = New System.Drawing.Point(83, 29)
         Me.txtEmailFrom.Name = "txtEmailFrom"
         Me.txtEmailFrom.Size = New System.Drawing.Size(318, 20)
         Me.txtEmailFrom.TabIndex = 5
@@ -1006,7 +1008,7 @@ Partial Class frmMain
         'Label34
         '
         Me.Label34.AutoSize = True
-        Me.Label34.Location = New System.Drawing.Point(15, 83)
+        Me.Label34.Location = New System.Drawing.Point(15, 102)
         Me.Label34.Name = "Label34"
         Me.Label34.Size = New System.Drawing.Size(62, 13)
         Me.Label34.TabIndex = 4
@@ -1015,7 +1017,7 @@ Partial Class frmMain
         'Label33
         '
         Me.Label33.AutoSize = True
-        Me.Label33.Location = New System.Drawing.Point(12, 60)
+        Me.Label33.Location = New System.Drawing.Point(12, 79)
         Me.Label33.Name = "Label33"
         Me.Label33.Size = New System.Drawing.Size(65, 13)
         Me.Label33.TabIndex = 3
@@ -1024,7 +1026,7 @@ Partial Class frmMain
         'Label32
         '
         Me.Label32.AutoSize = True
-        Me.Label32.Location = New System.Drawing.Point(3, 106)
+        Me.Label32.Location = New System.Drawing.Point(3, 125)
         Me.Label32.Name = "Label32"
         Me.Label32.Size = New System.Drawing.Size(74, 13)
         Me.Label32.TabIndex = 2
@@ -1033,7 +1035,7 @@ Partial Class frmMain
         'Label31
         '
         Me.Label31.AutoSize = True
-        Me.Label31.Location = New System.Drawing.Point(21, 37)
+        Me.Label31.Location = New System.Drawing.Point(21, 56)
         Me.Label31.Name = "Label31"
         Me.Label31.Size = New System.Drawing.Size(56, 13)
         Me.Label31.TabIndex = 1
@@ -1042,7 +1044,7 @@ Partial Class frmMain
         'Label35
         '
         Me.Label35.AutoSize = True
-        Me.Label35.Location = New System.Drawing.Point(19, 14)
+        Me.Label35.Location = New System.Drawing.Point(19, 33)
         Me.Label35.Name = "Label35"
         Me.Label35.Size = New System.Drawing.Size(58, 13)
         Me.Label35.TabIndex = 0
@@ -1674,6 +1676,17 @@ Partial Class frmMain
         Me.btnExport.Text = "Export To PDF"
         Me.btnExport.UseVisualStyleBackColor = True
         '
+        'chkIncludeExpSummary
+        '
+        Me.chkIncludeExpSummary.AutoSize = True
+        Me.chkIncludeExpSummary.Location = New System.Drawing.Point(83, 10)
+        Me.chkIncludeExpSummary.Name = "chkIncludeExpSummary"
+        Me.chkIncludeExpSummary.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.chkIncludeExpSummary.Size = New System.Drawing.Size(151, 17)
+        Me.chkIncludeExpSummary.TabIndex = 2
+        Me.chkIncludeExpSummary.Text = "Include Expense Summary"
+        Me.chkIncludeExpSummary.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AcceptButton = Me.btnSubmit
@@ -1894,5 +1907,6 @@ Partial Class frmMain
     Friend WithEvents Label31 As System.Windows.Forms.Label
     Friend WithEvents Label35 As System.Windows.Forms.Label
     Friend WithEvents chkSendEmails As System.Windows.Forms.CheckBox
+    Friend WithEvents chkIncludeExpSummary As System.Windows.Forms.CheckBox
 
 End Class

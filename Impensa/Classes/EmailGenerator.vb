@@ -56,8 +56,7 @@ Public Class EmailGenerator
 
             _strBuilder.Append("<tr>")
             _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px;' align='left'>{0}</td>", dr("Date"), color)
-            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px;' align='left'>{0}</td>", dr("sCategory"), color)
-            'strBuilder.AppendFormat("<td style='display:none;'>{0}</td>", dr("iCategory"))
+            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px;' align='left'>{0}</td>", dr("CategoryName"), color)
             _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px;' align='right'>{0}</td>", Format(dr("Amount"), "#,##0.00"), color)
             _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px;' align='left'>{0}</td>", dr("Notes"), color)
             _strBuilder.Append("<tr>")
@@ -129,8 +128,10 @@ Public Class EmailGenerator
         _strBuilder.Append("<h4>Here are the Changes:<h4>")
         Call BuildDetailHtmlTable()
         Call BuildLegendHtmlTable()
-        _strBuilder.Append("<h4>Summary:<h4>")
-        Call BuildSummaryHtmlTable()
+        If (IncludeExpenseSummary) Then
+            _strBuilder.Append("<h4>Summary:<h4>")
+            Call BuildSummaryHtmlTable()
+        End If
         _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
     End Sub
 

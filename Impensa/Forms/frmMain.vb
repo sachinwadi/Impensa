@@ -167,7 +167,7 @@ Public Class frmMain
             DataGridExpDet.Columns("IsDummy").Visible = False
             DataGridExpDet.Columns("sCategory").Visible = False
             DataGridExpDet.Columns("IsDummyRowAdded").Visible = False
-
+            DataGridExpDet.Columns("CategoryName").Visible = False
             DataGridExpDet.Columns("bDelete").DisplayIndex = 0
             DataGridExpDet.Columns("iCategory").DisplayIndex = 3
             DataGridExpDet.Columns("Notes").DisplayIndex = 5
@@ -262,10 +262,19 @@ Public Class frmMain
         Dim dc As SqlCommandBuilder
         Dim lst As New List(Of Integer)
         Dim RowCounter As Integer = 0
+        Dim dtEmail As New DataTable()
 
         Try
             dtGrid = DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges
             If Not dtGrid Is Nothing Then
+                Panel5.BringToFront()
+                Panel5.Visible = True
+                Label15.Text = "Saving Records..."
+                Application.DoEvents()
+
+                dtGrid = DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges
+                dtEmail = dtGrid.Select("iCategory IS NOT NULL").CopyToDataTable
+
                 For Each dr As DataRow In dtGrid.Rows
                     If dr.RowState = DataRowState.Modified And dr("hKey") Is DBNull.Value Then
                         dr.AcceptChanges()
@@ -302,6 +311,10 @@ Public Class frmMain
 
                     da.Update(dtGrid)
                 End Using
+
+                If SendEmails Then
+                    Call SendEmail(dtEmail)
+                End If
             End If
 
             Call RefreshGrids()
@@ -316,6 +329,61 @@ Public Class frmMain
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '1
+
+    Private Sub SendEmail(ByVal dtGrid As DataTable)
+        Try
+            Dim emailItem As New EmailGenerator()
+            Dim dcAction As New DataColumn("Action", GetType(String))
+            dtGrid.Columns.Add(dcAction)
+
+            Label15.Text = "Sending email notification..."
+            Application.DoEvents()
+
+            For Each dr As DataRow In dtGrid.Rows
+                If dr("hKey") Is DBNull.Value Then
+                    dr("Action") = "Add"
+                ElseIf Not dr("hKey") Is DBNull.Value Then
+                    If Not (IsDBNull(dr.Item("bDelete"))) Then
+                        If (Convert.ToBoolean(dr.Item("bDelete"))) Then
+                            dr("Action") = "Delete"
+                        Else
+                            dr("Action") = "Update"
+                        End If
+                    Else
+                        dr("Action") = "Update"
+                    End If
+                End If
+            Next
+
+            emailItem.Changes = dtGrid
+            emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail()
+            emailItem.SendEmail()
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        Finally
+            Panel5.SendToBack()
+            Panel5.Visible = False
+        End Try
+    End Sub
+
+    Private Function GetAllInOneSummaryDataTableForEmail() As DataTable
+        Dim strSQL As String = ""
+        Dim dtGridSummary As New DataTable
+
+        Try
+            Using Connection = GetConnection()
+                strSQL = "Execute sp_GetExpenditureSummary_AllInOne " & " '" & dtpRecdKeeping.Value.Date & "', '', ''"
+                da = New SqlDataAdapter(strSQL, Connection)
+                da.Fill(dtGridSummary)
+            End Using
+
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        End Try
+
+        Return dtGridSummary
+
+    End Function
 
     Private Sub PopulateSearchResults()
         Dim strSQL As String = ""
@@ -1551,7 +1619,7 @@ Public Class frmMain
             txtEmailTo.Text = ToEmails
 
             chkStartImport.Checked = EnableImport
-
+            chkIncludeExpSummary.Checked = IncludeExpenseSummary
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
@@ -1561,6 +1629,7 @@ Public Class frmMain
         Try
             SaveValidationFailed = True
             SendEmails = chkSendEmails.Checked
+            IncludeExpenseSummary = chkIncludeExpSummary.Checked
             If (SendEmails) Then If Not ValidateAndSaveEmailSettings() Then Return False
 
             HighlightDetail = txtHighlightDet.Text
@@ -3114,6 +3183,21 @@ Public Class frmMain
         Dim digitsOnly As Regex = New Regex("[^\d]")
         txtHighlightSummYr.Text = digitsOnly.Replace(txtHighlightSummYr.Text, "")
     End Sub
+
+    Private Sub txtEmailFrom_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtEmailFrom.MouseHover
+        tt = New ToolTip
+        tt.SetToolTip(sender, "Email account using which the email will be sent.")
+    End Sub
+
+    Private Sub txtEmailPassword_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtEmailPassword.MouseHover
+        tt = New ToolTip
+        tt.SetToolTip(sender, "Password for email account using which the email will be sent")
+    End Sub
+
+    Private Sub txtEmailTo_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtEmailTo.MouseHover
+        tt = New ToolTip
+        tt.SetToolTip(sender, "Email Ids to which notifications will be sent. Specify multiple email addresses seperated by semicolon(;).")
+    End Sub
 #End Region
 
 #Region "ComboBox Events"
@@ -3391,6 +3475,10 @@ Public Class frmMain
             Call SetDefaultPropValue()
             Call PopulateExpenditureDetailGrid()
         End If
+    End Sub
+
+    Private Sub chkSendEmails_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkSendEmails.CheckedChanged
+        If chkSendEmails.Checked Then grpEmailSettings.Enabled = True Else grpEmailSettings.Enabled = False
     End Sub
 #End Region
 
@@ -3759,6 +3847,9 @@ Public Class frmMain
                 ImpensaAlert("Selected Category is obsolete. Cannot use this Category for new entry.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
                 DgvComboBox.SelectedIndex = -1
             End If
+
+            Dgv(Dgv.Columns("CategoryName").Index, Dgv.CurrentCell.RowIndex).Value = DgvComboBox.Text
+
         End If
     End Sub
 
@@ -3774,23 +3865,4 @@ Public Class frmMain
     End Sub
 #End Region
 #End Region
-
-    Private Sub txtEmailFrom_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtEmailFrom.MouseHover
-        tt = New ToolTip
-        tt.SetToolTip(sender, "Email account using which the email will be sent.")
-    End Sub
-
-    Private Sub txtEmailPassword_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtEmailPassword.MouseHover
-        tt = New ToolTip
-        tt.SetToolTip(sender, "Password for email account using which the email will be sent")
-    End Sub
-
-    Private Sub txtEmailTo_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtEmailTo.MouseHover
-        tt = New ToolTip
-        tt.SetToolTip(sender, "Email Ids to which notifications will be sent. Specify multiple email addresses seperated by semicolon(;).")
-    End Sub
-
-    Private Sub chkSendEmails_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkSendEmails.CheckedChanged
-        If chkSendEmails.Checked Then grpEmailSettings.Enabled = True Else grpEmailSettings.Enabled = False
-    End Sub
 End Class

@@ -509,6 +509,15 @@ Public Class clsLib
         End Set
     End Property
 
+    Public Shared Property IncludeExpenseSummary() As Boolean
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "IncludeExpenseSummary", Nothing)
+        End Get
+        Set(ByVal value As Boolean)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "IncludeExpenseSummary", value)
+        End Set
+    End Property
+
 #End Region
 
 #Region "Methods"
