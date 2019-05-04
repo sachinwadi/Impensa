@@ -356,7 +356,7 @@ Public Class frmMain
             Next
 
             emailItem.Changes = dtGrid
-            emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail()
+            If (IncludeExpenseSummary) Then emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail()
             emailItem.SendEmail()
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
