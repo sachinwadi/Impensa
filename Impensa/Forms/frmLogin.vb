@@ -19,7 +19,7 @@ Public Class frmLogin
 
                 IsLoginDetailsChanged = True
 
-                If frmMain.TabControl1.SelectedIndex <> 0 Then frmMain.TabControl1.SelectedIndex = 0
+                If frmMain.ImpensaTabControl.SelectedIndex <> 0 Then frmMain.ImpensaTabControl.SelectedIndex = 0
             End If
 
             Me.Close()

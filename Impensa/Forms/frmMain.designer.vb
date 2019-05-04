@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -39,9 +39,9 @@ Partial Class frmMain
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.dtPickerFrom = New System.Windows.Forms.DateTimePicker()
-        Me.TabCatList = New System.Windows.Forms.TabPage()
+        Me.TabCategories = New System.Windows.Forms.TabPage()
         Me.DataGridCatList = New System.Windows.Forms.DataGridView()
-        Me.TabAnalysis = New System.Windows.Forms.TabPage()
+        Me.TabCharts = New System.Windows.Forms.TabPage()
         Me.Panel4 = New System.Windows.Forms.Panel()
         Me.Chart_Analysis = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.Panel2 = New System.Windows.Forms.Panel()
@@ -60,7 +60,7 @@ Partial Class frmMain
         Me.Label5 = New System.Windows.Forms.Label()
         Me.cmbListing = New System.Windows.Forms.ComboBox()
         Me.cmbSelectChart = New System.Windows.Forms.ComboBox()
-        Me.TabExpSumm = New System.Windows.Forms.TabPage()
+        Me.TabSummary = New System.Windows.Forms.TabPage()
         Me.Panel8 = New System.Windows.Forms.Panel()
         Me.Label19 = New System.Windows.Forms.Label()
         Me.cmbSummaryType = New System.Windows.Forms.ComboBox()
@@ -70,7 +70,7 @@ Partial Class frmMain
         Me.cmbCatListRunTot = New System.Windows.Forms.ComboBox()
         Me.Label22 = New System.Windows.Forms.Label()
         Me.DataGridExpSumm = New System.Windows.Forms.DataGridView()
-        Me.TabExpDet = New System.Windows.Forms.TabPage()
+        Me.TabDetails = New System.Windows.Forms.TabPage()
         Me.LstUnpaidBillsPrevMonth = New System.Windows.Forms.ListBox()
         Me.Label29 = New System.Windows.Forms.Label()
         Me.LstUnpaidBillsCurrentMonth = New System.Windows.Forms.ListBox()
@@ -81,18 +81,31 @@ Partial Class frmMain
         Me.Label14 = New System.Windows.Forms.Label()
         Me.PictureBox2 = New System.Windows.Forms.PictureBox()
         Me.btnSave = New System.Windows.Forms.Button()
-        Me.TabControl1 = New System.Windows.Forms.TabControl()
-        Me.TabThreshold = New System.Windows.Forms.TabPage()
+        Me.ImpensaTabControl = New System.Windows.Forms.TabControl()
+        Me.TabBudget = New System.Windows.Forms.TabPage()
         Me.Panel7 = New System.Windows.Forms.Panel()
         Me.DataGridThrLimits = New System.Windows.Forms.DataGridView()
         Me.Panel6 = New System.Windows.Forms.Panel()
         Me.cmbThrMonth = New System.Windows.Forms.ComboBox()
         Me.Label17 = New System.Windows.Forms.Label()
-        Me.TabFunctions = New System.Windows.Forms.TabPage()
+        Me.TabSettings = New System.Windows.Forms.TabPage()
+        Me.gbEmailConfig = New System.Windows.Forms.GroupBox()
+        Me.grpEmailSettings = New System.Windows.Forms.GroupBox()
+        Me.txtEmailPassword = New System.Windows.Forms.TextBox()
+        Me.txtEmailTo = New System.Windows.Forms.TextBox()
+        Me.txtSmtpPort = New System.Windows.Forms.TextBox()
+        Me.txtSmtpHost = New System.Windows.Forms.TextBox()
+        Me.txtEmailFrom = New System.Windows.Forms.TextBox()
+        Me.Label34 = New System.Windows.Forms.Label()
+        Me.Label33 = New System.Windows.Forms.Label()
+        Me.Label32 = New System.Windows.Forms.Label()
+        Me.Label31 = New System.Windows.Forms.Label()
+        Me.Label35 = New System.Windows.Forms.Label()
+        Me.chkSendEmails = New System.Windows.Forms.CheckBox()
+        Me.Label30 = New System.Windows.Forms.Label()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.txtReminder = New System.Windows.Forms.TextBox()
         Me.chkShowReminder = New System.Windows.Forms.CheckBox()
-        Me.pbCredit = New System.Windows.Forms.PictureBox()
         Me.GroupBox6 = New System.Windows.Forms.GroupBox()
         Me.Label27 = New System.Windows.Forms.Label()
         Me.btnBrowse = New System.Windows.Forms.Button()
@@ -153,27 +166,28 @@ Partial Class frmMain
         Me.btnExport = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabCatList.SuspendLayout()
+        Me.TabCategories.SuspendLayout()
         CType(Me.DataGridCatList, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabAnalysis.SuspendLayout()
+        Me.TabCharts.SuspendLayout()
         Me.Panel4.SuspendLayout()
         CType(Me.Chart_Analysis, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel2.SuspendLayout()
-        Me.TabExpSumm.SuspendLayout()
+        Me.TabSummary.SuspendLayout()
         Me.Panel8.SuspendLayout()
         CType(Me.DataGridExpSumm, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabExpDet.SuspendLayout()
+        Me.TabDetails.SuspendLayout()
         CType(Me.DataGridExpDet, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel5.SuspendLayout()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.TabControl1.SuspendLayout()
-        Me.TabThreshold.SuspendLayout()
+        Me.ImpensaTabControl.SuspendLayout()
+        Me.TabBudget.SuspendLayout()
         Me.Panel7.SuspendLayout()
         CType(Me.DataGridThrLimits, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel6.SuspendLayout()
-        Me.TabFunctions.SuspendLayout()
+        Me.TabSettings.SuspendLayout()
+        Me.gbEmailConfig.SuspendLayout()
+        Me.grpEmailSettings.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
-        CType(Me.pbCredit, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.GroupBox6.SuspendLayout()
         Me.GroupBox5.SuspendLayout()
         Me.GroupBox4.SuspendLayout()
@@ -293,7 +307,6 @@ Partial Class frmMain
         '
         'LstCategory
         '
-        Me.LstCategory.CheckOnClick = True
         Me.LstCategory.FormattingEnabled = True
         Me.LstCategory.Location = New System.Drawing.Point(13, 225)
         Me.LstCategory.Name = "LstCategory"
@@ -342,16 +355,16 @@ Partial Class frmMain
         Me.dtPickerFrom.Size = New System.Drawing.Size(100, 20)
         Me.dtPickerFrom.TabIndex = 0
         '
-        'TabCatList
+        'TabCategories
         '
-        Me.TabCatList.BackColor = System.Drawing.Color.Transparent
-        Me.TabCatList.Controls.Add(Me.DataGridCatList)
-        Me.TabCatList.Location = New System.Drawing.Point(4, 22)
-        Me.TabCatList.Name = "TabCatList"
-        Me.TabCatList.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabCatList.Size = New System.Drawing.Size(1031, 426)
-        Me.TabCatList.TabIndex = 5
-        Me.TabCatList.Text = "Categories"
+        Me.TabCategories.BackColor = System.Drawing.Color.Transparent
+        Me.TabCategories.Controls.Add(Me.DataGridCatList)
+        Me.TabCategories.Location = New System.Drawing.Point(4, 22)
+        Me.TabCategories.Name = "TabCategories"
+        Me.TabCategories.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabCategories.Size = New System.Drawing.Size(1031, 426)
+        Me.TabCategories.TabIndex = 5
+        Me.TabCategories.Text = "Categories"
         '
         'DataGridCatList
         '
@@ -367,17 +380,17 @@ Partial Class frmMain
         Me.DataGridCatList.TabIndex = 4
         Me.DataGridCatList.TabStop = False
         '
-        'TabAnalysis
+        'TabCharts
         '
-        Me.TabAnalysis.Controls.Add(Me.Panel4)
-        Me.TabAnalysis.Controls.Add(Me.Panel2)
-        Me.TabAnalysis.Location = New System.Drawing.Point(4, 22)
-        Me.TabAnalysis.Name = "TabAnalysis"
-        Me.TabAnalysis.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabAnalysis.Size = New System.Drawing.Size(1031, 426)
-        Me.TabAnalysis.TabIndex = 2
-        Me.TabAnalysis.Text = "Graphical Analysis"
-        Me.TabAnalysis.UseVisualStyleBackColor = True
+        Me.TabCharts.Controls.Add(Me.Panel4)
+        Me.TabCharts.Controls.Add(Me.Panel2)
+        Me.TabCharts.Location = New System.Drawing.Point(4, 22)
+        Me.TabCharts.Name = "TabCharts"
+        Me.TabCharts.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabCharts.Size = New System.Drawing.Size(1031, 426)
+        Me.TabCharts.TabIndex = 2
+        Me.TabCharts.Text = "Graphical Analysis"
+        Me.TabCharts.UseVisualStyleBackColor = True
         '
         'Panel4
         '
@@ -395,9 +408,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend3.Name = "Legend1"
-        Legend3.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend3)
+        Legend2.Name = "Legend1"
+        Legend2.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend2)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -576,18 +589,18 @@ Partial Class frmMain
         Me.cmbSelectChart.Size = New System.Drawing.Size(244, 21)
         Me.cmbSelectChart.TabIndex = 0
         '
-        'TabExpSumm
+        'TabSummary
         '
-        Me.TabExpSumm.AutoScroll = True
-        Me.TabExpSumm.Controls.Add(Me.Panel8)
-        Me.TabExpSumm.Controls.Add(Me.DataGridExpSumm)
-        Me.TabExpSumm.Location = New System.Drawing.Point(4, 22)
-        Me.TabExpSumm.Name = "TabExpSumm"
-        Me.TabExpSumm.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabExpSumm.Size = New System.Drawing.Size(1031, 426)
-        Me.TabExpSumm.TabIndex = 1
-        Me.TabExpSumm.Text = "Expenditure Summary"
-        Me.TabExpSumm.UseVisualStyleBackColor = True
+        Me.TabSummary.AutoScroll = True
+        Me.TabSummary.Controls.Add(Me.Panel8)
+        Me.TabSummary.Controls.Add(Me.DataGridExpSumm)
+        Me.TabSummary.Location = New System.Drawing.Point(4, 22)
+        Me.TabSummary.Name = "TabSummary"
+        Me.TabSummary.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabSummary.Size = New System.Drawing.Size(1031, 426)
+        Me.TabSummary.TabIndex = 1
+        Me.TabSummary.Text = "Expenditure Summary"
+        Me.TabSummary.UseVisualStyleBackColor = True
         '
         'Panel8
         '
@@ -685,22 +698,22 @@ Partial Class frmMain
         Me.DataGridExpSumm.TabIndex = 0
         Me.DataGridExpSumm.VirtualMode = True
         '
-        'TabExpDet
+        'TabDetails
         '
-        Me.TabExpDet.AutoScroll = True
-        Me.TabExpDet.Controls.Add(Me.LstUnpaidBillsPrevMonth)
-        Me.TabExpDet.Controls.Add(Me.Label29)
-        Me.TabExpDet.Controls.Add(Me.LstUnpaidBillsCurrentMonth)
-        Me.TabExpDet.Controls.Add(Me.Label28)
-        Me.TabExpDet.Controls.Add(Me.DataGridExpDet)
-        Me.TabExpDet.Controls.Add(Me.Panel5)
-        Me.TabExpDet.Location = New System.Drawing.Point(4, 22)
-        Me.TabExpDet.Name = "TabExpDet"
-        Me.TabExpDet.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabExpDet.Size = New System.Drawing.Size(1031, 426)
-        Me.TabExpDet.TabIndex = 0
-        Me.TabExpDet.Text = "Expenditure Details"
-        Me.TabExpDet.UseVisualStyleBackColor = True
+        Me.TabDetails.AutoScroll = True
+        Me.TabDetails.Controls.Add(Me.LstUnpaidBillsPrevMonth)
+        Me.TabDetails.Controls.Add(Me.Label29)
+        Me.TabDetails.Controls.Add(Me.LstUnpaidBillsCurrentMonth)
+        Me.TabDetails.Controls.Add(Me.Label28)
+        Me.TabDetails.Controls.Add(Me.DataGridExpDet)
+        Me.TabDetails.Controls.Add(Me.Panel5)
+        Me.TabDetails.Location = New System.Drawing.Point(4, 22)
+        Me.TabDetails.Name = "TabDetails"
+        Me.TabDetails.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabDetails.Size = New System.Drawing.Size(1031, 426)
+        Me.TabDetails.TabIndex = 0
+        Me.TabDetails.Text = "Expenditure Details"
+        Me.TabDetails.UseVisualStyleBackColor = True
         '
         'LstUnpaidBillsPrevMonth
         '
@@ -816,33 +829,33 @@ Partial Class frmMain
         Me.btnSave.Text = "Save"
         Me.btnSave.UseVisualStyleBackColor = True
         '
-        'TabControl1
+        'ImpensaTabControl
         '
-        Me.TabControl1.Controls.Add(Me.TabExpDet)
-        Me.TabControl1.Controls.Add(Me.TabExpSumm)
-        Me.TabControl1.Controls.Add(Me.TabAnalysis)
-        Me.TabControl1.Controls.Add(Me.TabThreshold)
-        Me.TabControl1.Controls.Add(Me.TabCatList)
-        Me.TabControl1.Controls.Add(Me.TabFunctions)
-        Me.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.TabControl1.Location = New System.Drawing.Point(0, 0)
-        Me.TabControl1.Margin = New System.Windows.Forms.Padding(0)
-        Me.TabControl1.Name = "TabControl1"
-        Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(1039, 452)
-        Me.TabControl1.TabIndex = 4
+        Me.ImpensaTabControl.Controls.Add(Me.TabDetails)
+        Me.ImpensaTabControl.Controls.Add(Me.TabSummary)
+        Me.ImpensaTabControl.Controls.Add(Me.TabCharts)
+        Me.ImpensaTabControl.Controls.Add(Me.TabBudget)
+        Me.ImpensaTabControl.Controls.Add(Me.TabCategories)
+        Me.ImpensaTabControl.Controls.Add(Me.TabSettings)
+        Me.ImpensaTabControl.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.ImpensaTabControl.Location = New System.Drawing.Point(0, 0)
+        Me.ImpensaTabControl.Margin = New System.Windows.Forms.Padding(0)
+        Me.ImpensaTabControl.Name = "ImpensaTabControl"
+        Me.ImpensaTabControl.SelectedIndex = 0
+        Me.ImpensaTabControl.Size = New System.Drawing.Size(1039, 452)
+        Me.ImpensaTabControl.TabIndex = 4
         '
-        'TabThreshold
+        'TabBudget
         '
-        Me.TabThreshold.Controls.Add(Me.Panel7)
-        Me.TabThreshold.Controls.Add(Me.Panel6)
-        Me.TabThreshold.Location = New System.Drawing.Point(4, 22)
-        Me.TabThreshold.Name = "TabThreshold"
-        Me.TabThreshold.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabThreshold.Size = New System.Drawing.Size(1031, 426)
-        Me.TabThreshold.TabIndex = 7
-        Me.TabThreshold.Text = "Monthly Budget"
-        Me.TabThreshold.UseVisualStyleBackColor = True
+        Me.TabBudget.Controls.Add(Me.Panel7)
+        Me.TabBudget.Controls.Add(Me.Panel6)
+        Me.TabBudget.Location = New System.Drawing.Point(4, 22)
+        Me.TabBudget.Name = "TabBudget"
+        Me.TabBudget.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabBudget.Size = New System.Drawing.Size(1031, 426)
+        Me.TabBudget.TabIndex = 7
+        Me.TabBudget.Text = "Monthly Budget"
+        Me.TabBudget.UseVisualStyleBackColor = True
         '
         'Panel7
         '
@@ -892,22 +905,170 @@ Partial Class frmMain
         Me.Label17.TabIndex = 0
         Me.Label17.Text = "Month"
         '
-        'TabFunctions
+        'TabSettings
         '
-        Me.TabFunctions.Controls.Add(Me.GroupBox1)
-        Me.TabFunctions.Controls.Add(Me.pbCredit)
-        Me.TabFunctions.Controls.Add(Me.GroupBox6)
-        Me.TabFunctions.Controls.Add(Me.GroupBox5)
-        Me.TabFunctions.Controls.Add(Me.GroupBox4)
-        Me.TabFunctions.Controls.Add(Me.GroupBox3)
-        Me.TabFunctions.Controls.Add(Me.GroupBox2)
-        Me.TabFunctions.Location = New System.Drawing.Point(4, 22)
-        Me.TabFunctions.Name = "TabFunctions"
-        Me.TabFunctions.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabFunctions.Size = New System.Drawing.Size(1031, 426)
-        Me.TabFunctions.TabIndex = 6
-        Me.TabFunctions.Text = "Settings"
-        Me.TabFunctions.UseVisualStyleBackColor = True
+        Me.TabSettings.Controls.Add(Me.gbEmailConfig)
+        Me.TabSettings.Controls.Add(Me.Label30)
+        Me.TabSettings.Controls.Add(Me.GroupBox1)
+        Me.TabSettings.Controls.Add(Me.GroupBox6)
+        Me.TabSettings.Controls.Add(Me.GroupBox5)
+        Me.TabSettings.Controls.Add(Me.GroupBox4)
+        Me.TabSettings.Controls.Add(Me.GroupBox3)
+        Me.TabSettings.Controls.Add(Me.GroupBox2)
+        Me.TabSettings.Location = New System.Drawing.Point(4, 22)
+        Me.TabSettings.Name = "TabSettings"
+        Me.TabSettings.Padding = New System.Windows.Forms.Padding(3)
+        Me.TabSettings.Size = New System.Drawing.Size(1031, 426)
+        Me.TabSettings.TabIndex = 6
+        Me.TabSettings.Text = "Settings"
+        Me.TabSettings.UseVisualStyleBackColor = True
+        '
+        'gbEmailConfig
+        '
+        Me.gbEmailConfig.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.gbEmailConfig.Controls.Add(Me.grpEmailSettings)
+        Me.gbEmailConfig.Controls.Add(Me.chkSendEmails)
+        Me.gbEmailConfig.Location = New System.Drawing.Point(343, 239)
+        Me.gbEmailConfig.Name = "gbEmailConfig"
+        Me.gbEmailConfig.Size = New System.Drawing.Size(423, 165)
+        Me.gbEmailConfig.TabIndex = 9
+        Me.gbEmailConfig.TabStop = False
+        '
+        'grpEmailSettings
+        '
+        Me.grpEmailSettings.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.grpEmailSettings.Controls.Add(Me.txtEmailPassword)
+        Me.grpEmailSettings.Controls.Add(Me.txtEmailTo)
+        Me.grpEmailSettings.Controls.Add(Me.txtSmtpPort)
+        Me.grpEmailSettings.Controls.Add(Me.txtSmtpHost)
+        Me.grpEmailSettings.Controls.Add(Me.txtEmailFrom)
+        Me.grpEmailSettings.Controls.Add(Me.Label34)
+        Me.grpEmailSettings.Controls.Add(Me.Label33)
+        Me.grpEmailSettings.Controls.Add(Me.Label32)
+        Me.grpEmailSettings.Controls.Add(Me.Label31)
+        Me.grpEmailSettings.Controls.Add(Me.Label35)
+        Me.grpEmailSettings.Location = New System.Drawing.Point(13, 24)
+        Me.grpEmailSettings.Margin = New System.Windows.Forms.Padding(0)
+        Me.grpEmailSettings.Name = "grpEmailSettings"
+        Me.grpEmailSettings.Padding = New System.Windows.Forms.Padding(0)
+        Me.grpEmailSettings.Size = New System.Drawing.Size(404, 127)
+        Me.grpEmailSettings.TabIndex = 1
+        Me.grpEmailSettings.TabStop = False
+        '
+        'txtEmailPassword
+        '
+        Me.txtEmailPassword.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtEmailPassword.Location = New System.Drawing.Point(83, 33)
+        Me.txtEmailPassword.Name = "txtEmailPassword"
+        Me.txtEmailPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
+        Me.txtEmailPassword.Size = New System.Drawing.Size(318, 20)
+        Me.txtEmailPassword.TabIndex = 9
+        '
+        'txtEmailTo
+        '
+        Me.txtEmailTo.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtEmailTo.Location = New System.Drawing.Point(83, 102)
+        Me.txtEmailTo.Name = "txtEmailTo"
+        Me.txtEmailTo.Size = New System.Drawing.Size(318, 20)
+        Me.txtEmailTo.TabIndex = 8
+        '
+        'txtSmtpPort
+        '
+        Me.txtSmtpPort.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtSmtpPort.Location = New System.Drawing.Point(83, 79)
+        Me.txtSmtpPort.Name = "txtSmtpPort"
+        Me.txtSmtpPort.Size = New System.Drawing.Size(318, 20)
+        Me.txtSmtpPort.TabIndex = 7
+        '
+        'txtSmtpHost
+        '
+        Me.txtSmtpHost.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtSmtpHost.Location = New System.Drawing.Point(83, 56)
+        Me.txtSmtpHost.Name = "txtSmtpHost"
+        Me.txtSmtpHost.Size = New System.Drawing.Size(318, 20)
+        Me.txtSmtpHost.TabIndex = 6
+        '
+        'txtEmailFrom
+        '
+        Me.txtEmailFrom.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtEmailFrom.Location = New System.Drawing.Point(83, 10)
+        Me.txtEmailFrom.Name = "txtEmailFrom"
+        Me.txtEmailFrom.Size = New System.Drawing.Size(318, 20)
+        Me.txtEmailFrom.TabIndex = 5
+        '
+        'Label34
+        '
+        Me.Label34.AutoSize = True
+        Me.Label34.Location = New System.Drawing.Point(15, 83)
+        Me.Label34.Name = "Label34"
+        Me.Label34.Size = New System.Drawing.Size(62, 13)
+        Me.Label34.TabIndex = 4
+        Me.Label34.Text = "SMTP Port:"
+        '
+        'Label33
+        '
+        Me.Label33.AutoSize = True
+        Me.Label33.Location = New System.Drawing.Point(12, 60)
+        Me.Label33.Name = "Label33"
+        Me.Label33.Size = New System.Drawing.Size(65, 13)
+        Me.Label33.TabIndex = 3
+        Me.Label33.Text = "SMTP Host:"
+        '
+        'Label32
+        '
+        Me.Label32.AutoSize = True
+        Me.Label32.Location = New System.Drawing.Point(3, 106)
+        Me.Label32.Name = "Label32"
+        Me.Label32.Size = New System.Drawing.Size(74, 13)
+        Me.Label32.TabIndex = 2
+        Me.Label32.Text = "Recipient List:"
+        '
+        'Label31
+        '
+        Me.Label31.AutoSize = True
+        Me.Label31.Location = New System.Drawing.Point(21, 37)
+        Me.Label31.Name = "Label31"
+        Me.Label31.Size = New System.Drawing.Size(56, 13)
+        Me.Label31.TabIndex = 1
+        Me.Label31.Text = "Password:"
+        '
+        'Label35
+        '
+        Me.Label35.AutoSize = True
+        Me.Label35.Location = New System.Drawing.Point(19, 14)
+        Me.Label35.Name = "Label35"
+        Me.Label35.Size = New System.Drawing.Size(58, 13)
+        Me.Label35.TabIndex = 0
+        Me.Label35.Text = "Username:"
+        '
+        'chkSendEmails
+        '
+        Me.chkSendEmails.AutoSize = True
+        Me.chkSendEmails.Location = New System.Drawing.Point(9, 10)
+        Me.chkSendEmails.Name = "chkSendEmails"
+        Me.chkSendEmails.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.chkSendEmails.Size = New System.Drawing.Size(140, 17)
+        Me.chkSendEmails.TabIndex = 0
+        Me.chkSendEmails.Text = "Send Notification Emails"
+        Me.chkSendEmails.UseVisualStyleBackColor = True
+        '
+        'Label30
+        '
+        Me.Label30.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label30.AutoSize = True
+        Me.Label30.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label30.Location = New System.Drawing.Point(858, 406)
+        Me.Label30.Name = "Label30"
+        Me.Label30.Size = New System.Drawing.Size(166, 13)
+        Me.Label30.TabIndex = 7
+        Me.Label30.Text = "Developed By: Sachin Wadi"
         '
         'GroupBox1
         '
@@ -917,7 +1078,7 @@ Partial Class frmMain
         Me.GroupBox1.Controls.Add(Me.chkShowReminder)
         Me.GroupBox1.Location = New System.Drawing.Point(343, 85)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(423, 145)
+        Me.GroupBox1.Size = New System.Drawing.Size(423, 150)
         Me.GroupBox1.TabIndex = 6
         Me.GroupBox1.TabStop = False
         '
@@ -929,7 +1090,7 @@ Partial Class frmMain
         Me.txtReminder.MaxLength = 1000
         Me.txtReminder.Multiline = True
         Me.txtReminder.Name = "txtReminder"
-        Me.txtReminder.Size = New System.Drawing.Size(406, 100)
+        Me.txtReminder.Size = New System.Drawing.Size(406, 111)
         Me.txtReminder.TabIndex = 1
         '
         'chkShowReminder
@@ -942,18 +1103,6 @@ Partial Class frmMain
         Me.chkShowReminder.TabIndex = 0
         Me.chkShowReminder.Text = "Show Alert"
         Me.chkShowReminder.UseVisualStyleBackColor = True
-        '
-        'pbCredit
-        '
-        Me.pbCredit.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pbCredit.Image = CType(resources.GetObject("pbCredit.Image"), System.Drawing.Image)
-        Me.pbCredit.Location = New System.Drawing.Point(320, 371)
-        Me.pbCredit.Name = "pbCredit"
-        Me.pbCredit.Size = New System.Drawing.Size(329, 50)
-        Me.pbCredit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
-        Me.pbCredit.TabIndex = 5
-        Me.pbCredit.TabStop = False
         '
         'GroupBox6
         '
@@ -1131,7 +1280,7 @@ Partial Class frmMain
         '
         'txtHighlightSummYr
         '
-        Me.txtHighlightSummYr.Location = New System.Drawing.Point(100, 99)
+        Me.txtHighlightSummYr.Location = New System.Drawing.Point(102, 99)
         Me.txtHighlightSummYr.MaxLength = 6
         Me.txtHighlightSummYr.Name = "txtHighlightSummYr"
         Me.txtHighlightSummYr.Size = New System.Drawing.Size(100, 20)
@@ -1139,7 +1288,7 @@ Partial Class frmMain
         '
         'txtHighlightSummMth
         '
-        Me.txtHighlightSummMth.Location = New System.Drawing.Point(100, 69)
+        Me.txtHighlightSummMth.Location = New System.Drawing.Point(102, 69)
         Me.txtHighlightSummMth.MaxLength = 6
         Me.txtHighlightSummMth.Name = "txtHighlightSummMth"
         Me.txtHighlightSummMth.Size = New System.Drawing.Size(100, 20)
@@ -1151,9 +1300,9 @@ Partial Class frmMain
         Me.Label21.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label21.Location = New System.Drawing.Point(60, 46)
         Me.Label21.Name = "Label21"
-        Me.Label21.Size = New System.Drawing.Size(39, 13)
+        Me.Label21.Size = New System.Drawing.Size(42, 13)
         Me.Label21.TabIndex = 5
-        Me.Label21.Text = "Details"
+        Me.Label21.Text = "Details:"
         '
         'Label16
         '
@@ -1161,9 +1310,9 @@ Partial Class frmMain
         Me.Label16.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label16.Location = New System.Drawing.Point(3, 73)
         Me.Label16.Name = "Label16"
-        Me.Label16.Size = New System.Drawing.Size(96, 13)
+        Me.Label16.Size = New System.Drawing.Size(99, 13)
         Me.Label16.TabIndex = 4
-        Me.Label16.Text = "Summary (Monthly)"
+        Me.Label16.Text = "Summary (Monthly):"
         '
         'Label7
         '
@@ -1171,9 +1320,9 @@ Partial Class frmMain
         Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label7.Location = New System.Drawing.Point(11, 103)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(88, 13)
+        Me.Label7.Size = New System.Drawing.Size(91, 13)
         Me.Label7.TabIndex = 3
-        Me.Label7.Text = "Summary (Yearly)"
+        Me.Label7.Text = "Summary (Yearly):"
         '
         'Label11
         '
@@ -1187,7 +1336,7 @@ Partial Class frmMain
         '
         'txtHighlightDet
         '
-        Me.txtHighlightDet.Location = New System.Drawing.Point(100, 42)
+        Me.txtHighlightDet.Location = New System.Drawing.Point(102, 42)
         Me.txtHighlightDet.MaxLength = 6
         Me.txtHighlightDet.Name = "txtHighlightDet"
         Me.txtHighlightDet.Size = New System.Drawing.Size(100, 20)
@@ -1199,7 +1348,7 @@ Partial Class frmMain
                     Or System.Windows.Forms.AnchorStyles.Left) _
                     Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.Panel3.Controls.Add(Me.TabControl1)
+        Me.Panel3.Controls.Add(Me.ImpensaTabControl)
         Me.Panel3.Location = New System.Drawing.Point(209, 0)
         Me.Panel3.Name = "Panel3"
         Me.Panel3.Size = New System.Drawing.Size(1041, 454)
@@ -1548,33 +1697,37 @@ Partial Class frmMain
         Me.Panel1.ResumeLayout(False)
         Me.Panel1.PerformLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabCatList.ResumeLayout(False)
+        Me.TabCategories.ResumeLayout(False)
         CType(Me.DataGridCatList, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabAnalysis.ResumeLayout(False)
+        Me.TabCharts.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         CType(Me.Chart_Analysis, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel2.ResumeLayout(False)
         Me.Panel2.PerformLayout()
-        Me.TabExpSumm.ResumeLayout(False)
+        Me.TabSummary.ResumeLayout(False)
         Me.Panel8.ResumeLayout(False)
         Me.Panel8.PerformLayout()
         CType(Me.DataGridExpSumm, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabExpDet.ResumeLayout(False)
-        Me.TabExpDet.PerformLayout()
+        Me.TabDetails.ResumeLayout(False)
+        Me.TabDetails.PerformLayout()
         CType(Me.DataGridExpDet, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel5.ResumeLayout(False)
         Me.Panel5.PerformLayout()
         CType(Me.PictureBox2, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.TabControl1.ResumeLayout(False)
-        Me.TabThreshold.ResumeLayout(False)
+        Me.ImpensaTabControl.ResumeLayout(False)
+        Me.TabBudget.ResumeLayout(False)
         Me.Panel7.ResumeLayout(False)
         CType(Me.DataGridThrLimits, System.ComponentModel.ISupportInitialize).EndInit()
         Me.Panel6.ResumeLayout(False)
         Me.Panel6.PerformLayout()
-        Me.TabFunctions.ResumeLayout(False)
+        Me.TabSettings.ResumeLayout(False)
+        Me.TabSettings.PerformLayout()
+        Me.gbEmailConfig.ResumeLayout(False)
+        Me.gbEmailConfig.PerformLayout()
+        Me.grpEmailSettings.ResumeLayout(False)
+        Me.grpEmailSettings.PerformLayout()
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
-        CType(Me.pbCredit, System.ComponentModel.ISupportInitialize).EndInit()
         Me.GroupBox6.ResumeLayout(False)
         Me.GroupBox6.PerformLayout()
         Me.GroupBox5.ResumeLayout(False)
@@ -1607,13 +1760,13 @@ Partial Class frmMain
     Friend WithEvents Label4 As System.Windows.Forms.Label
     Friend WithEvents btnSubmit As System.Windows.Forms.Button
     'Friend WithEvents DataGridView1 As System.Windows.Forms.DataGridView
-    Friend WithEvents TabCatList As System.Windows.Forms.TabPage
+    Friend WithEvents TabCategories As System.Windows.Forms.TabPage
     Friend WithEvents DataGridCatList As System.Windows.Forms.DataGridView
-    Friend WithEvents TabAnalysis As System.Windows.Forms.TabPage
-    Friend WithEvents TabExpSumm As System.Windows.Forms.TabPage
-    Friend WithEvents TabExpDet As System.Windows.Forms.TabPage
+    Friend WithEvents TabCharts As System.Windows.Forms.TabPage
+    Friend WithEvents TabSummary As System.Windows.Forms.TabPage
+    Friend WithEvents TabDetails As System.Windows.Forms.TabPage
     Friend WithEvents btnSave As System.Windows.Forms.Button
-    Friend WithEvents TabControl1 As System.Windows.Forms.TabControl
+    Friend WithEvents ImpensaTabControl As System.Windows.Forms.TabControl
     Friend WithEvents DataGridExpSumm As System.Windows.Forms.DataGridView
     Friend WithEvents Chart_Analysis As System.Windows.Forms.DataVisualization.Charting.Chart
     Friend WithEvents Panel2 As System.Windows.Forms.Panel
@@ -1630,7 +1783,7 @@ Partial Class frmMain
     Friend WithEvents Label9 As System.Windows.Forms.Label
     Friend WithEvents txtSearch As System.Windows.Forms.TextBox
     Friend WithEvents Label10 As System.Windows.Forms.Label
-    Friend WithEvents TabFunctions As System.Windows.Forms.TabPage
+    Friend WithEvents TabSettings As System.Windows.Forms.TabPage
     Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
     Friend WithEvents Label11 As System.Windows.Forms.Label
     Friend WithEvents txtHighlightDet As System.Windows.Forms.TextBox
@@ -1654,8 +1807,7 @@ Partial Class frmMain
     Friend WithEvents Label15 As System.Windows.Forms.Label
     Friend WithEvents cmbSort As System.Windows.Forms.ComboBox
     Friend WithEvents chkSort As System.Windows.Forms.CheckBox
-    Friend WithEvents pbCredit As System.Windows.Forms.PictureBox
-    Friend WithEvents TabThreshold As System.Windows.Forms.TabPage
+    Friend WithEvents TabBudget As System.Windows.Forms.TabPage
     Friend WithEvents Panel6 As System.Windows.Forms.Panel
     Friend WithEvents cmbThrMonth As System.Windows.Forms.ComboBox
     Friend WithEvents Label17 As System.Windows.Forms.Label
@@ -1728,5 +1880,19 @@ Partial Class frmMain
     Friend WithEvents LstUnpaidBillsPrevMonth As System.Windows.Forms.ListBox
     Friend WithEvents Label29 As System.Windows.Forms.Label
     Friend WithEvents btnExport As System.Windows.Forms.Button
+    Friend WithEvents Label30 As System.Windows.Forms.Label
+    Friend WithEvents gbEmailConfig As System.Windows.Forms.GroupBox
+    Friend WithEvents grpEmailSettings As System.Windows.Forms.GroupBox
+    Friend WithEvents txtEmailPassword As System.Windows.Forms.TextBox
+    Friend WithEvents txtEmailTo As System.Windows.Forms.TextBox
+    Friend WithEvents txtSmtpPort As System.Windows.Forms.TextBox
+    Friend WithEvents txtSmtpHost As System.Windows.Forms.TextBox
+    Friend WithEvents txtEmailFrom As System.Windows.Forms.TextBox
+    Friend WithEvents Label34 As System.Windows.Forms.Label
+    Friend WithEvents Label33 As System.Windows.Forms.Label
+    Friend WithEvents Label32 As System.Windows.Forms.Label
+    Friend WithEvents Label31 As System.Windows.Forms.Label
+    Friend WithEvents Label35 As System.Windows.Forms.Label
+    Friend WithEvents chkSendEmails As System.Windows.Forms.CheckBox
 
 End Class

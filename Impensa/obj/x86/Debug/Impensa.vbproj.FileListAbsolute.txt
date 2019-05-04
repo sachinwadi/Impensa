@@ -26,10 +26,8 @@ F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Debug\Impensa.xml
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Debug\itextsharp.dll
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Debug\Microsoft.Office.Interop.Excel.dll
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Debug\System.Windows.Forms.DataVisualization.dll
-F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Debug\office.dll
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Debug\itextsharp.xml
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\bin\x86\Debug\System.Windows.Forms.DataVisualization.xml
-F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.vbprojResolveAssemblyReference.cache
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.frmChart.resources
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.frmLogin.resources
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.frmMain.resources

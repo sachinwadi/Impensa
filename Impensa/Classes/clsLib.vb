@@ -15,13 +15,14 @@ Imports System.Runtime.InteropServices
 
 Public Class clsLib
 #Region "Enums"
-    Public Enum En_SummaryType
+    Public Enum SummaryTypes
         Monthly = 0
         Yearly = 1
-        RunningTotals = 2
-        Variance = 3
+        AllInOne = 2
+        RunningTotals = 3
+        Variance = 4
     End Enum
-#End Region   
+#End Region
 
 #Region "Variables"
     Private Shared _cmbListing As Object
@@ -39,7 +40,7 @@ Public Class clsLib
     Private Shared _SummaryType As Integer
     Private Shared _ImpensaFont As Font
     Private Shared _ChkLBYearsItemsList As String
-    Private Shared _ExportPDFProcessID As Int64
+    'Private Shared _ExportPDFProcessID As Int64
     Private Shared _ChartDataSetAmtTotal As List(Of String)
     Private Shared _CategoryColIndex As Int32
     Private Shared _CategoriesList As Dictionary(Of Int32, String)
@@ -48,9 +49,16 @@ Public Class clsLib
     Private Shared _ImportSkippedCnt As Int32
     Private Shared _TotalImportCnt As Int32
     Private Shared _ImportSucceessAndFailCnt As Int32
-    Private Shared _AssemblyLocation As String
-    Private Shared _LogTimeStamp As String
-    Private Shared _ImportExceptionOccurred As Boolean
+    Private Shared _SaveValidationFailed As Boolean
+    'Private Shared _AssemblyLocation As String
+    'Private Shared _LogTimeStamp As String
+    'Private Shared _ImportExceptionOccurred As Boolean
+    'Private Shared _SendEmails As Boolean
+    'Private Shared _FromEmail As String
+    'Private Shared _FromPassword As String
+    'Private Shared _SmtpHost As String
+    'Private Shared _SmtpPort As String
+    'Private Shared _ToEmails As String
 
 #End Region
 
@@ -413,11 +421,11 @@ Public Class clsLib
         End Set
     End Property
 
-    Public Shared Property SummaryType() As En_SummaryType
+    Public Shared Property SummaryType() As SummaryTypes
         Get
             Return _SummaryType
         End Get
-        Set(ByVal value As En_SummaryType)
+        Set(ByVal value As SummaryTypes)
             _SummaryType = value
         End Set
     End Property
@@ -430,6 +438,77 @@ Public Class clsLib
             My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "ImportExceptionOccurred", value)
         End Set
     End Property
+
+    Public Shared Property SendEmails() As Boolean
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "SendEmails", Nothing)
+        End Get
+        Set(ByVal value As Boolean)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "SendEmails", value)
+        End Set
+    End Property
+
+    Public Shared Property FromEmail() As String
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "From Email Id", Nothing)
+        End Get
+        Set(ByVal value As String)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "From Email Id", value)
+        End Set
+    End Property
+
+    Public Shared Property FromPassword() As String
+        Get
+            Dim strPassword = My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "From Email Password", Nothing)
+
+            If Not (strPassword Is Nothing) Then
+                Return strPassword.ToString().Decrypt()
+            Else
+                Return String.Empty
+            End If
+
+        End Get
+        Set(ByVal value As String)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "From Email Password", value.Encrypt)
+        End Set
+    End Property
+
+    Public Shared Property SmtpHost() As String
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "SMTP Host", Nothing)
+        End Get
+        Set(ByVal value As String)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "SMTP Host", value)
+        End Set
+    End Property
+
+    Public Shared Property SmtpPort() As String
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "SMTP Port", Nothing)
+        End Get
+        Set(ByVal value As String)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "SMTP Port", value)
+        End Set
+    End Property
+
+    Public Shared Property ToEmails() As String
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "To Emails", Nothing)
+        End Get
+        Set(ByVal value As String)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "To Emails", value)
+        End Set
+    End Property
+
+    Public Shared Property SaveValidationFailed() As Boolean
+        Get
+            Return _SaveValidationFailed
+        End Get
+        Set(ByVal value As Boolean)
+            _SaveValidationFailed = value
+        End Set
+    End Property
+
 #End Region
 
 #Region "Methods"
