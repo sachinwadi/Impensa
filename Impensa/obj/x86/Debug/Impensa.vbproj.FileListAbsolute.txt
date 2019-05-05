@@ -34,3 +34,4 @@ F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.frmMain.r
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.Resources.resources
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.Splash.resources
 F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.vbproj.GenerateResource.Cache
+F:\Sachin\Dropbox\###Programming\Impensa\Impensa\obj\x86\Debug\Impensa.vbprojResolveAssemblyReference.cache

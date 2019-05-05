@@ -33,7 +33,7 @@ Public Class EmailGenerator
         _strBuilder.Append("<table>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<td>")
-        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse;'>")
+        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse; font-family: Arial; font-size:14;'>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='left'>Date</th>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='left'>Category</th>")
@@ -69,7 +69,7 @@ Public Class EmailGenerator
 
     Private Sub BuildSummaryHtmlTable()
 
-        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse;'>")
+        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse;font-family: Arial;font-size:14;'>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='left'>Category</th>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='right'>MTD</th>")
@@ -91,14 +91,18 @@ Public Class EmailGenerator
             End If
 
             Dim fontWeight As String = "normal"
+            Dim fontSize As String = "14"
 
-            If (dr("Category") = "TOTAL") Then fontWeight = "bold"
+            If (dr("Category") = "TOTAL") Then
+                fontWeight = "bold"
+                fontSize = "18"
+            End If
 
             _strBuilder.Append("<tr>")
-            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px; font-weight: {2}' align='left'>{0}</td>", dr("Category"), color, fontWeight)
-            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px; font-weight: {2}' align='right'>{0}</td>", Format(dr("MTD"), "#,##0.00"), color, fontWeight)
-            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px; font-weight: {2}' align='right'>{0}</td>", Format(dr("YTD"), "#,##0.00"), color, fontWeight)
-            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px; font-weight: {2}' align='right'>{0}</td>", Format(dr("ITD"), "#,##0.00"), color, fontWeight)
+            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px; font-weight: {2}; font-size: {3}' align='left'>{0}</td>", dr("Category"), color, fontWeight, fontSize)
+            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px; font-weight: {2}; font-size: {3}' align='right'>{0}</td>", Format(dr("MTD"), "#,##0.00"), color, fontWeight, fontSize)
+            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px; font-weight: {2}; font-size: {3}' align='right'>{0}</td>", Format(dr("YTD"), "#,##0.00"), color, fontWeight, fontSize)
+            _strBuilder.AppendFormat("<td style='color: {1}; border: 1px solid black; padding: 3px; font-weight: {2}; font-size: {3}' align='right'>{0}</td>", Format(dr("ITD"), "#,##0.00"), color, fontWeight, fontSize)
             _strBuilder.Append("</tr>")
         Next
 
@@ -110,12 +114,12 @@ Public Class EmailGenerator
         _strBuilder.Append("<td>")
         _strBuilder.Append("<table style='margin-top: 5px;'>")
         _strBuilder.Append("<tr>")
-        _strBuilder.Append("<td>Added</td>")
         _strBuilder.Append("<td style='border: 1px solid black; padding: px; width: 15px; background-color:blue'></td>")
-        _strBuilder.Append("<td>Updated</td>")
+        _strBuilder.Append("<td>Added</td>")
         _strBuilder.Append("<td style='border: 1px solid black; padding: 1px; width: 15px; background-color:orange'></td>")
-        _strBuilder.Append("<td>Deleted</td>")
+        _strBuilder.Append("<td>Updated</td>")
         _strBuilder.Append("<td style='border: 1px solid black; padding: 1px; width: 15px; background-color:red'></td>")
+        _strBuilder.Append("<td>Deleted</td>")
         _strBuilder.Append("</tr>")
         _strBuilder.Append("<table>")
         _strBuilder.Append("</td>")
@@ -125,11 +129,11 @@ Public Class EmailGenerator
 
     Private Sub BuildEmailBody()
         _strBuilder.Append("<p>Hello,<br /><br />This is a notification e-mail from <strong>Impensa Expense Manager</strong></p>")
-        _strBuilder.Append("<h4>Here are the Changes:<h4>")
+        _strBuilder.Append("<h4>Here are the Changes:</h4>")
         Call BuildDetailHtmlTable()
         Call BuildLegendHtmlTable()
         If (IncludeExpenseSummary) Then
-            _strBuilder.Append("<h4>Summary:<h4>")
+            _strBuilder.Append("<h4>Summary:</h4>")
             Call BuildSummaryHtmlTable()
         End If
         _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
