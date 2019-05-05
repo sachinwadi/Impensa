@@ -16,7 +16,8 @@ Public Class frmLogin
                 My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "ConnStr", TestConnStr)
 
                 ImpensaAlert("Database connection established.", MsgBoxStyle.Information)
-
+                DatabaseName = txtDatabase.Text
+                frmMain.Label36.Text = "Database: " + txtDatabase.Text
                 IsLoginDetailsChanged = True
 
                 If frmMain.ImpensaTabControl.SelectedIndex <> 0 Then frmMain.ImpensaTabControl.SelectedIndex = 0

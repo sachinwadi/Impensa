@@ -313,6 +313,8 @@ Public Class frmMain
                 End Using
 
                 If SendEmails Then
+                    Label15.Text = "Sending email notification..."
+                    Application.DoEvents()
                     Call SendEmail(dtEmail)
                 End If
             End If
@@ -327,63 +329,11 @@ Public Class frmMain
             ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-        End Try
-    End Sub '1
-
-    Private Sub SendEmail(ByVal dtGrid As DataTable)
-        Try
-            Dim emailItem As New EmailGenerator()
-            Dim dcAction As New DataColumn("Action", GetType(String))
-            dtGrid.Columns.Add(dcAction)
-
-            Label15.Text = "Sending email notification..."
-            Application.DoEvents()
-
-            For Each dr As DataRow In dtGrid.Rows
-                If dr("hKey") Is DBNull.Value Then
-                    dr("Action") = "Add"
-                ElseIf Not dr("hKey") Is DBNull.Value Then
-                    If Not (IsDBNull(dr.Item("bDelete"))) Then
-                        If (Convert.ToBoolean(dr.Item("bDelete"))) Then
-                            dr("Action") = "Delete"
-                        Else
-                            dr("Action") = "Update"
-                        End If
-                    Else
-                        dr("Action") = "Update"
-                    End If
-                End If
-            Next
-
-            emailItem.Changes = dtGrid
-            If (IncludeExpenseSummary) Then emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail()
-            emailItem.SendEmail()
-        Catch ex As Exception
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Panel5.SendToBack()
             Panel5.Visible = False
         End Try
-    End Sub
-
-    Private Function GetAllInOneSummaryDataTableForEmail() As DataTable
-        Dim strSQL As String = ""
-        Dim dtGridSummary As New DataTable
-
-        Try
-            Using Connection = GetConnection()
-                strSQL = "Execute sp_GetExpenditureSummary_AllInOne " & " '" & dtpRecdKeeping.Value.Date & "', '', ''"
-                da = New SqlDataAdapter(strSQL, Connection)
-                da.Fill(dtGridSummary)
-            End Using
-
-        Catch ex As Exception
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-        End Try
-
-        Return dtGridSummary
-
-    End Function
+    End Sub '1
 
     Private Sub PopulateSearchResults()
         Dim strSQL As String = ""
@@ -1588,7 +1538,7 @@ Public Class frmMain
                 HighlightSummYearly_Orig = HighlightSummYearly
             End If
 
-            If RecordKeepingStartDate Is Nothing Then
+            If RecordKeepingStartDate = Nothing Then
                 RecordKeepingStartDate = CDate("01/01/2012")
                 dtpRecdKeeping.Value = Format(CDate("01/01/2012"), "dd/MM/yyyy")
             Else
@@ -1620,6 +1570,7 @@ Public Class frmMain
 
             chkStartImport.Checked = EnableImport
             chkIncludeExpSummary.Checked = IncludeExpenseSummary
+            Label36.Text = "Database: " + DatabaseName
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try

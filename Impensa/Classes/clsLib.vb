@@ -268,12 +268,12 @@ Public Class clsLib
         End Set
     End Property
 
-    Public Shared Property RecordKeepingStartDate() As String
+    Public Shared Property RecordKeepingStartDate() As Date
         Get
             Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "Record Keeping Start Date", Nothing)
         End Get
-        Set(ByVal value As String)
-            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "Record Keeping Start Date", Format(CDate(value), "dd/MM/yyyy"))
+        Set(ByVal value As Date)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "Record Keeping Start Date", Format(value, "dd/MM/yyyy"))
         End Set
     End Property
 
@@ -518,6 +518,15 @@ Public Class clsLib
         End Set
     End Property
 
+    Public Shared Property DatabaseName() As String
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "Database Name", Nothing)
+        End Get
+        Set(ByVal value As String)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "Database Name", value)
+        End Set
+    End Property
+
 #End Region
 
 #Region "Methods"
@@ -603,6 +612,10 @@ Public Class clsLib
                 ImportSucceessAndFailCnt = ImportSucceessCnt + ImportFailedCnt
 
                 dt = dv.ToTable
+                dt.Columns.Add("hKey", GetType(Int64))
+                dt.Columns("Category").ColumnName = "CategoryName"
+
+                If (SendEmails) Then Call SendEmail(dt)
 
                 Call SaveNotes(dt) 'Add notes of successful records to AutoComplete Directory
 
@@ -687,6 +700,56 @@ Public Class clsLib
         End Try
     End Sub
 
+    Public Shared Sub SendEmail(ByVal dtGrid As DataTable)
+        Try
+            Dim emailItem As New EmailGenerator()
+            Dim dcAction As New DataColumn("Action", GetType(String))
+            dtGrid.Columns.Add(dcAction)
+
+            For Each dr As DataRow In dtGrid.Rows
+                If dr("hKey") Is DBNull.Value Then
+                    dr("Action") = "Add"
+                ElseIf Not dr("hKey") Is DBNull.Value Then
+                    If Not (IsDBNull(dr.Item("bDelete"))) Then
+                        If (Convert.ToBoolean(dr.Item("bDelete"))) Then
+                            dr("Action") = "Delete"
+                        Else
+                            dr("Action") = "Update"
+                        End If
+                    Else
+                        dr("Action") = "Update"
+                    End If
+                End If
+            Next
+
+            emailItem.Changes = dtGrid
+            If (IncludeExpenseSummary) Then emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail()
+            emailItem.SendEmail()
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        End Try
+    End Sub
+
+    Public Shared Function GetAllInOneSummaryDataTableForEmail() As DataTable
+        Dim strSQL As String = ""
+        Dim dtGridSummary As New DataTable
+        Dim da As SqlDataAdapter
+
+        Try
+            Using Connection = GetConnection()
+                strSQL = "Execute sp_GetExpenditureSummary_AllInOne " & " '" & RecordKeepingStartDate & "', '', ''"
+                da = New SqlDataAdapter(strSQL, Connection)
+                da.Fill(dtGridSummary)
+            End Using
+
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        End Try
+
+        Return dtGridSummary
+
+    End Function
+
     Public Shared Sub SaveNotes(ByVal dtGrid As DataTable)
         Dim StrCommand As New StringBuilder
         Dim Cmd As New SqlCommand
@@ -736,8 +799,6 @@ Public Class clsLib
     End Function
 
 #End Region
-
-    
 
 End Class
 

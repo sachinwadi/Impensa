@@ -1040,7 +1040,14 @@ BEGIN
 
 	UPDATE Temp_ImportData SET iDelete = 1
 
-	SELECT dtDate [Date], sCategory [Category], dAmount [Amount], sNotes [Notes], sImportComments FROM Temp_ImportData			
+	SELECT 	CONVERT(VARCHAR, CONVERT(DATE, dtDate), 103) [Date], 
+			TMP.sCategory [Category], 
+			CONVERT(MONEY, TMP.dAmount) [Amount], 
+			TMP.sNotes [Notes], 
+			TMP.sImportComments,
+		    C.hKey [iCategory]
+	FROM Temp_ImportData TMP
+		 INNER JOIN tbl_CategoryList C ON C.sCategory = TMP.sCategory	
 END
 GO
 /*############################################################################################################################################################*/
