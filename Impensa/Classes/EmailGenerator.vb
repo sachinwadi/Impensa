@@ -164,12 +164,7 @@ Public Class EmailGenerator
             message.Bcc.Add(addr)
         Next
 
-        Try
-            smtp.Send(message)
-        Catch ex As Exception
-            ImpensaAlert("Unable to send notification email" + vbCrLf + vbCrLf + "Error Details:" + vbCrLf + ex.Message, MsgBoxStyle.Critical)
-        End Try
-
+        smtp.Send(message)
     End Sub
 
 End Class

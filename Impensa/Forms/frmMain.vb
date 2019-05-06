@@ -10,6 +10,8 @@ Imports System.Globalization
 Imports Impensa.clsLib
 Imports iTextSharp.text
 Imports iTextSharp.text.pdf
+Imports System.Net.Mail
+
 #End Region
 
 Public Class frmMain
@@ -315,7 +317,15 @@ Public Class frmMain
                 If SendEmails Then
                     Label15.Text = "Sending email notification..."
                     Application.DoEvents()
-                    Call SendEmail(dtEmail)
+                    Try
+                        Call SendEmail(dtEmail)
+                    Catch ex As Exception
+                        If (TypeOf (ex) Is SmtpException) Then
+                            ImpensaAlert("Unable to send notification email" + vbCrLf + vbCrLf + "Error Details:" + vbCrLf + ex.Message, MsgBoxStyle.Critical)
+                        Else
+                            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+                        End If
+                    End Try
                 End If
             End If
 

@@ -11,6 +11,8 @@ Imports System.Collections.Generic
 Imports System.Globalization
 Imports excel = Microsoft.Office.Interop.Excel
 Imports System.Runtime.InteropServices
+Imports System.Net.Mail
+
 #End Region
 
 Public Class clsLib
@@ -556,6 +558,7 @@ Public Class clsLib
         Dim ExcelWorkBook As excel.Workbook = Nothing
         Dim ExcelWorkSheet As excel.Worksheet = Nothing
         Dim Workbooks As excel.Workbooks = Nothing
+        Dim IsEmailExceptionOccurred As Boolean = False
 
         Try
             If (Not IsWorkbookAccessible(DataFile)) Then Exit Sub
@@ -662,7 +665,14 @@ Public Class clsLib
                     If (dtEmail.Rows.Count > 0) Then
                         dtEmail.Columns.Add("hKey", GetType(Int64))
                         dtEmail.Columns("Category").ColumnName = "CategoryName"
-                        Call SendEmail(dtEmail)
+                        Try
+                            Call SendEmail(dtEmail)
+                        Catch ex As Exception
+                            If (TypeOf (ex) Is SmtpException) Then
+                                Call GenerateErrorLog(ex.Message)
+                                IsEmailExceptionOccurred = True
+                            End If
+                        End Try
                     End If
                 End If
             End If
@@ -672,13 +682,13 @@ Public Class clsLib
 
             'Should be last piece of code
             Try
-                If (File.Exists(CSVBackupPath + "\ImpensaImportErrorLog.log")) Then
+                If (File.Exists(CSVBackupPath + "\ImpensaImportErrorLog.log") And Not IsEmailExceptionOccurred) Then
                     File.Delete(CSVBackupPath + "\ImpensaImportErrorLog.log")
                 End If
             Catch ex As Exception
 
             End Try
-            
+
             ImportExceptionOccurred = False
 
         Catch ex As Exception
@@ -708,33 +718,29 @@ Public Class clsLib
     End Sub
 
     Public Shared Sub SendEmail(ByVal dtGrid As DataTable)
-        Try
-            Dim emailItem As New EmailGenerator()
-            Dim dcAction As New DataColumn("Action", GetType(String))
-            dtGrid.Columns.Add(dcAction)
+        Dim emailItem As New EmailGenerator()
+        Dim dcAction As New DataColumn("Action", GetType(String))
+        dtGrid.Columns.Add(dcAction)
 
-            For Each dr As DataRow In dtGrid.Rows
-                If dr("hKey") Is DBNull.Value Then
-                    dr("Action") = "Add"
-                ElseIf Not dr("hKey") Is DBNull.Value Then
-                    If Not (IsDBNull(dr.Item("bDelete"))) Then
-                        If (Convert.ToBoolean(dr.Item("bDelete"))) Then
-                            dr("Action") = "Delete"
-                        Else
-                            dr("Action") = "Update"
-                        End If
+        For Each dr As DataRow In dtGrid.Rows
+            If dr("hKey") Is DBNull.Value Then
+                dr("Action") = "Add"
+            ElseIf Not dr("hKey") Is DBNull.Value Then
+                If Not (IsDBNull(dr.Item("bDelete"))) Then
+                    If (Convert.ToBoolean(dr.Item("bDelete"))) Then
+                        dr("Action") = "Delete"
                     Else
                         dr("Action") = "Update"
                     End If
+                Else
+                    dr("Action") = "Update"
                 End If
-            Next
+            End If
+        Next
 
-            emailItem.Changes = dtGrid
-            If (IncludeExpenseSummary) Then emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail()
-            emailItem.SendEmail()
-        Catch ex As Exception
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-        End Try
+        emailItem.Changes = dtGrid
+        If (IncludeExpenseSummary) Then emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail()
+        emailItem.SendEmail()
     End Sub
 
     Public Shared Function GetAllInOneSummaryDataTableForEmail() As DataTable
