@@ -570,6 +570,7 @@ Public Class clsLib
                 Dim da As SqlDataAdapter
                 Dim dcb As SqlCommandBuilder
                 Dim dv As New DataView
+                Dim dtEmail As New DataTable
 
                 TotalImportCnt = dt.Rows.Count
 
@@ -612,10 +613,7 @@ Public Class clsLib
                 ImportSucceessAndFailCnt = ImportSucceessCnt + ImportFailedCnt
 
                 dt = dv.ToTable
-                dt.Columns.Add("hKey", GetType(Int64))
-                dt.Columns("Category").ColumnName = "CategoryName"
-
-                If (SendEmails) Then Call SendEmail(dt)
+                dtEmail = dt.Copy()
 
                 Call SaveNotes(dt) 'Add notes of successful records to AutoComplete Directory
 
@@ -659,6 +657,14 @@ Public Class clsLib
                 ExcelWorkSheet.Protect("Hotmail@123")
                 ExcelWorkBook.Save()
                 ''''End: Format Import Excel
+
+                If (SendEmails) Then
+                    If (dtEmail.Rows.Count > 0) Then
+                        dtEmail.Columns.Add("hKey", GetType(Int64))
+                        dtEmail.Columns("Category").ColumnName = "CategoryName"
+                        Call SendEmail(dtEmail)
+                    End If
+                End If
             End If
 
             ImportFileTimeStamp = File.GetLastWriteTime(DataFile)
@@ -674,6 +680,7 @@ Public Class clsLib
             End Try
             
             ImportExceptionOccurred = False
+
         Catch ex As Exception
             ImportExceptionOccurred = True
             Call GenerateErrorLog(ex.Message)
