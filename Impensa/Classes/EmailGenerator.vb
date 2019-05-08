@@ -107,6 +107,14 @@ Public Class EmailGenerator
         Next
 
         _strBuilder.Append("</table>")
+        _strBuilder.Append("<br />")
+        _strBuilder.Append("<table style='font-family:Arial;font-size:10'>")
+        _strBuilder.Append("<tr>")
+        _strBuilder.Append("<td style='border-right:1px solid black;padding:3px;'>*MTD - Month To Date</td>")
+        _strBuilder.Append("<td style='border-right:1px solid black;padding:3px;'>*YTD - Year To Date</td>")
+        _strBuilder.Append("<td style='padding:3px;'>*ITD - Inception To Date</td>")
+        _strBuilder.Append("</tr>")
+        _strBuilder.Append("</table>")
     End Sub
 
     Private Sub BuildLegendHtmlTable()
