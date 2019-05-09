@@ -138,7 +138,7 @@ Public Class frmMain
             DoNotChkRowAdded = True
 
             Label15.Text = "Loading Details..."
-            Application.DoEvents()
+            Panel5.Refresh()
 
             StrClosedYrs = BuildOpenOrClosedYrsStr(1) 'List Of Closed Years
             dc_Category = GetComboBoxColumn_Category()
@@ -272,7 +272,7 @@ Public Class frmMain
                 Panel5.BringToFront()
                 Panel5.Visible = True
                 Label15.Text = "Saving Records..."
-                Application.DoEvents()
+                Panel5.Refresh()
 
                 dtGrid = DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges
                 dtEmail = dtGrid.Select("iCategory IS NOT NULL").CopyToDataTable
@@ -316,7 +316,7 @@ Public Class frmMain
 
                 If SendEmails Then
                     Label15.Text = "Sending email notification..."
-                    Application.DoEvents()
+                    Panel5.Refresh()
                     Try
                         Call SendEmail(dtEmail)
                     Catch ex As Exception
@@ -365,7 +365,7 @@ Public Class frmMain
             DataGridExpDet.Columns.Add(dc_DelChk)
 
             Label15.Text = "Loading Search Results..."
-            Application.DoEvents()
+            Panel5.Refresh()
 
             Using Connection = GetConnection()
                 dtDetailGrid = New DataTable
@@ -481,7 +481,7 @@ Public Class frmMain
             Panel5.BringToFront()
             Panel5.Visible = True
             Label15.Text = "Rebuilding AutoComplete Dictionary..."
-            Application.DoEvents()
+            Panel5.Refresh()
 
             Using Connection = GetConnection()
                 Cmd = New SqlCommand("DELETE N FROM tbl_Notes N LEFT JOIN(SELECT MAX(dtDate) dtDate, sNotes From tbl_ExpenditureDet GROUP BY sNotes)X ON N.sNotes = X.sNotes WHERE DATEADD(YY,1,N.dtLastUsed) <= CONVERT(DATE, GETDATE())", Connection)
@@ -517,7 +517,7 @@ Public Class frmMain
             DataGridExpSumm.DataSource = Nothing
             DataGridExpSumm.Controls.Clear()
             Label15.Text = "Loading Summary..."
-            Application.DoEvents()
+            Panel5.Refresh()
 
             If SummaryType = SummaryTypes.Monthly Then
                 procName = "sp_GetExpenditureSummary_Monthly"
@@ -659,7 +659,7 @@ Public Class frmMain
             If DataGridExpSumm.Rows.Count > 0 Then
 
                 Label15.Text = "Styling Summary Grid..."
-                Application.DoEvents()
+                Panel5.Refresh()
 
                 If SummaryType = SummaryTypes.Variance Then
                     For Each dr As DataGridViewRow In DataGridExpSumm.Rows
@@ -948,7 +948,7 @@ Public Class frmMain
             DataGridThrLimits.Columns.Clear()
 
             Label15.Text = "Loading Monthly Budget..."
-            Application.DoEvents()
+            Panel5.Refresh()
 
             Using Connection = GetConnection()
                 dtThresholdData = New DataTable
@@ -1428,7 +1428,7 @@ Public Class frmMain
 
         Try
             Label15.Text = "Loading Categories..."
-            Application.DoEvents()
+            Panel5.Refresh()
 
             DataGridCatList.DataSource = Nothing
 
@@ -2145,7 +2145,7 @@ Public Class frmMain
             Panel1.Enabled = False
             btnSave.Enabled = False
             btnExport.Enabled = False
-            Application.DoEvents()
+            'Application.DoEvents()
 
             If Not CallSearchFunction Then
                 chkShowAllDet.Visible = False
@@ -2337,7 +2337,7 @@ Public Class frmMain
             Panel5.BringToFront()
             Panel5.Visible = True
             Label15.Text = "Exporting To PDF..."
-            Application.DoEvents()
+            Panel5.Refresh()
 
             'Get count of desired columns in a grid
             For Each column As DataGridViewColumn In dataGridViewObj.Columns
@@ -2429,6 +2429,20 @@ Public Class frmMain
             btnExport.Enabled = True
             ImpensaTabControl.Enabled = True
         End Try
+    End Sub
+
+    Private Sub PositionPanel5()
+        Panel5.Parent = Panel3
+        Panel5.Top = (Panel5.Parent.ClientSize.Height - Panel5.Height) / 2
+
+        If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) Then
+            Panel5.Left = (DataGridExpDet.ClientSize.Width - Panel5.Width) / 2
+        Else
+            Panel5.Left = (Panel3.ClientSize.Width - Panel5.Width) / 2
+        End If
+
+        Panel9.Width = Me.Width
+        Panel10.Width = Me.Width
     End Sub
 #End Region
 
@@ -2529,11 +2543,7 @@ Public Class frmMain
     End Sub
 
     Private Sub frmMain_Resize(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Resize
-        Panel5.Parent = Panel3
-        Panel5.Left = (Panel5.Parent.ClientSize.Width - Panel5.Width) / 2
-        Panel5.Top = (Panel5.Parent.ClientSize.Height - Panel5.Height) / 2
-        Panel9.Width = Me.Width
-        Panel10.Width = Me.Width
+        Call PositionPanel5()
     End Sub
 #End Region
 
@@ -3561,6 +3571,7 @@ Public Class frmMain
         Dim HighlightAmt As Long
 
         Try
+            Call PositionPanel5()
             LastTabIndex = ImpensaTabControl.SelectedIndex
 
             btnSave.Enabled = False
