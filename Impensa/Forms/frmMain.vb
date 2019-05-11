@@ -944,6 +944,8 @@ Public Class frmMain
                 dtThresholdData = GetThresholdData(ThresholdMonth)
             End Using
 
+            If dtThresholdData.Rows.Count = 0 Then Exit Sub
+
             dv = dtThresholdData.DefaultView
 
             dv.RowFilter = Nothing
@@ -1035,6 +1037,8 @@ Public Class frmMain
     Private Sub SaveThresholds()
         Dim dc As SqlCommandBuilder
         Try
+            If DataGridThrLimits.DataSource Is Nothing Then Exit Sub
+
             dt = New DataTable
             dt = DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges
             If Not dt Is Nothing Then
@@ -2126,6 +2130,11 @@ Public Class frmMain
     Private Function ShowUnsavedDataWarning(ByVal sMessage As String) As Windows.Forms.DialogResult
         Dim Result As Windows.Forms.DialogResult
 
+        If DataGridExpDet.DataSource Is Nothing OrElse DataGridThrLimits.DataSource Is Nothing OrElse DataGridCatList.DataSource Is Nothing Then
+            Exit Function
+        End If
+
+
         If (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) AndAlso (Not DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
         (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) AndAlso (Not DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
         (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabCategories) AndAlso (Not DirectCast(DataGridCatList.DataSource, DataTable).GetChanges Is Nothing)) Then
@@ -2334,6 +2343,12 @@ Public Class frmMain
         Dim invisibleColumnIncludeInExport As String() = {"sCategory"}
 
         Try
+            If dataGridViewObj.Rows.Count = 0 Then
+                ImpensaAlert("No data to export.", MsgBoxStyle.Information)
+                Exit Sub
+            End If
+
+
             btnExport.Enabled = False
 
             ImpensaTabControl.Enabled = False

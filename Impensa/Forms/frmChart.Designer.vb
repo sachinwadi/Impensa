@@ -75,6 +75,7 @@ Partial Class frmChart
         Me.Name = "frmChart"
         Me.Text = "Impensa"
         Me.TopMost = True
+        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         CType(Me.Chart_Analysis, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ChartContextMenu.ResumeLayout(False)
         Me.ResumeLayout(False)
