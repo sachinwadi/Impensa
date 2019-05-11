@@ -23,7 +23,7 @@ Partial Class frmChart
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmChart))
         Me.Chart_Analysis = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.ChartContextMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
@@ -37,8 +37,8 @@ Partial Class frmChart
         'Chart_Analysis
         '
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend2.Name = "Legend1"
-        Me.Chart_Analysis.Legends.Add(Legend2)
+        Legend1.Name = "Legend1"
+        Me.Chart_Analysis.Legends.Add(Legend1)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(724, 413)
@@ -72,12 +72,9 @@ Partial Class frmChart
         Me.ContextMenuStrip = Me.ChartContextMenu
         Me.Controls.Add(Me.Chart_Analysis)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
-        Me.MaximizeBox = False
-        Me.MinimizeBox = False
         Me.Name = "frmChart"
         Me.Text = "Impensa"
         Me.TopMost = True
-        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         CType(Me.Chart_Analysis, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ChartContextMenu.ResumeLayout(False)
         Me.ResumeLayout(False)

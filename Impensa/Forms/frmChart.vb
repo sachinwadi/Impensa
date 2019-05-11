@@ -8,6 +8,12 @@ Public Class frmChart
         Call frmMain.DisplayGraph(Chart_Analysis)
     End Sub
 
+    Private Sub frmChart_Shown(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Shown
+        If (Not DataAvailableForChart) Then
+            ImpensaAlert("No data available for display.", MsgBoxStyle.Exclamation)
+        End If
+    End Sub
+
     Private Sub PrintToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PrintToolStripMenuItem.Click
         Me.SendToBack()
 

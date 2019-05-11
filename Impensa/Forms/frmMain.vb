@@ -858,8 +858,6 @@ Public Class frmMain
                     If Not Reader.GetValue(1) = Format(DateSerial(Today.Year, Today.Month, 1), "yyyy-MM-dd") Then
                         ImpensaAlert("Last month's budgeted amounts are being copied over to this month. To change the budgeted amounts for this month go to ""Monthly Budget"" Tab", MsgBoxStyle.OkOnly + MsgBoxStyle.Information)
                     End If
-                Else
-                    ImpensaAlert("So far monthly budget has not been set earlier. Set the monthly budget in ""Monthly Budget"" Tab", MsgBoxStyle.OkOnly + MsgBoxStyle.Information)
                 End If
                 Reader.Close()
             End Using
@@ -1175,7 +1173,7 @@ Public Class frmMain
     End Sub
 
 
-    Public Sub DisplayGraph(ByVal Chart_Analysis As System.Windows.Forms.DataVisualization.Charting.Chart)
+    Public Sub DisplayGraph(ByVal Chart_Analysis As Chart)
         Dim dt As New DataTable
         Dim ChartTitle As String = ""
         Dim dv As New DataView
@@ -1183,7 +1181,9 @@ Public Class frmMain
         Dim dtTo As Date
         Dim lst As New List(Of String)
         Dim bShowLabel = True
+
         Try
+            DataAvailableForChart = True
             bShowLabel = IIf(chkShowLabel.Checked, True, False)
 
             Call ResetChartControl(Chart_Analysis)
@@ -1241,6 +1241,11 @@ Public Class frmMain
                 dt = mdlChart3.GetChartData_3B(dtpFrom, dtpTo, ListingCombo.key, SearchStr, chkPeriodLevel.Checked)
             ElseIf SelectChartCombo = "Chart 4" Then
                 dt = mdlChart4.GetChartData(dtpFrom, dtpTo, ListingCombo.key, SearchStr, chkPeriodLevel.Checked)
+            End If
+
+            If (dt.Rows.Count = 0) Then
+                DataAvailableForChart = False
+                Exit Sub
             End If
 
             For i As Int32 = 1 To dt.Columns.Count - 1
@@ -1435,6 +1440,10 @@ Public Class frmMain
                 da.Fill(dt)
             End Using
 
+            If (dt.Rows.Count = 0) Then
+                ImpensaAlert("No Catagory found. Categories must be defined in order to add the expenses. Use ""Categories"" tab to add the Categories.", MsgBoxStyle.Exclamation)
+            End If
+
             DataGridCatList.DataSource = dt
             DataGridCatList.DefaultCellStyle.WrapMode = DataGridViewTriState.True
             DataGridCatList.Columns("bDelete").DisplayIndex = 0
@@ -1486,7 +1495,7 @@ Public Class frmMain
                         End If
 
                         If Not (IsDBNull(dr.Item("bDelete"))) Then
-                            If (Convert.ToBoolean(dr.Item("bDelete"))) Then
+                            If (Convert.ToBoolean(dr.Item("bDelete")) And Not dr("hKey") Is DBNull.Value) Then
                                 Cmd.CommandText = "DELETE FROM tbl_ExpThresholds WHERE iCategory = " & dr("hKey")
                                 Cmd.ExecuteNonQuery()
                                 dr.Delete()
@@ -1494,11 +1503,11 @@ Public Class frmMain
                         End If
                     Next
                     da.Update(dt)
-                End If
 
-                ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
-                DirectCast(DataGridCatList.DataSource, DataTable).AcceptChanges()
-                Call ResetFilters()
+                    ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
+                    DirectCast(DataGridCatList.DataSource, DataTable).AcceptChanges()
+                    Call ResetFilters()
+                End If
             End Using
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
@@ -2055,6 +2064,7 @@ Public Class frmMain
 #End Region
 #End Region
 
+#Region "OtherMethods"
     Protected Overrides Sub SetVisibleCore(ByVal value As Boolean)
         Dim Args As String() = Environment.GetCommandLineArgs
         If Array.IndexOf(Args, "Startup") > -1 Then
@@ -2115,6 +2125,7 @@ Public Class frmMain
 
     Private Function ShowUnsavedDataWarning(ByVal sMessage As String) As Windows.Forms.DialogResult
         Dim Result As Windows.Forms.DialogResult
+
         If (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) AndAlso (Not DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
         (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) AndAlso (Not DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
         (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabCategories) AndAlso (Not DirectCast(DataGridCatList.DataSource, DataTable).GetChanges Is Nothing)) Then
@@ -2126,6 +2137,7 @@ Public Class frmMain
         End If
 
         Return Result
+
     End Function '42
 
     Private Sub RefreshGrids()
@@ -2435,6 +2447,7 @@ Public Class frmMain
         Panel9.Width = Me.Width
         Panel10.Width = Me.Width
     End Sub
+#End Region
 #End Region
 
 #Region "Control Events"
@@ -2926,38 +2939,45 @@ Public Class frmMain
     End Sub
 
     Private Sub DataGridExpSumm_CellMouseEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridExpSumm.CellMouseEnter
-        If Panel5.Visible = True Then Exit Sub
+        Try
+            If Panel5.Visible = True Then Exit Sub
 
-        DataGridExpSumm.Cursor = Cursors.Default
+            DataGridExpSumm.Cursor = Cursors.Default
 
-        If e.ColumnIndex >= 0 AndAlso e.RowIndex >= 0 Then
-            If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
-                If DataGridExpSumm.Columns(e.ColumnIndex).Index > DataGridExpSumm.Columns("Category").Index AndAlso DataGridExpSumm.Columns(e.ColumnIndex).Index < (DataGridExpSumm.Columns.Count - 1) Then
+            If e.ColumnIndex >= 0 AndAlso e.RowIndex >= 0 Then
+                If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
+                    If DataGridExpSumm.Columns(e.ColumnIndex).Index > DataGridExpSumm.Columns("Category").Index AndAlso DataGridExpSumm.Columns(e.ColumnIndex).Index < (DataGridExpSumm.Columns.Count - 1) Then
 
-                    If SearchStr Is Nothing Then
-                        If Not (SummaryType = SummaryTypes.RunningTotals Or SummaryType = SummaryTypes.AllInOne) Then
-                            If Not dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is Nothing Then
-                                If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 AndAlso dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
-                                    If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
-                                        DataGridExpSumm.Cursor = Cursors.Hand
-                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Budgeted Amount: Not Defined"
-                                    Else
-                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: Not Defined"
-                                    End If
-                                ElseIf Not dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
-                                    If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
+                        If SearchStr Is Nothing Then
+                            If Not (SummaryType = SummaryTypes.RunningTotals Or SummaryType = SummaryTypes.AllInOne) Then
+                                If Not dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is Nothing Then
+                                    If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 AndAlso dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
                                         If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
                                             DataGridExpSumm.Cursor = Cursors.Hand
-                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Budgeted Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
+                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Budgeted Amount: Not Defined"
                                         Else
+                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: Not Defined"
+                                        End If
+                                    ElseIf Not dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
+                                        If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
+                                            If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
+                                                DataGridExpSumm.Cursor = Cursors.Hand
+                                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Budgeted Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
+                                            Else
+                                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
+                                            End If
+                                        ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value = 0 Then
                                             DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
                                         End If
                                     ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value = 0 Then
-                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
+                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: Not Defined"
+                                    ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
+                                        DataGridExpSumm.Cursor = Cursors.Hand
+                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary."
                                     End If
-                                ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value = 0 Then
-                                    DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: Not Defined"
-                                ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
+                                End If
+                            Else
+                                If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
                                     DataGridExpSumm.Cursor = Cursors.Hand
                                     DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary."
                                 End If
@@ -2968,15 +2988,12 @@ Public Class frmMain
                                 DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary."
                             End If
                         End If
-                    Else
-                        If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
-                            DataGridExpSumm.Cursor = Cursors.Hand
-                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary."
-                        End If
                     End If
                 End If
             End If
-        End If
+        Catch ex As Exception
+            'Do Nothing
+        End Try
     End Sub
 
     Private Sub DataGridExpSumm_CellBeginEdit(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellCancelEventArgs) Handles DataGridExpSumm.CellBeginEdit
@@ -3057,12 +3074,26 @@ Public Class frmMain
 
 #Region "DataGridCatList Events"
     Private Sub DataGridCatList_CellMouseEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridCatList.CellMouseEnter
-        If e.ColumnIndex = DataGridCatList.Columns("bDelete").Index AndAlso e.RowIndex >= 0 Then
-
-            If DataGridCatList("CanDelete", e.RowIndex).Value = 0 AndAlso Not DataGridCatList("sCategory", e.RowIndex).Value Is Nothing Then
-                DataGridCatList(e.ColumnIndex, e.RowIndex).ToolTipText = "Can't delete this category. There are expenses against this category."
+        Try
+            If e.ColumnIndex = DataGridCatList.Columns("bDelete").Index AndAlso e.RowIndex >= 0 Then
+                If DataGridCatList("CanDelete", e.RowIndex).Value Is DBNull.Value AndAlso DataGridCatList("hKey", e.RowIndex).Value Is DBNull.Value Then Exit Sub
+                If DataGridCatList("CanDelete", e.RowIndex).Value = 0 AndAlso Not DataGridCatList("sCategory", e.RowIndex).Value Is Nothing Then
+                    DataGridCatList(e.ColumnIndex, e.RowIndex).ToolTipText = "Can't delete this category. There are expenses against this category."
+                End If
             End If
-        End If
+        Catch ex As Exception
+            'Do Nothing
+        End Try
+    End Sub
+
+    Private Sub DataGridCatList_RowsAdded(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewRowsAddedEventArgs) Handles DataGridCatList.RowsAdded
+        Try
+            If e.RowIndex >= 0 AndAlso DataGridCatList.Columns.Contains("hKey") AndAlso DataGridCatList.Columns.Contains("bDelete") Then
+                If DataGridCatList("hKey", e.RowIndex).Value Is Nothing Then DataGridCatList("bDelete", e.RowIndex).ReadOnly = True
+            End If
+        Catch ex As Exception
+            'Do nothing
+        End Try
     End Sub
 
     Private Sub DataGridCatList_CellValueChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridCatList.CellValueChanged
@@ -3599,8 +3630,11 @@ Public Class frmMain
                     dr.HeaderCell.Value = ""
                     If dr.Cells("CanDelete").Value = 0 And Not dr.Cells("hKey").Value Is Nothing Then
                         dr.Cells("bDelete").ReadOnly = True
+                    ElseIf dr.Cells("CanDelete").Value Is Nothing AndAlso dr.Cells("hKey").Value Is Nothing Then
+                        dr.Cells("bDelete").ReadOnly = True
                     End If
                 Next
+
                 tslblRecdCnt.Text = "Total Records Displayed: #" & (DataGridCatList.Rows.Count - 1)
                 tslblRecdCnt.Visible = True
                 tslblSeperator2.Visible = True

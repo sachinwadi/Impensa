@@ -27,6 +27,7 @@ Public Class clsLib
 #End Region
 
 #Region "Variables"
+    Private Shared _dataAvailableForChart As Boolean
     Private Shared _cmbListing As Object
     Private Shared _cmbSelectChart As Object
     Private Shared _cmbChartType As Object
@@ -42,7 +43,6 @@ Public Class clsLib
     Private Shared _SummaryType As Integer
     Private Shared _ImpensaFont As Font
     Private Shared _ChkLBYearsItemsList As String
-    'Private Shared _ExportPDFProcessID As Int64
     Private Shared _ChartDataSetAmtTotal As List(Of String)
     Private Shared _CategoryColIndex As Int32
     Private Shared _CategoriesList As Dictionary(Of Int32, String)
@@ -65,6 +65,15 @@ Public Class clsLib
 #End Region
 
 #Region "Properties"
+
+    Public Shared Property DataAvailableForChart() As Boolean
+        Get
+            Return _dataAvailableForChart
+        End Get
+        Set(ByVal value As Boolean)
+            _dataAvailableForChart = value
+        End Set
+    End Property
 
     Public Shared Property LastUsedTimeStamp() As Date
         Get
