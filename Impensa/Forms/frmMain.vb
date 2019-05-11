@@ -15,6 +15,8 @@ Imports System.Net.Mail
 #End Region
 
 Public Class frmMain
+    Dim dtEmail As DataTable
+
 #Region "Enums"
     Private Enum CSVCreationFrequency
         Monthly = 0
@@ -264,7 +266,6 @@ Public Class frmMain
         Dim dc As SqlCommandBuilder
         Dim lst As New List(Of Integer)
         Dim RowCounter As Integer = 0
-        Dim dtEmail As New DataTable()
 
         Try
             dtGrid = DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges
@@ -314,29 +315,19 @@ Public Class frmMain
                     da.Update(dtGrid)
                 End Using
 
+                Call RefreshGrids()
+
+                ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
+
                 If SendEmails Then
-                    Label15.Text = "Sending email notification..."
-                    Panel5.Refresh()
-                    Try
-                        Call SendEmail(dtEmail)
-                    Catch ex As Exception
-                        If (TypeOf (ex) Is SmtpException) Then
-                            ImpensaAlert("Unable to send notification email" + vbCrLf + vbCrLf + "Error Details:" + vbCrLf + ex.Message, MsgBoxStyle.Critical)
-                        Else
-                            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-                        End If
-                    End Try
+                    BgWorker_Email.RunWorkerAsync()
                 End If
             End If
-
-            Call RefreshGrids()
 
             If Not String.IsNullOrEmpty(CSVBackupPath) Then
                 Call CreateMonthlyCSV()
                 Call CreateAdhocCSV()
             End If
-
-            ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
         Catch ex As Exception
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
@@ -3789,6 +3780,17 @@ Public Class frmMain
         End If
     End Sub
 
+    Private Sub BgWorker_Email_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BgWorker_Email.DoWork
+        Try
+            Call SendEmail(dtEmail)
+        Catch ex As Exception
+            If (TypeOf (ex) Is SmtpException) Then
+                ImpensaAlert("Unable to send notification email" + vbCrLf + vbCrLf + "Error Details:" + vbCrLf + ex.Message, MsgBoxStyle.Critical)
+            Else
+                ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+            End If
+        End Try
+    End Sub
 #End Region
 
 #Region "Custom Event Handlers"

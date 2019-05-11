@@ -1,4 +1,7 @@
 *.exe
 *.pdb
-*.cache
+*.Cache
 *.txt
+*.manifest
+*.reg
+*.bat

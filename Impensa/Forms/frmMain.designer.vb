@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -91,6 +91,7 @@ Partial Class frmMain
         Me.TabSettings = New System.Windows.Forms.TabPage()
         Me.gbEmailConfig = New System.Windows.Forms.GroupBox()
         Me.grpEmailSettings = New System.Windows.Forms.GroupBox()
+        Me.chkIncludeExpSummary = New System.Windows.Forms.CheckBox()
         Me.txtEmailPassword = New System.Windows.Forms.TextBox()
         Me.txtEmailTo = New System.Windows.Forms.TextBox()
         Me.txtSmtpPort = New System.Windows.Forms.TextBox()
@@ -115,6 +116,7 @@ Partial Class frmMain
         Me.dtpRecdKeeping = New System.Windows.Forms.DateTimePicker()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.GroupBox4 = New System.Windows.Forms.GroupBox()
+        Me.Label36 = New System.Windows.Forms.Label()
         Me.chkStartImport = New System.Windows.Forms.CheckBox()
         Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
@@ -164,8 +166,7 @@ Partial Class frmMain
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.tmrRefresh = New System.Windows.Forms.Timer(Me.components)
         Me.btnExport = New System.Windows.Forms.Button()
-        Me.chkIncludeExpSummary = New System.Windows.Forms.CheckBox()
-        Me.Label36 = New System.Windows.Forms.Label()
+        Me.BgWorker_Email = New System.ComponentModel.BackgroundWorker()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabCategories.SuspendLayout()
@@ -410,9 +411,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend2.Name = "Legend1"
-        Legend2.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend2)
+        Legend1.Name = "Legend1"
+        Legend1.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend1)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -960,6 +961,17 @@ Partial Class frmMain
         Me.grpEmailSettings.TabIndex = 1
         Me.grpEmailSettings.TabStop = False
         '
+        'chkIncludeExpSummary
+        '
+        Me.chkIncludeExpSummary.AutoSize = True
+        Me.chkIncludeExpSummary.Location = New System.Drawing.Point(78, 10)
+        Me.chkIncludeExpSummary.Name = "chkIncludeExpSummary"
+        Me.chkIncludeExpSummary.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.chkIncludeExpSummary.Size = New System.Drawing.Size(151, 17)
+        Me.chkIncludeExpSummary.TabIndex = 2
+        Me.chkIncludeExpSummary.Text = "Include Expense Summary"
+        Me.chkIncludeExpSummary.UseVisualStyleBackColor = True
+        '
         'txtEmailPassword
         '
         Me.txtEmailPassword.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
@@ -1198,6 +1210,16 @@ Partial Class frmMain
         Me.GroupBox4.Size = New System.Drawing.Size(331, 60)
         Me.GroupBox4.TabIndex = 2
         Me.GroupBox4.TabStop = False
+        '
+        'Label36
+        '
+        Me.Label36.AutoSize = True
+        Me.Label36.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label36.Location = New System.Drawing.Point(167, 16)
+        Me.Label36.Name = "Label36"
+        Me.Label36.Size = New System.Drawing.Size(52, 13)
+        Me.Label36.TabIndex = 2
+        Me.Label36.Text = "Label36"
         '
         'chkStartImport
         '
@@ -1678,26 +1700,8 @@ Partial Class frmMain
         Me.btnExport.Text = "Export To PDF"
         Me.btnExport.UseVisualStyleBackColor = True
         '
-        'chkIncludeExpSummary
+        'BgWorker_Email
         '
-        Me.chkIncludeExpSummary.AutoSize = True
-        Me.chkIncludeExpSummary.Location = New System.Drawing.Point(78, 10)
-        Me.chkIncludeExpSummary.Name = "chkIncludeExpSummary"
-        Me.chkIncludeExpSummary.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.chkIncludeExpSummary.Size = New System.Drawing.Size(151, 17)
-        Me.chkIncludeExpSummary.TabIndex = 2
-        Me.chkIncludeExpSummary.Text = "Include Expense Summary"
-        Me.chkIncludeExpSummary.UseVisualStyleBackColor = True
-        '
-        'Label36
-        '
-        Me.Label36.AutoSize = True
-        Me.Label36.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label36.Location = New System.Drawing.Point(167, 16)
-        Me.Label36.Name = "Label36"
-        Me.Label36.Size = New System.Drawing.Size(52, 13)
-        Me.Label36.TabIndex = 2
-        Me.Label36.Text = "Label36"
         '
         'frmMain
         '
@@ -1921,5 +1925,6 @@ Partial Class frmMain
     Friend WithEvents chkSendEmails As System.Windows.Forms.CheckBox
     Friend WithEvents chkIncludeExpSummary As System.Windows.Forms.CheckBox
     Friend WithEvents Label36 As System.Windows.Forms.Label
+    Friend WithEvents BgWorker_Email As System.ComponentModel.BackgroundWorker
 
 End Class

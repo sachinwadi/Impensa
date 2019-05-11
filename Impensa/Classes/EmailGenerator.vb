@@ -95,7 +95,7 @@ Public Class EmailGenerator
 
             If (dr("Category") = "TOTAL") Then
                 fontWeight = "bold"
-                fontSize = "18"
+                fontSize = "22"
             End If
 
             _strBuilder.Append("<tr>")
