@@ -1585,6 +1585,7 @@ Public Class frmMain
             txtEmailTo.Text = ToEmails
 
             chkStartImport.Checked = EnableImport
+            chkExcelDelRows.Checked = DeleteOldRowsFromExcel
             chkIncludeExpSummary.Checked = IncludeExpenseSummary
             Label36.Text = "Database: " + DatabaseName
         Catch ex As Exception
@@ -1617,6 +1618,7 @@ Public Class frmMain
             ShowReminder = chkShowReminder.Checked
             ReminderText = txtReminder.Text
             EnableImport = chkStartImport.Checked
+            DeleteOldRowsFromExcel = chkExcelDelRows.Checked
             'Call AlertTicker(ShowReminder)
 
             ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
@@ -3489,6 +3491,11 @@ Public Class frmMain
 
     Private Sub chkSendEmails_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkSendEmails.CheckedChanged
         If chkSendEmails.Checked Then grpEmailSettings.Enabled = True Else grpEmailSettings.Enabled = False
+    End Sub
+
+    Private Sub chkExcelDelRows_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkExcelDelRows.MouseHover
+        tt = New ToolTip
+        tt.SetToolTip(sender, "This will allow application to delete already successfully imported records older than 7 days.")
     End Sub
 #End Region
 

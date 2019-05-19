@@ -547,6 +547,15 @@ Public Class clsLib
         End Set
     End Property
 
+    Public Shared Property DeleteOldRowsFromExcel() As Boolean
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "DeleteOldRecords", Nothing)
+        End Get
+        Set(ByVal value As Boolean)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "DeleteOldRecords", value)
+        End Set
+    End Property
+
 #End Region
 
 #Region "Methods"
@@ -665,19 +674,21 @@ Public Class clsLib
                     ElseIf InStr(LCase(dr("sImportComments")), "skip") > 0 Then
                         currentRowStatus = "Skipped"
 
-                        If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) Then
-                            RowToDeleteStartIndex = (dt.Rows.IndexOf(dr) + 2)
-                        Else
-                            If Date.TryParse(dr("Date").ToString, Nothing) And DateDiff(DateInterval.Day, CDate(dr("Date")), Date.Now.Date) > 7 Then
-                                RowToDeleteEndIndex = (dt.Rows.IndexOf(dr) + 2)
+                        If DeleteOldRowsFromExcel Then
+                            If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) Then
+                                RowToDeleteStartIndex = (dt.Rows.IndexOf(dr) + 2)
+                            Else
+                                If Date.TryParse(dr("Date").ToString, Nothing) And DateDiff(DateInterval.Day, CDate(dr("Date")), Date.Now.Date) > 7 Then
+                                    RowToDeleteEndIndex = (dt.Rows.IndexOf(dr) + 2)
+                                End If
+                            End If
+
+                            If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) And Not String.Equals(currentRowStatus, "Skipped") Then
+                                lstRowRangesToDelete.Add(New RowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+                                RowToDeleteStartIndex = 0
+                                RowToDeleteEndIndex = 0
                             End If
                         End If
-                    End If
-
-                    If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) And Not String.Equals(currentRowStatus, "Skipped") Then
-                        lstRowRangesToDelete.Add(New RowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
-                        RowToDeleteStartIndex = 0
-                        RowToDeleteEndIndex = 0
                     End If
 
                     ExcelWorkSheet.Range("F" & (dt.Rows.IndexOf(dr) + 2)).Value = currentRowStatus
@@ -705,41 +716,41 @@ Public Class clsLib
                     lastRowStatus = currentRowStatus
                 Next
 
-                'if all rows are with status as "Skipped" in continuation
-                If lstRowRangesToDelete.Count = 0 And RowToDeleteStartIndex <> 0 And RowToDeleteEndIndex <> 0 Then
-                    lstRowRangesToDelete.Add(New RowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+            'if all rows are with status as "Skipped" in continuation
+            If lstRowRangesToDelete.Count = 0 And RowToDeleteStartIndex <> 0 And RowToDeleteEndIndex <> 0 Then
+                lstRowRangesToDelete.Add(New RowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+            End If
+
+            For Each item As RowsToDeleteRange In lstRowRangesToDelete
+                item.StartIndex = item.StartIndex - deletedRowsCount
+                item.EndIndex = IIf(item.EndIndex = 0, item.StartIndex, item.EndIndex - deletedRowsCount)
+
+                Dim range = ExcelWorkSheet.Range("F" & item.StartIndex & ": F" & item.EndIndex)
+
+                deletedRowsCount += range.Rows.Count
+                range.EntireRow.Delete()
+            Next
+
+            ExcelWorkSheet.Range("A" & (maxDateRowIndex - deletedRowsCount)).Activate()
+
+            ExcelWorkSheet.Protect(ExcelPassword)
+            ExcelWorkBook.Save()
+            ''''End: Format Import Excel
+
+            If (SendEmails) Then
+                If (dtEmail.Rows.Count > 0) Then
+                    dtEmail.Columns.Add("hKey", GetType(Int64))
+                    dtEmail.Columns("Category").ColumnName = "CategoryName"
+                    Try
+                        Call SendEmail(dtEmail)
+                    Catch ex As Exception
+                        If (TypeOf (ex) Is SmtpException) Then
+                            Call GenerateErrorLog(ex.Message)
+                            IsEmailExceptionOccurred = True
+                        End If
+                    End Try
                 End If
-
-                For Each item As RowsToDeleteRange In lstRowRangesToDelete
-                    item.StartIndex = item.StartIndex - deletedRowsCount
-                    item.EndIndex = IIf(item.EndIndex = 0, item.StartIndex, item.EndIndex - deletedRowsCount)
-
-                    Dim range = ExcelWorkSheet.Range("F" & item.StartIndex & ": F" & item.EndIndex)
-
-                    deletedRowsCount += range.Rows.Count
-                    range.EntireRow.Delete()
-                Next
-
-                ExcelWorkSheet.Range("A" & (maxDateRowIndex - deletedRowsCount)).Activate()
-
-                ExcelWorkSheet.Protect(ExcelPassword)
-                ExcelWorkBook.Save()
-                ''''End: Format Import Excel
-
-                If (SendEmails) Then
-                    If (dtEmail.Rows.Count > 0) Then
-                        dtEmail.Columns.Add("hKey", GetType(Int64))
-                        dtEmail.Columns("Category").ColumnName = "CategoryName"
-                        Try
-                            Call SendEmail(dtEmail)
-                        Catch ex As Exception
-                            If (TypeOf (ex) Is SmtpException) Then
-                                Call GenerateErrorLog(ex.Message)
-                                IsEmailExceptionOccurred = True
-                            End If
-                        End Try
-                    End If
-                End If
+            End If
             End If
 
             ImportFileTimeStamp = File.GetLastWriteTime(DataFile)

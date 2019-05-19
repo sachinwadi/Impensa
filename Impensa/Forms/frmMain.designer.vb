@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -89,6 +89,10 @@ Partial Class frmMain
         Me.cmbThrMonth = New System.Windows.Forms.ComboBox()
         Me.Label17 = New System.Windows.Forms.Label()
         Me.TabSettings = New System.Windows.Forms.TabPage()
+        Me.GroupBox7 = New System.Windows.Forms.GroupBox()
+        Me.chkExcelDelRows = New System.Windows.Forms.CheckBox()
+        Me.chkStartImport = New System.Windows.Forms.CheckBox()
+        Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
         Me.gbEmailConfig = New System.Windows.Forms.GroupBox()
         Me.grpEmailSettings = New System.Windows.Forms.GroupBox()
         Me.chkIncludeExpSummary = New System.Windows.Forms.CheckBox()
@@ -115,10 +119,6 @@ Partial Class frmMain
         Me.GroupBox5 = New System.Windows.Forms.GroupBox()
         Me.dtpRecdKeeping = New System.Windows.Forms.DateTimePicker()
         Me.Label12 = New System.Windows.Forms.Label()
-        Me.GroupBox4 = New System.Windows.Forms.GroupBox()
-        Me.Label36 = New System.Windows.Forms.Label()
-        Me.chkStartImport = New System.Windows.Forms.CheckBox()
-        Me.LinkLabel1 = New System.Windows.Forms.LinkLabel()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.cmbSelectYear = New System.Windows.Forms.ComboBox()
         Me.rbOpenYr = New System.Windows.Forms.RadioButton()
@@ -129,7 +129,6 @@ Partial Class frmMain
         Me.Label21 = New System.Windows.Forms.Label()
         Me.Label16 = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
-        Me.Label11 = New System.Windows.Forms.Label()
         Me.txtHighlightDet = New System.Windows.Forms.TextBox()
         Me.Panel3 = New System.Windows.Forms.Panel()
         Me.tmrAlert = New System.Windows.Forms.Timer(Me.components)
@@ -167,6 +166,7 @@ Partial Class frmMain
         Me.tmrRefresh = New System.Windows.Forms.Timer(Me.components)
         Me.btnExport = New System.Windows.Forms.Button()
         Me.BgWorker_Email = New System.ComponentModel.BackgroundWorker()
+        Me.Label36 = New System.Windows.Forms.Label()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabCategories.SuspendLayout()
@@ -188,12 +188,12 @@ Partial Class frmMain
         CType(Me.DataGridThrLimits, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.Panel6.SuspendLayout()
         Me.TabSettings.SuspendLayout()
+        Me.GroupBox7.SuspendLayout()
         Me.gbEmailConfig.SuspendLayout()
         Me.grpEmailSettings.SuspendLayout()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox6.SuspendLayout()
         Me.GroupBox5.SuspendLayout()
-        Me.GroupBox4.SuspendLayout()
         Me.GroupBox3.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.Panel3.SuspendLayout()
@@ -411,9 +411,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend1.Name = "Legend1"
-        Legend1.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend1)
+        Legend3.Name = "Legend1"
+        Legend3.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend3)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -910,12 +910,14 @@ Partial Class frmMain
         '
         'TabSettings
         '
+        Me.TabSettings.Controls.Add(Me.Label36)
+        Me.TabSettings.Controls.Add(Me.GroupBox7)
+        Me.TabSettings.Controls.Add(Me.LinkLabel1)
         Me.TabSettings.Controls.Add(Me.gbEmailConfig)
         Me.TabSettings.Controls.Add(Me.Label30)
         Me.TabSettings.Controls.Add(Me.GroupBox1)
         Me.TabSettings.Controls.Add(Me.GroupBox6)
         Me.TabSettings.Controls.Add(Me.GroupBox5)
-        Me.TabSettings.Controls.Add(Me.GroupBox4)
         Me.TabSettings.Controls.Add(Me.GroupBox3)
         Me.TabSettings.Controls.Add(Me.GroupBox2)
         Me.TabSettings.Location = New System.Drawing.Point(4, 22)
@@ -925,6 +927,49 @@ Partial Class frmMain
         Me.TabSettings.TabIndex = 6
         Me.TabSettings.Text = "Settings"
         Me.TabSettings.UseVisualStyleBackColor = True
+        '
+        'GroupBox7
+        '
+        Me.GroupBox7.Controls.Add(Me.chkExcelDelRows)
+        Me.GroupBox7.Controls.Add(Me.chkStartImport)
+        Me.GroupBox7.Location = New System.Drawing.Point(6, 32)
+        Me.GroupBox7.Name = "GroupBox7"
+        Me.GroupBox7.Size = New System.Drawing.Size(331, 61)
+        Me.GroupBox7.TabIndex = 10
+        Me.GroupBox7.TabStop = False
+        Me.GroupBox7.Text = "Import Service Options"
+        '
+        'chkExcelDelRows
+        '
+        Me.chkExcelDelRows.AutoSize = True
+        Me.chkExcelDelRows.Location = New System.Drawing.Point(6, 36)
+        Me.chkExcelDelRows.Name = "chkExcelDelRows"
+        Me.chkExcelDelRows.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.chkExcelDelRows.Size = New System.Drawing.Size(196, 17)
+        Me.chkExcelDelRows.TabIndex = 2
+        Me.chkExcelDelRows.Text = "Delete Old Records From Import File"
+        Me.chkExcelDelRows.UseVisualStyleBackColor = True
+        '
+        'chkStartImport
+        '
+        Me.chkStartImport.AutoSize = True
+        Me.chkStartImport.Location = New System.Drawing.Point(3, 19)
+        Me.chkStartImport.Name = "chkStartImport"
+        Me.chkStartImport.RightToLeft = System.Windows.Forms.RightToLeft.Yes
+        Me.chkStartImport.Size = New System.Drawing.Size(199, 17)
+        Me.chkStartImport.TabIndex = 1
+        Me.chkStartImport.Text = "Enable Impensa Data Import Service"
+        Me.chkStartImport.UseVisualStyleBackColor = True
+        '
+        'LinkLabel1
+        '
+        Me.LinkLabel1.AutoSize = True
+        Me.LinkLabel1.Location = New System.Drawing.Point(9, 12)
+        Me.LinkLabel1.Name = "LinkLabel1"
+        Me.LinkLabel1.Size = New System.Drawing.Size(157, 13)
+        Me.LinkLabel1.TabIndex = 0
+        Me.LinkLabel1.TabStop = True
+        Me.LinkLabel1.Text = "Change Database Login Details"
         '
         'gbEmailConfig
         '
@@ -1175,7 +1220,7 @@ Partial Class frmMain
         Me.GroupBox5.Controls.Add(Me.dtpRecdKeeping)
         Me.GroupBox5.Controls.Add(Me.Label12)
         Me.GroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.GroupBox5.Location = New System.Drawing.Point(6, 62)
+        Me.GroupBox5.Location = New System.Drawing.Point(6, 94)
         Me.GroupBox5.Name = "GroupBox5"
         Me.GroupBox5.Size = New System.Drawing.Size(331, 44)
         Me.GroupBox5.TabIndex = 3
@@ -1200,55 +1245,13 @@ Partial Class frmMain
         Me.Label12.TabIndex = 2
         Me.Label12.Text = "Book Keeping Start Date:"
         '
-        'GroupBox4
-        '
-        Me.GroupBox4.Controls.Add(Me.Label36)
-        Me.GroupBox4.Controls.Add(Me.chkStartImport)
-        Me.GroupBox4.Controls.Add(Me.LinkLabel1)
-        Me.GroupBox4.Location = New System.Drawing.Point(6, 0)
-        Me.GroupBox4.Name = "GroupBox4"
-        Me.GroupBox4.Size = New System.Drawing.Size(331, 60)
-        Me.GroupBox4.TabIndex = 2
-        Me.GroupBox4.TabStop = False
-        '
-        'Label36
-        '
-        Me.Label36.AutoSize = True
-        Me.Label36.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label36.Location = New System.Drawing.Point(167, 16)
-        Me.Label36.Name = "Label36"
-        Me.Label36.Size = New System.Drawing.Size(52, 13)
-        Me.Label36.TabIndex = 2
-        Me.Label36.Text = "Label36"
-        '
-        'chkStartImport
-        '
-        Me.chkStartImport.AutoSize = True
-        Me.chkStartImport.Location = New System.Drawing.Point(3, 37)
-        Me.chkStartImport.Name = "chkStartImport"
-        Me.chkStartImport.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.chkStartImport.Size = New System.Drawing.Size(199, 17)
-        Me.chkStartImport.TabIndex = 1
-        Me.chkStartImport.Text = "Enable Impensa Data Import Service"
-        Me.chkStartImport.UseVisualStyleBackColor = True
-        '
-        'LinkLabel1
-        '
-        Me.LinkLabel1.AutoSize = True
-        Me.LinkLabel1.Location = New System.Drawing.Point(3, 16)
-        Me.LinkLabel1.Name = "LinkLabel1"
-        Me.LinkLabel1.Size = New System.Drawing.Size(157, 13)
-        Me.LinkLabel1.TabIndex = 0
-        Me.LinkLabel1.TabStop = True
-        Me.LinkLabel1.Text = "Change Database Login Details"
-        '
         'GroupBox3
         '
         Me.GroupBox3.Controls.Add(Me.cmbSelectYear)
         Me.GroupBox3.Controls.Add(Me.rbOpenYr)
         Me.GroupBox3.Controls.Add(Me.rbCloseYr)
         Me.GroupBox3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.GroupBox3.Location = New System.Drawing.Point(6, 239)
+        Me.GroupBox3.Location = New System.Drawing.Point(6, 253)
         Me.GroupBox3.Name = "GroupBox3"
         Me.GroupBox3.Size = New System.Drawing.Size(331, 76)
         Me.GroupBox3.TabIndex = 1
@@ -1295,18 +1298,18 @@ Partial Class frmMain
         Me.GroupBox2.Controls.Add(Me.Label21)
         Me.GroupBox2.Controls.Add(Me.Label16)
         Me.GroupBox2.Controls.Add(Me.Label7)
-        Me.GroupBox2.Controls.Add(Me.Label11)
         Me.GroupBox2.Controls.Add(Me.txtHighlightDet)
         Me.GroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.GroupBox2.Location = New System.Drawing.Point(6, 108)
+        Me.GroupBox2.Location = New System.Drawing.Point(6, 140)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(331, 127)
+        Me.GroupBox2.Size = New System.Drawing.Size(331, 111)
         Me.GroupBox2.TabIndex = 0
         Me.GroupBox2.TabStop = False
+        Me.GroupBox2.Text = "Highlight Amount >= "
         '
         'txtHighlightSummYr
         '
-        Me.txtHighlightSummYr.Location = New System.Drawing.Point(102, 99)
+        Me.txtHighlightSummYr.Location = New System.Drawing.Point(102, 81)
         Me.txtHighlightSummYr.MaxLength = 6
         Me.txtHighlightSummYr.Name = "txtHighlightSummYr"
         Me.txtHighlightSummYr.Size = New System.Drawing.Size(100, 20)
@@ -1314,7 +1317,7 @@ Partial Class frmMain
         '
         'txtHighlightSummMth
         '
-        Me.txtHighlightSummMth.Location = New System.Drawing.Point(102, 69)
+        Me.txtHighlightSummMth.Location = New System.Drawing.Point(102, 51)
         Me.txtHighlightSummMth.MaxLength = 6
         Me.txtHighlightSummMth.Name = "txtHighlightSummMth"
         Me.txtHighlightSummMth.Size = New System.Drawing.Size(100, 20)
@@ -1324,7 +1327,7 @@ Partial Class frmMain
         '
         Me.Label21.AutoSize = True
         Me.Label21.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label21.Location = New System.Drawing.Point(60, 46)
+        Me.Label21.Location = New System.Drawing.Point(60, 28)
         Me.Label21.Name = "Label21"
         Me.Label21.Size = New System.Drawing.Size(42, 13)
         Me.Label21.TabIndex = 5
@@ -1334,7 +1337,7 @@ Partial Class frmMain
         '
         Me.Label16.AutoSize = True
         Me.Label16.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label16.Location = New System.Drawing.Point(3, 73)
+        Me.Label16.Location = New System.Drawing.Point(3, 55)
         Me.Label16.Name = "Label16"
         Me.Label16.Size = New System.Drawing.Size(99, 13)
         Me.Label16.TabIndex = 4
@@ -1344,25 +1347,15 @@ Partial Class frmMain
         '
         Me.Label7.AutoSize = True
         Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label7.Location = New System.Drawing.Point(11, 103)
+        Me.Label7.Location = New System.Drawing.Point(11, 85)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(91, 13)
         Me.Label7.TabIndex = 3
         Me.Label7.Text = "Summary (Yearly):"
         '
-        'Label11
-        '
-        Me.Label11.AutoSize = True
-        Me.Label11.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label11.Location = New System.Drawing.Point(3, 14)
-        Me.Label11.Name = "Label11"
-        Me.Label11.Size = New System.Drawing.Size(125, 13)
-        Me.Label11.TabIndex = 2
-        Me.Label11.Text = "Highlight Amount >= "
-        '
         'txtHighlightDet
         '
-        Me.txtHighlightDet.Location = New System.Drawing.Point(102, 42)
+        Me.txtHighlightDet.Location = New System.Drawing.Point(102, 24)
         Me.txtHighlightDet.MaxLength = 6
         Me.txtHighlightDet.Name = "txtHighlightDet"
         Me.txtHighlightDet.Size = New System.Drawing.Size(100, 20)
@@ -1652,7 +1645,7 @@ Partial Class frmMain
         'Panel10
         '
         Me.Panel10.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.Panel10.BackColor = System.Drawing.Color.Blue
+        Me.Panel10.BackColor = System.Drawing.Color.LightBlue
         Me.Panel10.Controls.Add(Me.lblAlertText)
         Me.Panel10.Location = New System.Drawing.Point(0, 489)
         Me.Panel10.Name = "Panel10"
@@ -1703,6 +1696,16 @@ Partial Class frmMain
         'BgWorker_Email
         '
         '
+        'Label36
+        '
+        Me.Label36.AutoSize = True
+        Me.Label36.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label36.Location = New System.Drawing.Point(172, 12)
+        Me.Label36.Name = "Label36"
+        Me.Label36.Size = New System.Drawing.Size(59, 13)
+        Me.Label36.TabIndex = 11
+        Me.Label36.Text = "Db Name"
+        '
         'frmMain
         '
         Me.AcceptButton = Me.btnSubmit
@@ -1751,6 +1754,8 @@ Partial Class frmMain
         Me.Panel6.PerformLayout()
         Me.TabSettings.ResumeLayout(False)
         Me.TabSettings.PerformLayout()
+        Me.GroupBox7.ResumeLayout(False)
+        Me.GroupBox7.PerformLayout()
         Me.gbEmailConfig.ResumeLayout(False)
         Me.gbEmailConfig.PerformLayout()
         Me.grpEmailSettings.ResumeLayout(False)
@@ -1761,8 +1766,6 @@ Partial Class frmMain
         Me.GroupBox6.PerformLayout()
         Me.GroupBox5.ResumeLayout(False)
         Me.GroupBox5.PerformLayout()
-        Me.GroupBox4.ResumeLayout(False)
-        Me.GroupBox4.PerformLayout()
         Me.GroupBox3.ResumeLayout(False)
         Me.GroupBox3.PerformLayout()
         Me.GroupBox2.ResumeLayout(False)
@@ -1814,13 +1817,11 @@ Partial Class frmMain
     Friend WithEvents Label10 As System.Windows.Forms.Label
     Friend WithEvents TabSettings As System.Windows.Forms.TabPage
     Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
-    Friend WithEvents Label11 As System.Windows.Forms.Label
     Friend WithEvents txtHighlightDet As System.Windows.Forms.TextBox
     Friend WithEvents GroupBox3 As System.Windows.Forms.GroupBox
     Friend WithEvents rbOpenYr As System.Windows.Forms.RadioButton
     Friend WithEvents rbCloseYr As System.Windows.Forms.RadioButton
     Friend WithEvents cmbSelectYear As System.Windows.Forms.ComboBox
-    Friend WithEvents GroupBox4 As System.Windows.Forms.GroupBox
     Friend WithEvents LinkLabel1 As System.Windows.Forms.LinkLabel
     Friend WithEvents GroupBox5 As System.Windows.Forms.GroupBox
     Friend WithEvents dtpRecdKeeping As System.Windows.Forms.DateTimePicker
@@ -1924,7 +1925,9 @@ Partial Class frmMain
     Friend WithEvents Label35 As System.Windows.Forms.Label
     Friend WithEvents chkSendEmails As System.Windows.Forms.CheckBox
     Friend WithEvents chkIncludeExpSummary As System.Windows.Forms.CheckBox
-    Friend WithEvents Label36 As System.Windows.Forms.Label
     Friend WithEvents BgWorker_Email As System.ComponentModel.BackgroundWorker
+    Friend WithEvents GroupBox7 As System.Windows.Forms.GroupBox
+    Friend WithEvents chkExcelDelRows As System.Windows.Forms.CheckBox
+    Friend WithEvents Label36 As System.Windows.Forms.Label
 
 End Class
