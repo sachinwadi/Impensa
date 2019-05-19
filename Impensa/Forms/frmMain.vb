@@ -1559,6 +1559,8 @@ Public Class frmMain
                 dtpRecdKeeping.Value = Format(CDate(RecordKeepingStartDate), "dd/MM/yyyy")
             End If
 
+            If ExcelPassword = Nothing Then ExcelPassword = "Hotmail@123"
+
             txtCSVBackupPath.Text = CSVBackupPath
             chkShowReminder.Checked = ShowReminder
             txtReminder.Text = ReminderText

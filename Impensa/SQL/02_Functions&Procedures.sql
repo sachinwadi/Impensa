@@ -970,7 +970,8 @@ BEGIN
 		BEGIN
 			UPDATE Temp_ImportData
 			   SET sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Missing required field(s).',
-				   @sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Missing required field(s).'
+				   @sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Missing required field(s).',
+				   iRowNumber = @Counter
 		     WHERE CURRENT OF ImportCursor
 		END
 	
@@ -978,7 +979,8 @@ BEGIN
 		BEGIN
 			UPDATE Temp_ImportData
 			   SET sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Invalid DATE format.',
-				   @sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Invalid DATE format.'
+				   @sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Invalid DATE format.',
+				   iRowNumber = @Counter
 		     WHERE CURRENT OF ImportCursor
 		END
 		
@@ -986,7 +988,8 @@ BEGIN
 		BEGIN
 			UPDATE Temp_ImportData
 			   SET sImportComments = 'Record No. #' + @Counter + ' failed to import. Invalid AMOUNT format.',
-			       @sImportComments = 'Record No. #' + @Counter + ' failed to import. Invalid AMOUNT format.'
+			       @sImportComments = 'Record No. #' + @Counter + ' failed to import. Invalid AMOUNT format.',
+				   iRowNumber = @Counter
 			 WHERE CURRENT OF ImportCursor
 		END
 		
@@ -994,7 +997,8 @@ BEGIN
 		BEGIN
 			UPDATE Temp_ImportData
 			   SET sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Invalid CATEGORY.',
-			   @sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Invalid CATEGORY.'
+			   @sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' failed to import. Invalid CATEGORY.',
+			   iRowNumber = @Counter
 			 WHERE CURRENT OF ImportCursor
 		END
 		
@@ -1006,7 +1010,8 @@ BEGIN
 		  BEGIN  
 		   UPDATE Temp_ImportData  
 			  SET sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' skipped. Record was already imported.',  
-			  @sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' skipped. Record was already imported.'  
+				  @sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' skipped. Record was already imported.',
+				  iRowNumber = @Counter			  
 			WHERE CURRENT OF ImportCursor  
 		  END  
 		END
@@ -1014,7 +1019,8 @@ BEGIN
 		IF @sImportComments IS NULL
 		BEGIN
 			UPDATE Temp_ImportData
-			   SET sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' imported successfully.'
+			   SET sImportComments = 'Record No. #' + CONVERT(VARCHAR, @Counter) + ' imported successfully.',
+			       iRowNumber = @Counter
 			 WHERE CURRENT OF ImportCursor
 		END
 	
@@ -1047,7 +1053,8 @@ BEGIN
 			TMP.sImportComments,
 		    C.hKey [iCategory]
 	FROM Temp_ImportData TMP
-		 INNER JOIN tbl_CategoryList C ON C.sCategory = TMP.sCategory	
+		 INNER JOIN tbl_CategoryList C ON C.sCategory = TMP.sCategory
+   ORDER BY iRowNumber
 END
 GO
 /*############################################################################################################################################################*/

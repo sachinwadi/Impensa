@@ -538,6 +538,15 @@ Public Class clsLib
         End Set
     End Property
 
+    Public Shared Property ExcelPassword() As String
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "ExcelPassword", Nothing)
+        End Get
+        Set(ByVal value As String)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "ExcelPassword", value)
+        End Set
+    End Property
+
 #End Region
 
 #Region "Methods"
@@ -583,6 +592,14 @@ Public Class clsLib
                 Dim dcb As SqlCommandBuilder
                 Dim dv As New DataView
                 Dim dtEmail As New DataTable
+                Dim RowToDeleteStartIndex As Integer = 0
+                Dim RowToDeleteEndIndex As Integer = 0
+                Dim lstRowRangesToDelete As List(Of RowsToDeleteRange) = New List(Of RowsToDeleteRange)
+                Dim maxDateRowIndex As Integer = 0
+                Dim maxDate As Date = CDate("01-01-1900")
+                Dim lastRowStatus As String = ""
+                Dim currentRowStatus As String = ""
+                Dim deletedRowsCount As Integer = 0
 
                 TotalImportCnt = dt.Rows.Count
 
@@ -638,19 +655,39 @@ Public Class clsLib
                 ExcelWorkBook = Workbooks.Open(DataFile)
                 ExcelWorkSheet = ExcelWorkBook.Sheets(1)
 
-                ExcelWorkSheet.Unprotect("Hotmail@123")
+                ExcelWorkSheet.Unprotect(ExcelPassword)
 
                 For Each dr As DataRow In dt.Rows
                     If InStr(LCase(dr("sImportComments")), "success") > 0 Then
-                        ExcelWorkSheet.Range("F" & (dt.Rows.IndexOf(dr) + 2)).Value = "Success"
+                        currentRowStatus = "Succeed"
                     ElseIf InStr(LCase(dr("sImportComments")), "fail") > 0 Then
-                        ExcelWorkSheet.Range("F" & (dt.Rows.IndexOf(dr) + 2)).Value = "Failed"
+                        currentRowStatus = "Failed"
                     ElseIf InStr(LCase(dr("sImportComments")), "skip") > 0 Then
-                        ExcelWorkSheet.Range("F" & (dt.Rows.IndexOf(dr) + 2)).Value = "Skipped"
+                        currentRowStatus = "Skipped"
+
+                        If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) Then
+                            RowToDeleteStartIndex = (dt.Rows.IndexOf(dr) + 2)
+                        Else
+                            If Date.TryParse(dr("Date").ToString, Nothing) And DateDiff(DateInterval.Day, CDate(dr("Date")), Date.Now.Date) > 7 Then
+                                RowToDeleteEndIndex = (dt.Rows.IndexOf(dr) + 2)
+                            End If
+                        End If
                     End If
 
+                    If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) And Not String.Equals(currentRowStatus, "Skipped") Then
+                        lstRowRangesToDelete.Add(New RowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+                        RowToDeleteStartIndex = 0
+                        RowToDeleteEndIndex = 0
+                    End If
+
+                    ExcelWorkSheet.Range("F" & (dt.Rows.IndexOf(dr) + 2)).Value = currentRowStatus
+
                     If Date.TryParse(dr("Date").ToString, Nothing) Then
-                        ExcelWorkSheet.Range("G" & (dt.Rows.IndexOf(dr) + 2)).Value = Left(CDate(dr("Date")), 10)
+                        ExcelWorkSheet.Range("G" & (dt.Rows.IndexOf(dr) + 2)).Value = CDate(dr("Date"))
+                        If (CDate(dr("Date")) > maxDate) Then
+                            maxDate = CDate(dr("Date"))
+                            maxDateRowIndex = (dt.Rows.IndexOf(dr) + 2)
+                        End If
                     Else
                         ExcelWorkSheet.Range("G" & (dt.Rows.IndexOf(dr) + 2)).Value = dr("Date")
                     End If
@@ -664,9 +701,28 @@ Public Class clsLib
                     End If
 
                     ExcelWorkSheet.Range("J" & (dt.Rows.IndexOf(dr) + 2)).Value = dr("Notes")
+
+                    lastRowStatus = currentRowStatus
                 Next
 
-                ExcelWorkSheet.Protect("Hotmail@123")
+                'if all rows are with status as "Skipped" in continuation
+                If lstRowRangesToDelete.Count = 0 And RowToDeleteStartIndex <> 0 And RowToDeleteEndIndex <> 0 Then
+                    lstRowRangesToDelete.Add(New RowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+                End If
+
+                For Each item As RowsToDeleteRange In lstRowRangesToDelete
+                    item.StartIndex = item.StartIndex - deletedRowsCount
+                    item.EndIndex = IIf(item.EndIndex = 0, item.StartIndex, item.EndIndex - deletedRowsCount)
+
+                    Dim range = ExcelWorkSheet.Range("F" & item.StartIndex & ": F" & item.EndIndex)
+
+                    deletedRowsCount += range.Rows.Count
+                    range.EntireRow.Delete()
+                Next
+
+                ExcelWorkSheet.Range("A" & (maxDateRowIndex - deletedRowsCount)).Activate()
+
+                ExcelWorkSheet.Protect(ExcelPassword)
                 ExcelWorkBook.Save()
                 ''''End: Format Import Excel
 

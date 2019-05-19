@@ -32,7 +32,8 @@ BEGIN
 		dAmount VARCHAR(20),
 		sNotes VARCHAR(500),
 		sImportComments VARCHAR(500),
-		iDelete BIT
+		iDelete BIT,
+		iRowNumber INTEGER
 	)
 END
 GO
