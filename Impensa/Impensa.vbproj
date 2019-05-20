@@ -127,6 +127,7 @@
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
     <Compile Include="Classes\EmailGenerator.vb" />
+    <Compile Include="Classes\MergedCell.vb" />
     <Compile Include="Classes\RowsToDeleteRange.vb" />
     <Compile Include="Forms\frmChart.Designer.vb">
       <DependentUpon>frmChart.vb</DependentUpon>
