@@ -1,6 +1,6 @@
 ﻿Imports System.Collections.Generic
 Imports System.Data.SqlClient
-Imports Impensa.clsLib
+Imports Impensa.clsLibrary
 
 ' Monthly Comparision Per Category
 Module mdlChart1

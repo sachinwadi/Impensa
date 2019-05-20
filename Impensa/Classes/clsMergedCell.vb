@@ -1,4 +1,4 @@
-﻿Public Class MergedCell
+﻿Public Class clsMergedCell
     Inherits DataGridViewTextBoxCell
 
     Private _LeftColIndex As Int32 = 0
@@ -66,7 +66,7 @@
             graphics.DrawString(strText, New Font("Microsoft Sans Serif", 14, FontStyle.Regular), Brushes.Green, rectDest, sf)
 
         Catch ex As Exception
-            clsLib.ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+            clsLibrary.ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
 End Class

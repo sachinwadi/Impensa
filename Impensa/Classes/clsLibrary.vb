@@ -15,7 +15,7 @@ Imports System.Net.Mail
 
 #End Region
 
-Public Class clsLib
+Public Class clsLibrary
 #Region "Enums"
     Public Enum SummaryTypes
         Monthly = 0
@@ -52,16 +52,6 @@ Public Class clsLib
     Private Shared _TotalImportCnt As Int32
     Private Shared _ImportSucceessAndFailCnt As Int32
     Private Shared _SaveValidationFailed As Boolean
-    'Private Shared _AssemblyLocation As String
-    'Private Shared _LogTimeStamp As String
-    'Private Shared _ImportExceptionOccurred As Boolean
-    'Private Shared _SendEmails As Boolean
-    'Private Shared _FromEmail As String
-    'Private Shared _FromPassword As String
-    'Private Shared _SmtpHost As String
-    'Private Shared _SmtpPort As String
-    'Private Shared _ToEmails As String
-
 #End Region
 
 #Region "Properties"
@@ -574,10 +564,6 @@ Public Class clsLib
     End Function
 
     Public Shared Sub DataImport()
-        Call ExcelDataImport()
-    End Sub
-
-    Public Shared Sub ExcelDataImport()
         Dim DataFile = CSVBackupPath + "\Impensa.xlsm"
         Dim dt As New DataTable
         Dim OleDBAdapter As OleDbDataAdapter
@@ -603,7 +589,7 @@ Public Class clsLib
                 Dim dtEmail As New DataTable
                 Dim RowToDeleteStartIndex As Integer = 0
                 Dim RowToDeleteEndIndex As Integer = 0
-                Dim lstRowRangesToDelete As List(Of RowsToDeleteRange) = New List(Of RowsToDeleteRange)
+                Dim lstRowRangesToDelete As List(Of clsRowsToDeleteRange) = New List(Of clsRowsToDeleteRange)
                 Dim maxDateRowIndex As Integer = 0
                 Dim maxDate As Date = CDate("01-01-1900")
                 Dim lastRowStatus As String = ""
@@ -684,7 +670,7 @@ Public Class clsLib
                             End If
 
                             If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) And Not String.Equals(currentRowStatus, "Skipped") Then
-                                lstRowRangesToDelete.Add(New RowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+                                lstRowRangesToDelete.Add(New clsRowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
                                 RowToDeleteStartIndex = 0
                                 RowToDeleteEndIndex = 0
                             End If
@@ -716,41 +702,41 @@ Public Class clsLib
                     lastRowStatus = currentRowStatus
                 Next
 
-            'if all rows are with status as "Skipped" in continuation
-            If lstRowRangesToDelete.Count = 0 And RowToDeleteStartIndex <> 0 And RowToDeleteEndIndex <> 0 Then
-                lstRowRangesToDelete.Add(New RowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
-            End If
-
-            For Each item As RowsToDeleteRange In lstRowRangesToDelete
-                item.StartIndex = item.StartIndex - deletedRowsCount
-                item.EndIndex = IIf(item.EndIndex = 0, item.StartIndex, item.EndIndex - deletedRowsCount)
-
-                Dim range = ExcelWorkSheet.Range("F" & item.StartIndex & ": F" & item.EndIndex)
-
-                deletedRowsCount += range.Rows.Count
-                range.EntireRow.Delete()
-            Next
-
-            ExcelWorkSheet.Range("A" & (maxDateRowIndex - deletedRowsCount)).Activate()
-
-            ExcelWorkSheet.Protect(ExcelPassword)
-            ExcelWorkBook.Save()
-            ''''End: Format Import Excel
-
-            If (SendEmails) Then
-                If (dtEmail.Rows.Count > 0) Then
-                    dtEmail.Columns.Add("hKey", GetType(Int64))
-                    dtEmail.Columns("Category").ColumnName = "CategoryName"
-                    Try
-                        Call SendEmail(dtEmail)
-                    Catch ex As Exception
-                        If (TypeOf (ex) Is SmtpException) Then
-                            Call GenerateErrorLog(ex.Message)
-                            IsEmailExceptionOccurred = True
-                        End If
-                    End Try
+                'if all rows are with status as "Skipped" in continuation
+                If lstRowRangesToDelete.Count = 0 And RowToDeleteStartIndex <> 0 And RowToDeleteEndIndex <> 0 Then
+                    lstRowRangesToDelete.Add(New clsRowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
                 End If
-            End If
+
+                For Each item As clsRowsToDeleteRange In lstRowRangesToDelete
+                    item.StartIndex = item.StartIndex - deletedRowsCount
+                    item.EndIndex = IIf(item.EndIndex = 0, item.StartIndex, item.EndIndex - deletedRowsCount)
+
+                    Dim range = ExcelWorkSheet.Range("F" & item.StartIndex & ": F" & item.EndIndex)
+
+                    deletedRowsCount += range.Rows.Count
+                    range.EntireRow.Delete()
+                Next
+
+                ExcelWorkSheet.Range("A" & (maxDateRowIndex - deletedRowsCount)).Activate()
+
+                ExcelWorkSheet.Protect(ExcelPassword)
+                ExcelWorkBook.Save()
+                ''''End: Format Import Excel
+
+                If (SendEmails) Then
+                    If (dtEmail.Rows.Count > 0) Then
+                        dtEmail.Columns.Add("hKey", GetType(Int64))
+                        dtEmail.Columns("Category").ColumnName = "CategoryName"
+                        Try
+                            Call SendEmail(dtEmail)
+                        Catch ex As Exception
+                            If (TypeOf (ex) Is SmtpException) Then
+                                Call GenerateErrorLog(ex.Message)
+                                IsEmailExceptionOccurred = True
+                            End If
+                        End Try
+                    End If
+                End If
             End If
 
             ImportFileTimeStamp = File.GetLastWriteTime(DataFile)
@@ -788,13 +774,13 @@ Public Class clsLib
 
             If (Not ExcelWorkSheet Is Nothing) Then Marshal.ReleaseComObject(ExcelWorkSheet)
 
-            GC.Collect()
-            GC.WaitForPendingFinalizers()
+            'GC.Collect()
+            'GC.WaitForPendingFinalizers()
         End Try
     End Sub
 
     Public Shared Sub SendEmail(ByVal dtGrid As DataTable)
-        Dim emailItem As New EmailGenerator()
+        Dim emailItem As New clsEmailGenerator()
         Dim dcAction As New DataColumn("Action", GetType(String))
         dtGrid.Columns.Add(dcAction)
 

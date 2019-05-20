@@ -1,6 +1,6 @@
 ﻿Imports System.Collections.Generic
 Imports System.Data.SqlClient
-Imports Impensa.clsLib
+Imports Impensa.clsLibrary
 
 ' Yearly Comparision
 Module mdlChart4

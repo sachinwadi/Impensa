@@ -2,7 +2,7 @@
 Imports System.Security.Cryptography
 Imports System.Text
 
-Module CryptoExtensions
+Module mdlCryptoExtensions
     <Extension()>
     Public Function Encrypt(ByVal text As String) As String
         Return Convert.ToBase64String(ProtectedData.Protect(Encoding.Unicode.GetBytes(text), Nothing, DataProtectionScope.CurrentUser))

@@ -1,4 +1,4 @@
-﻿Public Class RowsToDeleteRange
+﻿Public Class clsRowsToDeleteRange
     Private _StartIndex As Integer
     Private _EndIndex As Integer
     Public Property StartIndex() As Integer

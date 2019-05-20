@@ -1,10 +1,10 @@
 ﻿Imports System.Text
-Imports Impensa.clsLib
+Imports Impensa.clsLibrary
 Imports System.Net
 Imports System.Net.Mail
 Imports System.Globalization
 
-Public Class EmailGenerator
+Public Class clsEmailGenerator
 
     Private _strBuilder As StringBuilder = New StringBuilder()
     Private _collection As Dictionary(Of Integer, String) = New Dictionary(Of Integer, String)

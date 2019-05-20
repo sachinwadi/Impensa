@@ -7,7 +7,7 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.IO
 Imports System.Globalization
-Imports Impensa.clsLib
+Imports Impensa.clsLibrary
 Imports iTextSharp.text
 Imports iTextSharp.text.pdf
 Imports System.Net.Mail
@@ -611,13 +611,13 @@ Public Class frmMain
 
                 If SummaryType = SummaryTypes.RunningTotals Then
                     Dim StartMergeColIndex As Int32 = 2
-                    Dim MC As MergedCell
+                    Dim MC As clsMergedCell
 
                     DataGridExpSumm.Columns("Category").HeaderText = "Month"
 
                     For i As Int32 = StartMergeColIndex To DataGridExpSumm.Columns.Count - 1
-                        DataGridExpSumm.Rows(RunTotRowIndex).Cells(i) = New MergedCell()
-                        MC = CType(DataGridExpSumm.Rows(RunTotRowIndex).Cells(i), MergedCell)
+                        DataGridExpSumm.Rows(RunTotRowIndex).Cells(i) = New clsMergedCell()
+                        MC = CType(DataGridExpSumm.Rows(RunTotRowIndex).Cells(i), clsMergedCell)
                         MC.LeftColIndex = StartMergeColIndex
                         MC.RightColIndex = (DataGridExpSumm.Columns.Count - 1)
                     Next
@@ -2260,7 +2260,7 @@ Public Class frmMain
         TotalImportCnt = 0
         ImportSucceessAndFailCnt = 0
 
-        Call clsLib.DataImport()
+        Call clsLibrary.DataImport()
 
         If ImportSucceessAndFailCnt > 0 Then
             NotifyIcon.BalloonTipText = TotalImportCnt & " Records Found." & vbCrLf & "IMPORT STATUS: Success: " & ImportSucceessCnt & " | " & "Failed: " & ImportFailedCnt & _

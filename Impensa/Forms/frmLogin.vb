@@ -1,5 +1,5 @@
 ﻿Imports System.Data.SqlClient
-Imports Impensa.clsLib
+Imports Impensa.clsLibrary
 
 Public Class frmLogin
 

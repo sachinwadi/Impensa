@@ -126,9 +126,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
-    <Compile Include="Classes\EmailGenerator.vb" />
-    <Compile Include="Classes\MergedCell.vb" />
-    <Compile Include="Classes\RowsToDeleteRange.vb" />
+    <Compile Include="Classes\clsEmailGenerator.vb" />
+    <Compile Include="Classes\clsMergedCell.vb" />
+    <Compile Include="Classes\clsRowsToDeleteRange.vb" />
     <Compile Include="Forms\frmChart.Designer.vb">
       <DependentUpon>frmChart.vb</DependentUpon>
     </Compile>
@@ -141,11 +141,11 @@
     <Compile Include="Forms\frmLogin.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Modules\CryptoExtensions.vb" />
+    <Compile Include="Modules\mdlCryptoExtensions.vb" />
     <Compile Include="Modules\mdlChart1.vb" />
     <Compile Include="Modules\mdlChart2.vb" />
     <Compile Include="Modules\mdlChart3.vb" />
-    <Compile Include="Classes\clsLib.vb" />
+    <Compile Include="Classes\clsLibrary.vb" />
     <Compile Include="Forms\frmMain.designer.vb">
       <DependentUpon>frmMain.vb</DependentUpon>
     </Compile>

@@ -2,7 +2,7 @@
 Imports System.Collections.Generic
 Imports System.Data.SqlClient
 Imports System.Text
-Imports Impensa.clsLib
+Imports Impensa.clsLibrary
 
 Module mdlChart2
     Public Function PopulateListingCombo() As BindingSource

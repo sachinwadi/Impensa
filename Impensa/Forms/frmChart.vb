@@ -1,4 +1,4 @@
-﻿Imports Impensa.clsLib
+﻿Imports Impensa.clsLibrary
 Imports System.Drawing.Printing
 
 Public Class frmChart
