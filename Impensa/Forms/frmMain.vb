@@ -1930,7 +1930,7 @@ Public Class frmMain
         Dim AlertText As String = Nothing
 
         If LastFailedCnt > 0 Then
-            AlertText = LastFailedCnt & " RECORD(S) FAILED TO IMPORT IN LAST ATTEMPT MADE AT " & LogTimeStamp
+            AlertText = LastFailedCnt & " RECORD(S) FAILED TO IMPORT IN LAST ATTEMPT MADE AT " & LogFailedImportTimeStamp
             lblAlertText.ForeColor = Color.Red
         ElseIf ImportExceptionOccurred Then
             AlertText = "ERROR OCCURRED DURING LAST IMPORT ATTEMPT. PLEASE CHECK ERROR LOG PRESENT AT IMPORT PATH."
@@ -2263,7 +2263,8 @@ Public Class frmMain
         Call clsLibrary.DataImport()
 
         If ImportSucceessAndFailCnt > 0 Then
-            NotifyIcon.BalloonTipText = TotalImportCnt & " Records Found." & vbCrLf & "IMPORT STATUS: Success: " & ImportSucceessCnt & " | " & "Failed: " & ImportFailedCnt & _
+            NotifyIcon.BalloonTipText = "Impensa.xlms imported successfully." & vbCrLf & TotalImportCnt & " Records Found." & vbCrLf & _
+                                        "IMPORT STATUS: Success: " & ImportSucceessCnt & " | " & "Failed: " & ImportFailedCnt & _
                                         " | " & "Skipped: " & ImportSkippedCnt
 
             NotifyIcon.ShowBalloonTip(100)

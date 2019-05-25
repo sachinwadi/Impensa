@@ -1053,7 +1053,7 @@ BEGIN
 			TMP.sImportComments,
 		    C.hKey [iCategory]
 	FROM Temp_ImportData TMP
-		 INNER JOIN tbl_CategoryList C ON C.sCategory = TMP.sCategory
+		 LEFT JOIN tbl_CategoryList C ON C.sCategory = TMP.sCategory
    ORDER BY iRowNumber
 END
 GO

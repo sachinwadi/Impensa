@@ -92,12 +92,12 @@ Public Class clsLibrary
         End Set
     End Property
 
-    Public Shared Property LogTimeStamp() As String
+    Public Shared Property LogFailedImportTimeStamp() As String
         Get
-            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "LogTimeStamp", Nothing)
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "LogFailedImportTimeStamp", Nothing)
         End Get
         Set(ByVal value As String)
-            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "LogTimeStamp", value)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "LogFailedImportTimeStamp", value)
         End Set
     End Property
 
@@ -598,6 +598,8 @@ Public Class clsLibrary
 
                 TotalImportCnt = dt.Rows.Count
 
+                LogFailedImportTimeStamp = Date.Now
+
                 dt.Columns.Add("hKey", GetType(Int64), Nothing)
 
                 dt.Columns("hKey").SetOrdinal(0)
@@ -661,19 +663,22 @@ Public Class clsLibrary
                         currentRowStatus = "Skipped"
 
                         If DeleteOldRowsFromExcel Then
-                            If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) Then
+                            If Not String.Equals(currentRowStatus, lastRowStatus) Then
+                                'If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) Then
                                 RowToDeleteStartIndex = (dt.Rows.IndexOf(dr) + 2)
                             Else
                                 If Date.TryParse(dr("Date").ToString, Nothing) And DateDiff(DateInterval.Day, CDate(dr("Date")), Date.Now.Date) > 7 Then
                                     RowToDeleteEndIndex = (dt.Rows.IndexOf(dr) + 2)
                                 End If
                             End If
+                        End If
+                    End If
 
-                            If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) And Not String.Equals(currentRowStatus, "Skipped") Then
-                                lstRowRangesToDelete.Add(New clsRowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
-                                RowToDeleteStartIndex = 0
-                                RowToDeleteEndIndex = 0
-                            End If
+                    If DeleteOldRowsFromExcel Then
+                        If Not String.Equals(currentRowStatus, lastRowStatus) And Not String.IsNullOrEmpty(lastRowStatus) And Not String.Equals(currentRowStatus, "Skipped") Then
+                            lstRowRangesToDelete.Add(New clsRowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+                            RowToDeleteStartIndex = 0
+                            RowToDeleteEndIndex = 0
                         End If
                     End If
 
@@ -702,20 +707,26 @@ Public Class clsLibrary
                     lastRowStatus = currentRowStatus
                 Next
 
-                'if all rows are with status as "Skipped" in continuation
-                If lstRowRangesToDelete.Count = 0 And RowToDeleteStartIndex <> 0 And RowToDeleteEndIndex <> 0 Then
-                    lstRowRangesToDelete.Add(New clsRowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+                If DeleteOldRowsFromExcel Then
+
+                    'if all rows are with status as "Skipped" in continuation
+                    If lstRowRangesToDelete.Count = 0 And RowToDeleteStartIndex <> 0 And RowToDeleteEndIndex <> 0 Then
+                        lstRowRangesToDelete.Add(New clsRowsToDeleteRange With {.StartIndex = RowToDeleteStartIndex, .EndIndex = RowToDeleteEndIndex})
+                    End If
+
+                    For Each item As clsRowsToDeleteRange In lstRowRangesToDelete
+                        item.StartIndex = item.StartIndex - deletedRowsCount
+                        item.EndIndex = IIf(item.EndIndex = 0, item.StartIndex, item.EndIndex - deletedRowsCount)
+
+                        Dim range = ExcelWorkSheet.Range("F" & item.StartIndex & ": F" & item.EndIndex)
+
+                        deletedRowsCount += range.Rows.Count
+                        range.EntireRow.Delete()
+                    Next
+
+                    TotalImportCnt -= deletedRowsCount
+                    ImportSkippedCnt -= deletedRowsCount
                 End If
-
-                For Each item As clsRowsToDeleteRange In lstRowRangesToDelete
-                    item.StartIndex = item.StartIndex - deletedRowsCount
-                    item.EndIndex = IIf(item.EndIndex = 0, item.StartIndex, item.EndIndex - deletedRowsCount)
-
-                    Dim range = ExcelWorkSheet.Range("F" & item.StartIndex & ": F" & item.EndIndex)
-
-                    deletedRowsCount += range.Rows.Count
-                    range.EntireRow.Delete()
-                Next
 
                 ExcelWorkSheet.Range("A" & (maxDateRowIndex - deletedRowsCount)).Activate()
 
@@ -774,8 +785,9 @@ Public Class clsLibrary
 
             If (Not ExcelWorkSheet Is Nothing) Then Marshal.ReleaseComObject(ExcelWorkSheet)
 
-            'GC.Collect()
-            'GC.WaitForPendingFinalizers()
+            GC.WaitForPendingFinalizers()
+            GC.Collect()
+
         End Try
     End Sub
 
@@ -867,6 +879,7 @@ Public Class clsLibrary
             fs = File.Open(P_FilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
             Return True
         Catch ex As Exception
+            Call GenerateErrorLog("Unable to access Impensa.xlsm. Close any background process which may be accessing this file.")
             Return False
         Finally
             If (Not fs Is Nothing) Then fs.Close()
