@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend3 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -89,6 +89,7 @@ Partial Class frmMain
         Me.cmbThrMonth = New System.Windows.Forms.ComboBox()
         Me.Label17 = New System.Windows.Forms.Label()
         Me.TabSettings = New System.Windows.Forms.TabPage()
+        Me.Label36 = New System.Windows.Forms.Label()
         Me.GroupBox7 = New System.Windows.Forms.GroupBox()
         Me.chkExcelDelRows = New System.Windows.Forms.CheckBox()
         Me.chkStartImport = New System.Windows.Forms.CheckBox()
@@ -166,7 +167,6 @@ Partial Class frmMain
         Me.tmrRefresh = New System.Windows.Forms.Timer(Me.components)
         Me.btnExport = New System.Windows.Forms.Button()
         Me.BgWorker_Email = New System.ComponentModel.BackgroundWorker()
-        Me.Label36 = New System.Windows.Forms.Label()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabCategories.SuspendLayout()
@@ -411,9 +411,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend3.Name = "Legend1"
-        Legend3.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend3)
+        Legend2.Name = "Legend1"
+        Legend2.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend2)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -927,6 +927,16 @@ Partial Class frmMain
         Me.TabSettings.TabIndex = 6
         Me.TabSettings.Text = "Settings"
         Me.TabSettings.UseVisualStyleBackColor = True
+        '
+        'Label36
+        '
+        Me.Label36.AutoSize = True
+        Me.Label36.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label36.Location = New System.Drawing.Point(172, 12)
+        Me.Label36.Name = "Label36"
+        Me.Label36.Size = New System.Drawing.Size(59, 13)
+        Me.Label36.TabIndex = 11
+        Me.Label36.Text = "Db Name"
         '
         'GroupBox7
         '
@@ -1655,6 +1665,7 @@ Partial Class frmMain
         '
         'BGWorker
         '
+        Me.BGWorker.WorkerSupportsCancellation = True
         '
         'NotifyIcon
         '
@@ -1695,16 +1706,6 @@ Partial Class frmMain
         '
         'BgWorker_Email
         '
-        '
-        'Label36
-        '
-        Me.Label36.AutoSize = True
-        Me.Label36.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label36.Location = New System.Drawing.Point(172, 12)
-        Me.Label36.Name = "Label36"
-        Me.Label36.Size = New System.Drawing.Size(59, 13)
-        Me.Label36.TabIndex = 11
-        Me.Label36.Text = "Db Name"
         '
         'frmMain
         '

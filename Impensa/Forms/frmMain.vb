@@ -2467,6 +2467,15 @@ Public Class frmMain
         Panel9.Width = Me.Width
         Panel10.Width = Me.Width
     End Sub
+
+    Private Function HaltImport() As Boolean
+        If EnableImport Then
+            Return False
+        Else
+            BGWorker.CancelAsync()
+            Return True
+        End If
+    End Function
 #End Region
 #End Region
 
@@ -3828,7 +3837,7 @@ Public Class frmMain
     End Sub
 
     Private Sub BGWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BGWorker.DoWork
-        Do While Not File.GetLastWriteTime(CSVBackupPath + "\Impensa.xlsm").ToString = ImportFileTimeStamp
+        Do While Not File.GetLastWriteTime(CSVBackupPath + "\Impensa.xlsm").ToString = ImportFileTimeStamp And Not HaltImport()
             Call DataImport()
         Loop
     End Sub
@@ -3836,6 +3845,8 @@ Public Class frmMain
     Private Sub BGWorker_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles BGWorker.RunWorkerCompleted
         If EnableImport Then
             BGWorker.RunWorkerAsync()
+        Else
+            chkStartImport.Checked = False
         End If
     End Sub
 
