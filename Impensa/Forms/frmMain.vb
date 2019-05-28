@@ -970,7 +970,7 @@ Public Class frmMain
             dr("CateGory") = "TOTAL"
             dr("TAmount") = ThrAmtTotal
             dr("SAmount") = SpentAmtTotal
-            dr("Difference") = DiffAmtTotal
+            dr("Difference") = Math.Abs(DiffAmtTotal)
             dr("IsReadOnly") = 1
             dtThresholdData.Rows.Add(dr)
 
