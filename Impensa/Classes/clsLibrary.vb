@@ -879,9 +879,6 @@ Public Class clsLibrary
             fs = File.Open(P_FilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)
             Return True
         Catch ex As Exception
-            ImportExceptionOccurred = True
-            EnableImport = False
-            Call GenerateErrorLog("Unable to access Impensa.xlsm. Close any background process/application which may be accessing this file and enable ""Import Service"" option from settings again.")
             Return False
         Finally
             If (Not fs Is Nothing) Then fs.Close()
