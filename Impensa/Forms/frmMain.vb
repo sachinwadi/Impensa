@@ -2430,7 +2430,7 @@ Public Class frmMain
                 If File.Exists(FileName) Then File.Delete(FileName)
 
                 Using stream As New FileStream(FileName, FileMode.Create)
-                    Dim pdfDoc As New Document(PageSize.A4, 10.0F, 10.0F, 0.0F, 0.0F)
+                    Dim pdfDoc As New Document(PageSize.A4, 10.0F, 10.0F, 10.0F, 10.0F)
                     PdfWriter.GetInstance(pdfDoc, stream)
                     pdfDoc.Open()
                     pdfDoc.Add(New Phrase("Impensa"))
