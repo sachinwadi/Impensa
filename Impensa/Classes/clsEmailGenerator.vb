@@ -33,7 +33,7 @@ Public Class clsEmailGenerator
         _strBuilder.Append("<table>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<td>")
-        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse; font-family: Arial; font-size:14px;'>")
+        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse; font-family: Arial; font-size:13px;'>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='left'>Date</th>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='left'>Category</th>")
@@ -69,7 +69,7 @@ Public Class clsEmailGenerator
 
     Private Sub BuildSummaryHtmlTable()
 
-        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse;font-family: Arial;font-size:14;'>")
+        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse;font-family: Arial;font-size:13px;'>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='left'>Category</th>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='right'>MTD</th>")
@@ -91,11 +91,11 @@ Public Class clsEmailGenerator
             End If
 
             Dim fontWeight As String = "normal"
-            Dim fontSize As String = "14px"
+            Dim fontSize As String = "13px"
 
             If (dr("Category") = "TOTAL") Then
                 fontWeight = "bold"
-                fontSize = "20px"
+                fontSize = "15px"
             End If
 
             _strBuilder.Append("<tr>")
@@ -113,7 +113,7 @@ Public Class clsEmailGenerator
 
     Private Sub BuildFooterLegends()
         _strBuilder.Append("<br />")
-        _strBuilder.Append("<table style='font-family:Arial;font-size:10'>")
+        _strBuilder.Append("<table style='font-family:Arial;font-size:10px'>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<td style='border-right:1px solid black;padding:3px;'>*MTD - Month To Date</td>")
         _strBuilder.Append("<td style='border-right:1px solid black;padding:3px;'>*YTD - Year To Date</td>")
@@ -142,21 +142,12 @@ Public Class clsEmailGenerator
 
     Private Sub BuildEmailBody(ByVal P_OnlySummary As Boolean)
         If Not P_OnlySummary Then
-            _strBuilder.Append("<p>Hello,<br /><br />This is a notification e-mail from <strong>Impensa Expense Manager</strong></p>")
-            _strBuilder.Append("<h4>Here are the Changes:</h4>")
-            Call BuildDetailHtmlTable()
-            Call BuildLegendHtmlTable()
-            If (IncludeExpenseSummary) Then
-                _strBuilder.Append("<h4>Summary:</h4>")
-                Call BuildSummaryHtmlTable()
-            End If
-            _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
+            Call BuildDailyNotificationEmailBody()
         Else
-            _strBuilder.Append("<h2>Monthly Expense Summary")
-            Call BuildSummaryHtmlTable()
-            _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
+            Call BuildMonthlySummaryEmailBody()
         End If
     End Sub
+
 
     Public Sub SendEmail(ByVal P_Subject As String, Optional ByVal P_OnlySummary As Boolean = False)
         Dim fromAddress = New MailAddress(FromEmail, "Impensa Expense Manager")
@@ -184,6 +175,24 @@ Public Class clsEmailGenerator
         Next
 
         smtp.Send(message)
+    End Sub
+
+    Private Sub BuildDailyNotificationEmailBody()
+        _strBuilder.Append("<p>Hello,<br /><br />This is a notification e-mail from <strong>Impensa Expense Manager</strong></p>")
+        _strBuilder.Append("<h4>Here are the Changes:</h4>")
+        Call BuildDetailHtmlTable()
+        Call BuildLegendHtmlTable()
+        If (IncludeExpenseSummary) Then
+            _strBuilder.Append("<h4>Summary:</h4>")
+            Call BuildSummaryHtmlTable()
+        End If
+        _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
+    End Sub
+
+    Private Sub BuildMonthlySummaryEmailBody()
+        _strBuilder.AppendFormat("<h2>Monthly Expense Summary <span style='color: blue;'>({0}/{1})</span></h2>", New Date(Date.Now.Year, Date.Now.Month - 1, 1).ToString("MMM", CultureInfo.InvariantCulture), Date.Now.Year.ToString)
+        Call BuildSummaryHtmlTable()
+        _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
     End Sub
 
 End Class
