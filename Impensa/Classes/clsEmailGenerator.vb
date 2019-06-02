@@ -152,7 +152,7 @@ Public Class clsEmailGenerator
             End If
             _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
         Else
-            _strBuilder.AppendFormat("<h2>Monthly Expense Summary - {0}/{1}</h2>", New Date(Date.Now.Year, Date.Now.Month - 1, 1).ToString("MMM", CultureInfo.InvariantCulture), Date.Now.Year)
+            _strBuilder.Append("<h2>Monthly Expense Summary")
             Call BuildSummaryHtmlTable()
             _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
         End If

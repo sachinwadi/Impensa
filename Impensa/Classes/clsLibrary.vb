@@ -831,7 +831,7 @@ Public Class clsLibrary
     Public Shared Sub SendSummaryEmailOnceInMonth(ByVal P_FromDate As Date, ByVal P_ToDate As Date)
         Dim emailItem As New clsEmailGenerator()
         emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail(P_FromDate, P_ToDate)
-        emailItem.SendEmail("Impensa Notification - Monthly Expense Summary", True)
+        emailItem.SendEmail("Impensa Notification - Monthly Expense Summary (" + New Date(Date.Now.Year, Date.Now.Month - 1, 1).ToString("MMM", CultureInfo.InvariantCulture) + "/" + Date.Now.Year.ToString + ")", True)
     End Sub
 
     Public Shared Function GetAllInOneSummaryDataTableForEmail() As DataTable
