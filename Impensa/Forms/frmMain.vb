@@ -2467,6 +2467,19 @@ Public Class frmMain
         Panel9.Width = Me.Width
         Panel10.Width = Me.Width
     End Sub
+
+    Private Sub SendSummaryEmailOnceInMonth()
+        If LatestSummaryMailedDate = Nothing OrElse Month(LatestSummaryMailedDate) < Date.Today.Month Then
+            Dim dtFirstDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, 1)
+            Dim dtLastDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, (New Date(Date.Now.Year, Date.Now.Month, 1)).AddDays(-1).Day)
+            Try
+                Call clsLibrary.SendSummaryEmailOnceInMonth(dtFirstDayOfLastMonth, dtLastDayOfLastMonth)
+                LatestSummaryMailedDate = Date.Now.Date
+            Catch ex As Exception
+                ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+            End Try
+        End If
+    End Sub
 #End Region
 #End Region
 
@@ -2531,6 +2544,7 @@ Public Class frmMain
 
             Call CheckOpenYears()
             Call CheckCurrentMonthThresholds()
+            If SendEmails And Not BgWorker_Email.IsBusy Then BgWorker_Email.RunWorkerAsync()
 
             If (CDate(LastUsedTimeStamp).Month <> DateTime.Today.Month) Then
                 Call InsertCategoryPrevMonthOccurrences()
@@ -3834,12 +3848,13 @@ Public Class frmMain
     End Sub
 
     Private Sub BGWorker_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles BGWorker.RunWorkerCompleted
-            BGWorker.RunWorkerAsync()
+        BGWorker.RunWorkerAsync()
     End Sub
 
     Private Sub BgWorker_Email_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BgWorker_Email.DoWork
         Try
-            Call SendEmail(dtEmail)
+            Call SendDailyEmail(dtEmail)
+            Call SendSummaryEmailOnceInMonth()
         Catch ex As Exception
             If (TypeOf (ex) Is SmtpException) Then
                 ImpensaAlert("Unable to send notification email" + vbCrLf + vbCrLf + "Error Details:" + vbCrLf + ex.Message, MsgBoxStyle.Critical)

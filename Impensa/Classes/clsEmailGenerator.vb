@@ -33,7 +33,7 @@ Public Class clsEmailGenerator
         _strBuilder.Append("<table>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<td>")
-        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse; font-family: Arial; font-size:14;'>")
+        _strBuilder.Append("<table style='border:1px solid black;border-collapse:collapse; font-family: Arial; font-size:14px;'>")
         _strBuilder.Append("<tr>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='left'>Date</th>")
         _strBuilder.Append("<th style='border: 1px solid black; padding: 3px;' align='left'>Category</th>")
@@ -91,11 +91,11 @@ Public Class clsEmailGenerator
             End If
 
             Dim fontWeight As String = "normal"
-            Dim fontSize As String = "14"
+            Dim fontSize As String = "14px"
 
             If (dr("Category") = "TOTAL") Then
                 fontWeight = "bold"
-                fontSize = "22"
+                fontSize = "20px"
             End If
 
             _strBuilder.Append("<tr>")
@@ -107,6 +107,11 @@ Public Class clsEmailGenerator
         Next
 
         _strBuilder.Append("</table>")
+
+        Call BuildFooterLegends()
+    End Sub
+
+    Private Sub BuildFooterLegends()
         _strBuilder.Append("<br />")
         _strBuilder.Append("<table style='font-family:Arial;font-size:10'>")
         _strBuilder.Append("<tr>")
@@ -135,22 +140,28 @@ Public Class clsEmailGenerator
         _strBuilder.Append("</table>")
     End Sub
 
-    Private Sub BuildEmailBody()
-        _strBuilder.Append("<p>Hello,<br /><br />This is a notification e-mail from <strong>Impensa Expense Manager</strong></p>")
-        _strBuilder.Append("<h4>Here are the Changes:</h4>")
-        Call BuildDetailHtmlTable()
-        Call BuildLegendHtmlTable()
-        If (IncludeExpenseSummary) Then
-            _strBuilder.Append("<h4>Summary:</h4>")
+    Private Sub BuildEmailBody(ByVal P_OnlySummary As Boolean)
+        If Not P_OnlySummary Then
+            _strBuilder.Append("<p>Hello,<br /><br />This is a notification e-mail from <strong>Impensa Expense Manager</strong></p>")
+            _strBuilder.Append("<h4>Here are the Changes:</h4>")
+            Call BuildDetailHtmlTable()
+            Call BuildLegendHtmlTable()
+            If (IncludeExpenseSummary) Then
+                _strBuilder.Append("<h4>Summary:</h4>")
+                Call BuildSummaryHtmlTable()
+            End If
+            _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
+        Else
+            _strBuilder.AppendFormat("<h2>Monthly Expense Summary - {0}/{1}</h2>", New Date(Date.Now.Year, Date.Now.Month - 1, 1).ToString("MMM", CultureInfo.InvariantCulture), Date.Now.Year)
             Call BuildSummaryHtmlTable()
+            _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
         End If
-        _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
     End Sub
 
-    Public Sub SendEmail()
+    Public Sub SendEmail(ByVal P_Subject As String, Optional ByVal P_OnlySummary As Boolean = False)
         Dim fromAddress = New MailAddress(FromEmail, "Impensa Expense Manager")
 
-        Call BuildEmailBody()
+        Call BuildEmailBody(P_OnlySummary)
 
         Dim smtp = New SmtpClient() With
         {.Host = SmtpHost,
@@ -163,7 +174,7 @@ Public Class clsEmailGenerator
 
         Dim message = New MailMessage() With
         {.IsBodyHtml = True,
-         .Subject = "Impensa Notification - " + DateTime.Now.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture),
+         .Subject = P_Subject,
          .Body = _strBuilder.ToString,
          .From = fromAddress
         }

@@ -1134,7 +1134,12 @@ IF Object_id('sp_GetExpenditureSummary_AllInOne') IS NOT NULL
   DROP PROCEDURE sp_GetExpenditureSummary_AllInOne
 GO
 
-CREATE PROCEDURE sp_GetExpenditureSummary_AllInOne(@P_InceptionDate DATE, @P_Category  VARCHAR(MAX), @P_SearchStr VARCHAR(500), @P_SummaryType AS CHAR(3) = 'SUM')
+CREATE PROCEDURE sp_GetExpenditureSummary_AllInOne(	@P_InceptionDate DATE, 
+													@P_Category  VARCHAR(MAX), 
+													@P_SearchStr VARCHAR(500), 
+													@P_SummaryType AS CHAR(3) = 'SUM',
+													@P_FromDate DATE = NULL,
+													@P_ToDate DATE = NULL)
 AS
   BEGIN
 	DECLARE	@sql VARCHAR(MAX),
@@ -1147,8 +1152,15 @@ AS
 	CREATE TABLE #Temp_AllInOne(Sort INT, iCategory NUMERIC(18,0), sCategory VARCHAR(100), dAmount MONEY, Total MONEY)
 	
 	--MTD
-	SET	@FromDate = DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0) --First Day of Current Month
-	SET @ToDate = GETDATE()
+	IF @P_FromDate IS NULL
+		SET	@FromDate = DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0) --First Day of Current Month
+	ELSE
+		SET	@FromDate = @P_FromDate
+	
+	IF @P_ToDate IS NULL
+		SET @ToDate = GETDATE()
+	ELSE
+		SET	@ToDate = @P_ToDate
 	
 	INSERT INTO #Temp_AllInOne EXEC sp_GetExpenditureSummary_Monthly @FromDate, @ToDate, @P_Category, @P_SearchStr, @P_SummaryType
 	INSERT INTO #MTD(iCategory, MTD) SELECT iCategory, dAmount FROM #Temp_AllInOne

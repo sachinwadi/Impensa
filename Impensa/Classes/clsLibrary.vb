@@ -546,6 +546,14 @@ Public Class clsLibrary
         End Set
     End Property
 
+    Public Shared Property LatestSummaryMailedDate() As Date
+        Get
+            Return My.Computer.Registry.GetValue("HKEY_CURRENT_USER\Software\Impensa", "LatestSummaryMailedDate", Nothing)
+        End Get
+        Set(ByVal value As Date)
+            My.Computer.Registry.SetValue("HKEY_CURRENT_USER\Software\Impensa", "LatestSummaryMailedDate", Format(value, "dd/MM/yyyy"))
+        End Set
+    End Property
 #End Region
 
 #Region "Methods"
@@ -739,7 +747,7 @@ Public Class clsLibrary
                         dtEmail.Columns.Add("hKey", GetType(Int64))
                         dtEmail.Columns("Category").ColumnName = "CategoryName"
                         Try
-                            Call SendEmail(dtEmail)
+                            Call SendDailyEmail(dtEmail)
                         Catch ex As Exception
                             If (TypeOf (ex) Is SmtpException) Then
                                 Call GenerateErrorLog(ex.Message)
@@ -791,7 +799,10 @@ Public Class clsLibrary
         End Try
     End Sub
 
-    Public Shared Sub SendEmail(ByVal dtGrid As DataTable)
+    Public Shared Sub SendDailyEmail(ByVal dtGrid As DataTable)
+
+        If dtGrid Is Nothing OrElse dtGrid.Rows.Count = 0 Then Exit Sub
+
         Dim emailItem As New clsEmailGenerator()
         Dim dcAction As New DataColumn("Action", GetType(String))
         dtGrid.Columns.Add(dcAction)
@@ -814,7 +825,13 @@ Public Class clsLibrary
 
         emailItem.Changes = dtGrid
         If (IncludeExpenseSummary) Then emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail()
-        emailItem.SendEmail()
+        emailItem.SendEmail("Impensa Notification - " + DateTime.Now.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))
+    End Sub
+
+    Public Shared Sub SendSummaryEmailOnceInMonth(ByVal P_FromDate As Date, ByVal P_ToDate As Date)
+        Dim emailItem As New clsEmailGenerator()
+        emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail(P_FromDate, P_ToDate)
+        emailItem.SendEmail("Impensa Notification - Monthly Expense Summary", True)
     End Sub
 
     Public Shared Function GetAllInOneSummaryDataTableForEmail() As DataTable
@@ -824,7 +841,27 @@ Public Class clsLibrary
 
         Try
             Using Connection = GetConnection()
-                strSQL = "Execute sp_GetExpenditureSummary_AllInOne " & " '" & RecordKeepingStartDate & "', '', ''"
+                strSQL = "Execute sp_GetExpenditureSummary_AllInOne " & " '" & RecordKeepingStartDate.ToString("yyyy-MM-dd") & "', '', ''"
+                da = New SqlDataAdapter(strSQL, Connection)
+                da.Fill(dtGridSummary)
+            End Using
+
+        Catch ex As Exception
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        End Try
+
+        Return dtGridSummary
+
+    End Function
+
+    Public Shared Function GetAllInOneSummaryDataTableForEmail(ByVal P_FromDate As Date, ByVal P_ToDate As Date) As DataTable
+        Dim strSQL As String = ""
+        Dim dtGridSummary As New DataTable
+        Dim da As SqlDataAdapter
+
+        Try
+            Using Connection = GetConnection()
+                strSQL = "Execute sp_GetExpenditureSummary_AllInOne " & " '" & RecordKeepingStartDate.ToString("yyyy-MM-dd") & "', '', '','SUM','" & P_FromDate.ToString("yyyy-MM-dd") & "','" & P_ToDate.ToString("yyyy-MM-dd") & "'"
                 da = New SqlDataAdapter(strSQL, Connection)
                 da.Fill(dtGridSummary)
             End Using
