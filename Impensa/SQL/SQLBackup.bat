@@ -1,1 +1,1 @@
-sqlcmd -U sa -P Hotmail@123 -S localhost -Q "BACKUP DATABASE [MyExpenses] TO  DISK = N'F:\Sachin\Google Drive\Impensa DB\MyExpenses.bak' WITH NOFORMAT, INIT,  NAME = N'MyExpenses_Bkp', SKIP, NOREWIND, NOUNLOAD,  STATS = 10"
+sqlcmd -U sa -P Hotmail@123 -S localhost\MSSQLSERVER_2017 -Q "BACKUP DATABASE [MyExpenses] TO  DISK = N'F:\Sachin\Google Drive\Impensa DB\MyExpenses_2017.bak' WITH NOFORMAT, INIT,  NAME = N'MyExpenses_Bkp', SKIP, NOREWIND, NOUNLOAD,  STATS = 10"
