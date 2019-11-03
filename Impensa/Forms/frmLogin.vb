@@ -30,6 +30,7 @@ Public Class frmLogin
             IsLoginDetailsChanged = False
             txtUserName.Focus()
         Catch ex As Exception
+            clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -54,9 +55,8 @@ Public Class frmLogin
                 txtDatabase.Text = RegConnStrVal.ToString.Substring((DBIndex + 15), ((UNIndex - 2) - (DBIndex + 15)))
             End If
         Catch ex As Exception
+            clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
-
-
     End Sub
 End Class

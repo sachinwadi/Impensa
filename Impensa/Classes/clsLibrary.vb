@@ -748,6 +748,7 @@ Public Class clsLibrary
                         dtEmail.Columns("Category").ColumnName = "CategoryName"
                         Try
                             Call SendDailyEmail(dtEmail)
+                            Call SendSummaryEmailOnceInMonth()
                         Catch ex As Exception
                             If (TypeOf (ex) Is SmtpException) Then
                                 Call GenerateErrorLog(ex.Message)
@@ -828,7 +829,21 @@ Public Class clsLibrary
         emailItem.SendEmail("Impensa Notification - " + DateTime.Now.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture))
     End Sub
 
-    Public Shared Sub SendSummaryEmailOnceInMonth(ByVal P_FromDate As Date, ByVal P_ToDate As Date)
+    Private Shared Sub SendSummaryEmailOnceInMonth()
+        If LatestSummaryMailedDate = Nothing OrElse Month(LatestSummaryMailedDate) < Date.Today.Month Then
+            Dim dtFirstDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, 1)
+            Dim dtLastDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, (New Date(Date.Now.Year, Date.Now.Month, 1)).AddDays(-1).Day)
+            Try
+                Call SendSummaryEmailOnceInMonth(dtFirstDayOfLastMonth, dtLastDayOfLastMonth)
+                LatestSummaryMailedDate = Date.Now.Date
+            Catch ex As Exception
+                Call GenerateErrorLog(ex.StackTrace)
+                ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+            End Try
+        End If
+    End Sub
+
+    Private Shared Sub SendSummaryEmailOnceInMonth(ByVal P_FromDate As Date, ByVal P_ToDate As Date)
         Dim emailItem As New clsEmailGenerator()
         emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail(P_FromDate, P_ToDate)
         emailItem.SendEmail("Impensa Notification - Monthly Expense Summary (" + New Date(Date.Now.Year, Date.Now.Month - 1, 1).ToString("MMM", CultureInfo.InvariantCulture) + "/" + Date.Now.Year.ToString + ")", True)
@@ -847,6 +862,7 @@ Public Class clsLibrary
             End Using
 
         Catch ex As Exception
+            GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
 
@@ -867,6 +883,7 @@ Public Class clsLibrary
             End Using
 
         Catch ex As Exception
+            GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
 
@@ -892,11 +909,12 @@ Public Class clsLibrary
                 End Using
             End If
         Catch ex As Exception
+            GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '5
 
-    Private Shared Sub GenerateErrorLog(ByVal P_Exception As String)
+    Public Shared Sub GenerateErrorLog(ByVal P_Exception As String)
         Dim sw As StreamWriter = Nothing
         Try
             sw = New StreamWriter(CSVBackupPath + "\ImpensaImportErrorLog.log", True)

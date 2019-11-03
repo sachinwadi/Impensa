@@ -123,6 +123,7 @@ Public Class frmMain
             ColCombo.DisplayMember = "sCategory"
             ColCombo.DisplayStyle = DataGridViewComboBoxDisplayStyle.Nothing
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
 
@@ -202,6 +203,7 @@ Public Class frmMain
             DoNotChkRowAdded = False
             chkShowAllDet.Enabled = False
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
 
@@ -319,7 +321,7 @@ Public Class frmMain
 
                 ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
 
-                If SendEmails Then
+                If SendEmails AndAlso Not BgWorker_Email.IsBusy Then
                     BgWorker_Email.RunWorkerAsync()
                 End If
             End If
@@ -329,6 +331,7 @@ Public Class frmMain
                 Call CreateAdhocCSV()
             End If
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Panel5.SendToBack()
@@ -395,6 +398,7 @@ Public Class frmMain
 
             DoNotChkRowAdded = False
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '15
@@ -462,6 +466,7 @@ Public Class frmMain
             End Using
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '41
@@ -481,6 +486,7 @@ Public Class frmMain
 
             LastACRefreshDate = Today.Date
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Panel5.SendToBack()
@@ -641,6 +647,7 @@ Public Class frmMain
             End If
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '8
@@ -744,6 +751,7 @@ Public Class frmMain
             End If
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             btnExport.Enabled = True
@@ -803,6 +811,7 @@ Public Class frmMain
                 Next
             End If
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -862,6 +871,7 @@ Public Class frmMain
                 Reader.Close()
             End Using
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Me.TopMost = False
@@ -920,6 +930,7 @@ Public Class frmMain
                 Da.Fill(dt)
             End Using
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
 
@@ -1030,6 +1041,7 @@ Public Class frmMain
             Call BuildExpenseTicker(ToDate.YTD)
             Call BuildExpenseTicker(ToDate.MTD)
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '14
@@ -1053,6 +1065,7 @@ Public Class frmMain
                 End Using
             End If
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '6
@@ -1140,6 +1153,7 @@ Public Class frmMain
             cmbSelectYear.SelectedIndex = -1
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '12
@@ -1399,6 +1413,7 @@ Public Class frmMain
             Chart_Analysis.Palette = ChartColorScheme
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '26
@@ -1477,6 +1492,7 @@ Public Class frmMain
 
             DataGridCatList.DefaultCellStyle.WrapMode = DataGridViewTriState.True
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '9
@@ -1514,6 +1530,7 @@ Public Class frmMain
                 End If
             End Using
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '2
@@ -1589,6 +1606,7 @@ Public Class frmMain
             chkIncludeExpSummary.Checked = IncludeExpenseSummary
             Label36.Text = "Database: " + DatabaseName
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '18
@@ -1632,6 +1650,7 @@ Public Class frmMain
             SaveValidationFailed = False
             Return True
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
             Return False
         End Try
@@ -1661,6 +1680,7 @@ Public Class frmMain
 
             Return True
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
             Return False
         End Try
@@ -1725,6 +1745,7 @@ Public Class frmMain
                 StrYrList = Cmd.ExecuteScalar
             End Using
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
         Return StrYrList
@@ -1760,6 +1781,7 @@ Public Class frmMain
             cmbSelectYear.Enabled = False
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '4
@@ -1869,6 +1891,7 @@ Public Class frmMain
                 Writer.WriteLine(dr.Item("Date") & "," & dr.Item("sCategory") & "," & dr.Item("Amount") & "," & dr.Item("Notes"))
             Next
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             If Not Writer Is Nothing Then Writer.Close()
@@ -2004,6 +2027,7 @@ Public Class frmMain
                 Call SetTickerTextColor(RchTB_YTDTicker, dt)
             End If
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '37
@@ -2043,6 +2067,7 @@ Public Class frmMain
                 LstCategory.Items.Add(dr.Item("sCategory").ToString)
             Next
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '10
@@ -2111,6 +2136,7 @@ Public Class frmMain
             ImpensaAlert("Database connection could not be established", MsgBoxStyle.Critical)
             frmLogin.ShowDialog()
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub '17
@@ -2197,6 +2223,7 @@ Public Class frmMain
             Call BuildExpenseTicker(ToDate.YTD)
             Call PopulateExpenditureSummaryGrid()
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Panel5.SendToBack()
@@ -2295,6 +2322,7 @@ Public Class frmMain
             Next
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
 
@@ -2324,6 +2352,7 @@ Public Class frmMain
             Next
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
 
@@ -2338,6 +2367,7 @@ Public Class frmMain
                 Cmd.ExecuteNonQuery()
             End Using
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -2445,6 +2475,7 @@ Public Class frmMain
                 ExportPDFProcessID = proc.Id
             End If
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Panel5.SendToBack()
@@ -2468,18 +2499,19 @@ Public Class frmMain
         Panel10.Width = Me.Width
     End Sub
 
-    Private Sub SendSummaryEmailOnceInMonth()
-        If LatestSummaryMailedDate = Nothing OrElse Month(LatestSummaryMailedDate) < Date.Today.Month Then
-            Dim dtFirstDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, 1)
-            Dim dtLastDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, (New Date(Date.Now.Year, Date.Now.Month, 1)).AddDays(-1).Day)
-            Try
-                Call clsLibrary.SendSummaryEmailOnceInMonth(dtFirstDayOfLastMonth, dtLastDayOfLastMonth)
-                LatestSummaryMailedDate = Date.Now.Date
-            Catch ex As Exception
-                ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-            End Try
-        End If
-    End Sub
+    'Private Sub SendSummaryEmailOnceInMonth()
+    '    If LatestSummaryMailedDate = Nothing OrElse Month(LatestSummaryMailedDate) < Date.Today.Month Then
+    '        Dim dtFirstDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, 1)
+    '        Dim dtLastDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, (New Date(Date.Now.Year, Date.Now.Month, 1)).AddDays(-1).Day)
+    '        Try
+    '            Call clsLibrary.SendSummaryEmailOnceInMonth(dtFirstDayOfLastMonth, dtLastDayOfLastMonth)
+    '            LatestSummaryMailedDate = Date.Now.Date
+    '        Catch ex As Exception
+    '            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
+    '            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+    '        End Try
+    '    End If
+    'End Sub
 #End Region
 #End Region
 
@@ -2544,7 +2576,7 @@ Public Class frmMain
 
             Call CheckOpenYears()
             Call CheckCurrentMonthThresholds()
-            If SendEmails And Not BgWorker_Email.IsBusy Then BgWorker_Email.RunWorkerAsync()
+            'If SendEmails And Not BgWorker_Email.IsBusy Then BgWorker_Email.RunWorkerAsync()
 
             If (CDate(LastUsedTimeStamp).Month <> DateTime.Today.Month) Then
                 Call InsertCategoryPrevMonthOccurrences()
@@ -2567,6 +2599,7 @@ Public Class frmMain
             tmrTicker.Start()
             LastUsedTimeStamp = DateTime.Now
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -2646,6 +2679,7 @@ Public Class frmMain
 
             Call RefreshGrids()
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -2726,6 +2760,7 @@ Public Class frmMain
                 dtp.Visible = False
             End If
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -2758,6 +2793,7 @@ Public Class frmMain
             DgvTextBox = Nothing
             DgvComboBox = Nothing
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -2842,6 +2878,7 @@ Public Class frmMain
                 End If
             End If
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -3741,6 +3778,7 @@ Public Class frmMain
             End If
 
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         Finally
             Panel5.SendToBack()
@@ -3816,7 +3854,7 @@ Public Class frmMain
         If Me.Visible = False Then Me.Visible = True
     End Sub
 
-    Private Sub ContextMenu_ItemClicked(ByVal sender As Object, ByVal e As System.Windows.Forms.ToolStripItemClickedEventArgs) Handles ContextMenu.ItemClicked
+    Private Sub ContextMenu_ItemClicked(ByVal sender As Object, ByVal e As System.Windows.Forms.ToolStripItemClickedEventArgs) Handles ctxContextMenu.ItemClicked
         Try
             Select Case e.ClickedItem.ToString()
                 Case "Exit"
@@ -3837,6 +3875,7 @@ Public Class frmMain
 
             End Select
         Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
         End Try
     End Sub
@@ -3851,18 +3890,19 @@ Public Class frmMain
         BGWorker.RunWorkerAsync()
     End Sub
 
-    Private Sub BgWorker_Email_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BgWorker_Email.DoWork
-        Try
-            Call SendDailyEmail(dtEmail)
-            Call SendSummaryEmailOnceInMonth()
-        Catch ex As Exception
-            If (TypeOf (ex) Is SmtpException) Then
-                ImpensaAlert("Unable to send notification email" + vbCrLf + vbCrLf + "Error Details:" + vbCrLf + ex.Message, MsgBoxStyle.Critical)
-            Else
-                ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-            End If
-        End Try
-    End Sub
+    'Private Sub BgWorker_Email_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BgWorker_Email.DoWork
+    '    Try
+    '        Call SendDailyEmail(dtEmail)
+    '        Call SendSummaryEmailOnceInMonth()
+    '    Catch ex As Exception
+    '        If (TypeOf (ex) Is SmtpException) Then
+    '            ImpensaAlert("Unable to send notification email" + vbCrLf + vbCrLf + "Error Details:" + vbCrLf + ex.Message, MsgBoxStyle.Critical)
+    '        Else
+    '            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
+    '            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+    '        End If
+    '    End Try
+    'End Sub
 #End Region
 
 #Region "Custom Event Handlers"

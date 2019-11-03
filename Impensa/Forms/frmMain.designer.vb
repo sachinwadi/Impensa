@@ -162,7 +162,7 @@ Partial Class frmMain
         Me.Panel10 = New System.Windows.Forms.Panel()
         Me.BGWorker = New System.ComponentModel.BackgroundWorker()
         Me.NotifyIcon = New System.Windows.Forms.NotifyIcon(Me.components)
-        Me.ContextMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.ctxContextMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.tmrRefresh = New System.Windows.Forms.Timer(Me.components)
         Me.btnExport = New System.Windows.Forms.Button()
@@ -201,13 +201,13 @@ Partial Class frmMain
         Me.StatusStrip.SuspendLayout()
         Me.Panel9.SuspendLayout()
         Me.Panel10.SuspendLayout()
-        Me.ContextMenu.SuspendLayout()
+        Me.ctxContextMenu.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
         '
         Me.Panel1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Panel1.Controls.Add(Me.cmbPeriod)
         Me.Panel1.Controls.Add(Me.Label18)
@@ -398,8 +398,8 @@ Partial Class frmMain
         'Panel4
         '
         Me.Panel4.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel4.Controls.Add(Me.Chart_Analysis)
         Me.Panel4.Location = New System.Drawing.Point(3, 169)
         Me.Panel4.Name = "Panel4"
@@ -528,7 +528,7 @@ Partial Class frmMain
         'Label10
         '
         Me.Label10.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label10.AutoSize = True
         Me.Label10.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
@@ -692,8 +692,8 @@ Partial Class frmMain
         'DataGridExpSumm
         '
         Me.DataGridExpSumm.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.DataGridExpSumm.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridExpSumm.Location = New System.Drawing.Point(3, 53)
         Me.DataGridExpSumm.Name = "DataGridExpSumm"
@@ -863,8 +863,8 @@ Partial Class frmMain
         'Panel7
         '
         Me.Panel7.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel7.Controls.Add(Me.DataGridThrLimits)
         Me.Panel7.Location = New System.Drawing.Point(3, 49)
         Me.Panel7.Name = "Panel7"
@@ -984,7 +984,7 @@ Partial Class frmMain
         'gbEmailConfig
         '
         Me.gbEmailConfig.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.gbEmailConfig.Controls.Add(Me.grpEmailSettings)
         Me.gbEmailConfig.Controls.Add(Me.chkSendEmails)
         Me.gbEmailConfig.Location = New System.Drawing.Point(343, 239)
@@ -996,7 +996,7 @@ Partial Class frmMain
         'grpEmailSettings
         '
         Me.grpEmailSettings.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.grpEmailSettings.Controls.Add(Me.chkIncludeExpSummary)
         Me.grpEmailSettings.Controls.Add(Me.txtEmailPassword)
         Me.grpEmailSettings.Controls.Add(Me.txtEmailTo)
@@ -1030,7 +1030,7 @@ Partial Class frmMain
         'txtEmailPassword
         '
         Me.txtEmailPassword.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtEmailPassword.Location = New System.Drawing.Point(83, 52)
         Me.txtEmailPassword.Name = "txtEmailPassword"
         Me.txtEmailPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
@@ -1040,7 +1040,7 @@ Partial Class frmMain
         'txtEmailTo
         '
         Me.txtEmailTo.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtEmailTo.Location = New System.Drawing.Point(83, 121)
         Me.txtEmailTo.Name = "txtEmailTo"
         Me.txtEmailTo.Size = New System.Drawing.Size(318, 20)
@@ -1049,7 +1049,7 @@ Partial Class frmMain
         'txtSmtpPort
         '
         Me.txtSmtpPort.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtSmtpPort.Location = New System.Drawing.Point(83, 98)
         Me.txtSmtpPort.Name = "txtSmtpPort"
         Me.txtSmtpPort.Size = New System.Drawing.Size(318, 20)
@@ -1058,7 +1058,7 @@ Partial Class frmMain
         'txtSmtpHost
         '
         Me.txtSmtpHost.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtSmtpHost.Location = New System.Drawing.Point(83, 75)
         Me.txtSmtpHost.Name = "txtSmtpHost"
         Me.txtSmtpHost.Size = New System.Drawing.Size(318, 20)
@@ -1067,7 +1067,7 @@ Partial Class frmMain
         'txtEmailFrom
         '
         Me.txtEmailFrom.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtEmailFrom.Location = New System.Drawing.Point(83, 29)
         Me.txtEmailFrom.Name = "txtEmailFrom"
         Me.txtEmailFrom.Size = New System.Drawing.Size(318, 20)
@@ -1143,7 +1143,7 @@ Partial Class frmMain
         'GroupBox1
         '
         Me.GroupBox1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.GroupBox1.Controls.Add(Me.txtReminder)
         Me.GroupBox1.Controls.Add(Me.chkShowReminder)
         Me.GroupBox1.Location = New System.Drawing.Point(343, 85)
@@ -1155,7 +1155,7 @@ Partial Class frmMain
         'txtReminder
         '
         Me.txtReminder.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtReminder.Location = New System.Drawing.Point(11, 31)
         Me.txtReminder.MaxLength = 1000
         Me.txtReminder.Multiline = True
@@ -1177,7 +1177,7 @@ Partial Class frmMain
         'GroupBox6
         '
         Me.GroupBox6.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.GroupBox6.Controls.Add(Me.Label27)
         Me.GroupBox6.Controls.Add(Me.btnBrowse)
         Me.GroupBox6.Controls.Add(Me.txtCSVBackupPath)
@@ -1374,8 +1374,8 @@ Partial Class frmMain
         'Panel3
         '
         Me.Panel3.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-                    Or System.Windows.Forms.AnchorStyles.Left) _
-                    Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Panel3.Controls.Add(Me.ImpensaTabControl)
         Me.Panel3.Location = New System.Drawing.Point(209, 0)
@@ -1670,20 +1670,20 @@ Partial Class frmMain
         '
         Me.NotifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info
         Me.NotifyIcon.BalloonTipTitle = "Impensa Notifications"
-        Me.NotifyIcon.ContextMenuStrip = Me.ContextMenu
+        Me.NotifyIcon.ContextMenuStrip = Me.ctxContextMenu
         Me.NotifyIcon.Icon = CType(resources.GetObject("NotifyIcon.Icon"), System.Drawing.Icon)
         Me.NotifyIcon.Visible = True
         '
-        'ContextMenu
+        'ctxContextMenu
         '
-        Me.ContextMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExitToolStripMenuItem})
-        Me.ContextMenu.Name = "ContextMenu"
-        Me.ContextMenu.Size = New System.Drawing.Size(93, 26)
+        Me.ctxContextMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExitToolStripMenuItem})
+        Me.ctxContextMenu.Name = "ContextMenu"
+        Me.ctxContextMenu.Size = New System.Drawing.Size(153, 48)
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(92, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'tmrRefresh
@@ -1702,9 +1702,6 @@ Partial Class frmMain
         Me.btnExport.TabIndex = 22
         Me.btnExport.Text = "Export To PDF"
         Me.btnExport.UseVisualStyleBackColor = True
-        '
-        'BgWorker_Email
-        '
         '
         'frmMain
         '
@@ -1778,7 +1775,7 @@ Partial Class frmMain
         Me.Panel9.ResumeLayout(False)
         Me.Panel10.ResumeLayout(False)
         Me.Panel10.PerformLayout()
-        Me.ContextMenu.ResumeLayout(False)
+        Me.ctxContextMenu.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -1899,7 +1896,7 @@ Partial Class frmMain
     Friend WithEvents btnVarCompare As System.Windows.Forms.Button
     Friend WithEvents BGWorker As System.ComponentModel.BackgroundWorker
     Friend WithEvents NotifyIcon As System.Windows.Forms.NotifyIcon
-    Friend WithEvents ContextMenu As System.Windows.Forms.ContextMenuStrip
+    Friend WithEvents ctxContextMenu As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents ExitToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Label27 As System.Windows.Forms.Label
     Friend WithEvents chkStartImport As System.Windows.Forms.CheckBox
