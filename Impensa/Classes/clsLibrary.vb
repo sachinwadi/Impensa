@@ -743,19 +743,20 @@ Public Class clsLibrary
                 ''''End: Format Import Excel
 
                 If (SendEmails) Then
-                    If (dtEmail.Rows.Count > 0) Then
-                        dtEmail.Columns.Add("hKey", GetType(Int64))
-                        dtEmail.Columns("Category").ColumnName = "CategoryName"
-                        Try
+                    Try
+                        If (dtEmail.Rows.Count > 0) Then
+                            dtEmail.Columns.Add("hKey", GetType(Int64))
+                            dtEmail.Columns("Category").ColumnName = "CategoryName"
+
                             Call SendDailyEmail(dtEmail)
-                            Call SendSummaryEmailOnceInMonth()
-                        Catch ex As Exception
-                            If (TypeOf (ex) Is SmtpException) Then
-                                Call GenerateErrorLog(ex.Message)
-                                IsEmailExceptionOccurred = True
-                            End If
-                        End Try
-                    End If
+                        End If
+                        Call SendSummaryEmailOnceInMonth()
+                    Catch ex As Exception
+                        If (TypeOf (ex) Is SmtpException) Then
+                            Call GenerateErrorLog(ex.Message)
+                            IsEmailExceptionOccurred = True
+                        End If
+                    End Try
                 End If
             End If
 
@@ -830,12 +831,12 @@ Public Class clsLibrary
     End Sub
 
     Private Shared Sub SendSummaryEmailOnceInMonth()
-        If LatestSummaryMailedDate = Nothing OrElse Month(LatestSummaryMailedDate) < Date.Today.Month Then
-            Dim dtFirstDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, 1)
-            Dim dtLastDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, (New Date(Date.Now.Year, Date.Now.Month, 1)).AddDays(-1).Day)
+        If LatestSummaryMailedDate = Nothing OrElse LatestSummaryMailedDate < Date.Now.Date Then
+            Dim dtFirstDayOfLastMonth As Date = New Date(Date.Today.Year, Date.Today.Month, 1).AddMonths(-1)
+            Dim dtLastDayOfLastMonth As Date = New Date(Date.Today.Year, Date.Today.Month, 1).AddDays(-1)
             Try
                 Call SendSummaryEmailOnceInMonth(dtFirstDayOfLastMonth, dtLastDayOfLastMonth)
-                LatestSummaryMailedDate = Date.Now.Date
+                LatestSummaryMailedDate = New Date(Date.Today.Year, Date.Today.Month, 1).AddMonths(1).AddDays(-1)
             Catch ex As Exception
                 Call GenerateErrorLog(ex.StackTrace)
                 ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
@@ -846,7 +847,7 @@ Public Class clsLibrary
     Private Shared Sub SendSummaryEmailOnceInMonth(ByVal P_FromDate As Date, ByVal P_ToDate As Date)
         Dim emailItem As New clsEmailGenerator()
         emailItem.ChangeSummary = GetAllInOneSummaryDataTableForEmail(P_FromDate, P_ToDate)
-        emailItem.SendEmail("Impensa Notification - Monthly Expense Summary (" + New Date(Date.Now.Year, Date.Now.Month - 1, 1).ToString("MMM", CultureInfo.InvariantCulture) + "/" + Date.Now.Year.ToString + ")", True)
+        emailItem.SendEmail("Impensa Notification - Monthly Expense Summary (" + New Date(Date.Today.Year, Date.Today.Month, 1).AddMonths(-1).ToString("MMM", CultureInfo.InvariantCulture) + "/" + New Date(Date.Today.Year, Date.Today.Month, 1).AddMonths(-1).Year.ToString + ")", True)
     End Sub
 
     Public Shared Function GetAllInOneSummaryDataTableForEmail() As DataTable

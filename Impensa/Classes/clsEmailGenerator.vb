@@ -190,7 +190,7 @@ Public Class clsEmailGenerator
     End Sub
 
     Private Sub BuildMonthlySummaryEmailBody()
-        _strBuilder.AppendFormat("<h2>Monthly Expense Summary <span style='color: blue;'>({0}/{1})</span></h2>", New Date(Date.Now.Year, Date.Now.Month - 1, 1).ToString("MMM", CultureInfo.InvariantCulture), Date.Now.Year.ToString)
+        _strBuilder.AppendFormat("<h2>Monthly Expense Summary <span style='color: blue;'>({0}/{1})</span></h2>", New Date(Date.Today.Year, Date.Today.Month, 1).AddMonths(-1).ToString("MMM", CultureInfo.InvariantCulture), New Date(Date.Today.Year, Date.Today.Month, 1).AddMonths(-1).Year.ToString)
         Call BuildSummaryHtmlTable()
         _strBuilder.Append("<p>Thanks,<br />Team Impensa</p>")
     End Sub
