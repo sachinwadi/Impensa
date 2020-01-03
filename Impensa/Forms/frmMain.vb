@@ -32,7 +32,9 @@ Public Class frmMain
     Private Enum Period
         CurrentMonth = 0
         CurrentYear = 1
-        BookStart = 2
+        PreviousMonth = 2
+        PreviousYear = 3
+        BookStart = 4
     End Enum
 
     Private Enum BudgetBuckets
@@ -2075,9 +2077,11 @@ Public Class frmMain
 #Region "Period Combo Methods"
     Private Sub PopulatePeriodCombo()
         cmbPeriod.Items.Clear()
-        cmbPeriod.Items.Add(New KeyValuePair(Of Integer, String)(0, "Current Month (MTD)"))
-        cmbPeriod.Items.Add(New KeyValuePair(Of Integer, String)(1, "Current Year (YTD)"))
-        cmbPeriod.Items.Add(New KeyValuePair(Of Integer, String)(2, CDate(RecordKeepingStartDate).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) & " - " & Today.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)))
+        cmbPeriod.Items.Add(New KeyValuePair(Of Integer, String)(0, "Current Month"))
+        cmbPeriod.Items.Add(New KeyValuePair(Of Integer, String)(1, "Current Year"))
+        cmbPeriod.Items.Add(New KeyValuePair(Of Integer, String)(2, "Previous Month"))
+        cmbPeriod.Items.Add(New KeyValuePair(Of Integer, String)(3, "Previous Year"))
+        cmbPeriod.Items.Add(New KeyValuePair(Of Integer, String)(4, CDate(RecordKeepingStartDate).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) & " - " & Today.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)))
         cmbPeriod.DisplayMember = "Value"
         cmbPeriod.ValueMember = "Key"
         cmbPeriod.SelectedIndex = 0
@@ -2088,6 +2092,10 @@ Public Class frmMain
             cmbPeriod.SelectedIndex = Period.CurrentMonth
         ElseIf dtPickerFrom.Value.Date = New DateTime(Year(Today), 1, 1) AndAlso dtPickerTo.Value.Date = Today.Date Then
             cmbPeriod.SelectedIndex = Period.CurrentYear
+        ElseIf dtPickerFrom.Value.Date = New Date(Date.Today.Year, Date.Today.Month, 1).AddMonths(-1) AndAlso dtPickerTo.Value.Date = New Date(Date.Today.Year, Date.Today.Month, 1).AddDays(-1) Then
+            cmbPeriod.SelectedIndex = Period.PreviousMonth
+        ElseIf dtPickerFrom.Value.Date = New Date(Date.Today.AddYears(-1).Year, 1, 1) AndAlso dtPickerTo.Value.Date = New Date(Date.Today.AddYears(-1).Year, 12, 31) Then
+            cmbPeriod.SelectedIndex = Period.PreviousYear
         ElseIf dtPickerFrom.Value.Date = RecordKeepingStartDate AndAlso dtPickerTo.Value.Date = Today.Date Then
             cmbPeriod.SelectedIndex = Period.BookStart
         Else
@@ -3448,14 +3456,22 @@ Public Class frmMain
     Private Sub cmbPeriod_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbPeriod.SelectionChangeCommitted
         If cmbPeriod.SelectedIndex = Period.CurrentMonth Then
             dtPickerFrom.Value = Now.AddDays((Now.Day - 1) * -1) 'First Day Of Current Month
+            dtPickerTo.Value = DateTime.Today
         ElseIf cmbPeriod.SelectedIndex = Period.CurrentYear Then
             dtPickerFrom.Value = Convert.ToDateTime("01/01/" & Year(Now))
+            dtPickerTo.Value = DateTime.Today
+        ElseIf cmbPeriod.SelectedIndex = Period.PreviousMonth Then
+            dtPickerFrom.Value = New Date(Date.Today.Year, Date.Today.Month, 1).AddMonths(-1)
+            dtPickerTo.Value = New Date(Date.Today.Year, Date.Today.Month, 1).AddDays(-1)
+        ElseIf cmbPeriod.SelectedIndex = Period.PreviousYear Then
+            dtPickerFrom.Value = New Date(Date.Today.AddYears(-1).Year, 1, 1)
+            dtPickerTo.Value = New Date(Date.Today.AddYears(-1).Year, 12, 31)
         ElseIf cmbPeriod.SelectedIndex = Period.BookStart Then
             dtPickerFrom.Value = RecordKeepingStartDate
+            dtPickerTo.Value = DateTime.Today
         End If
 
         dtpFrom = dtPickerFrom.Value.Date.ToString("yyyy-MM-dd")
-        dtPickerTo.Value = DateTime.Today
         dtpTo = dtPickerTo.Value.Date.ToString("yyyy-MM-dd")
     End Sub
 

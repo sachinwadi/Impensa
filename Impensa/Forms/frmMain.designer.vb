@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -241,11 +241,11 @@ Partial Class frmMain
         '
         Me.Label18.AutoSize = True
         Me.Label18.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label18.Location = New System.Drawing.Point(55, 94)
+        Me.Label18.Location = New System.Drawing.Point(38, 94)
         Me.Label18.Name = "Label18"
-        Me.Label18.Size = New System.Drawing.Size(83, 13)
+        Me.Label18.Size = New System.Drawing.Size(131, 13)
         Me.Label18.TabIndex = 18
-        Me.Label18.Text = "Select Period"
+        Me.Label18.Text = "Select Period (Preset)"
         '
         'LinkLabel2
         '
@@ -411,9 +411,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend1.Name = "Legend1"
-        Legend1.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend1)
+        Legend2.Name = "Legend1"
+        Legend2.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend2)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -1678,12 +1678,12 @@ Partial Class frmMain
         '
         Me.ctxContextMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExitToolStripMenuItem})
         Me.ctxContextMenu.Name = "ContextMenu"
-        Me.ctxContextMenu.Size = New System.Drawing.Size(153, 48)
+        Me.ctxContextMenu.Size = New System.Drawing.Size(94, 26)
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(93, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'tmrRefresh
@@ -1702,6 +1702,9 @@ Partial Class frmMain
         Me.btnExport.TabIndex = 22
         Me.btnExport.Text = "Export To PDF"
         Me.btnExport.UseVisualStyleBackColor = True
+        '
+        'BgWorker_Email
+        '
         '
         'frmMain
         '
