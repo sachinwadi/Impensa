@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -411,9 +411,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend2.Name = "Legend1"
-        Legend2.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend2)
+        Legend1.Name = "Legend1"
+        Legend1.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend1)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -1195,7 +1195,9 @@ Partial Class frmMain
         Me.Label27.Name = "Label27"
         Me.Label27.Size = New System.Drawing.Size(410, 45)
         Me.Label27.TabIndex = 3
-        Me.Label27.Text = resources.GetString("Label27.Text")
+        Me.Label27.Text = "Mention the location from where import service should pull the changes.This locat" & _
+    "ion usually should be the location shared with the cloud service providers such " & _
+    "as Google Drive, Dropbox, OneDrive etc."
         '
         'btnBrowse
         '

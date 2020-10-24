@@ -255,9 +255,6 @@
         AwBxEyDOEAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="Label27.Text" xml:space="preserve">
-    <value>Mention the location where you want to store your CSV files having expenditure records.This location usually should be the location shared with the cloud service providers such as Google Drive, Dropbox, Sky Drive etc.</value>
-  </data>
   <metadata name="tmrAlert.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 3</value>
   </metadata>
