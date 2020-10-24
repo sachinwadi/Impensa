@@ -385,6 +385,7 @@ Public Class frmMain
             DataGridExpDet.Columns("IsDummy").Visible = False
             DataGridExpDet.Columns("IsDummyRowAdded").Visible = False
             DataGridExpDet.Columns("IsReadOnly").Visible = False
+            DataGridExpDet.Columns("CategoryName").Visible = False
 
             DataGridExpDet.Columns("bDelete").DisplayIndex = 0
             DataGridExpDet.Columns("iCategory").DisplayIndex = 4
