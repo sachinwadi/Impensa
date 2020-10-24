@@ -85,7 +85,7 @@ Public Class frmMain
     Private Rnd As New Random
     Private tt As ToolTip
     Private bClearCmbPeriod As Boolean = False
-    Private Highlighter As System.Drawing.Color = Color.LightBlue
+    Private Highlighter As System.Drawing.Color = Color.GreenYellow
     Private dtBudget As DataTable
     Private dtThresholdData As DataTable
     Private dtShowUntil As Date
