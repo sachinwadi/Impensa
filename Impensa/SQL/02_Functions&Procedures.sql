@@ -788,9 +788,9 @@ GO
 CREATE PROCEDURE sp_SearchExpenses(@P_FromDate DATE, @P_ToDate DATE, @P_Category VARCHAR(MAX), @P_SearchStr VARCHAR(500))  
 AS
 BEGIN
-WITH X (Sort, RowNum, hKey, dtDate, sCategory, dAmount, sNotes, iCategory, SearchAmt, items, dtDateOrderBy, IsReadOnly)
+WITH X (Sort, RowNum, hKey, dtDate, sCategory, dAmount, sNotes, iCategory, SearchAmt, items, dtDateOrderBy, IsReadOnly, CategoryName )
 AS
-	(SELECT 1 [Sort], NULL RowNum, NULL [hKey], 'Keyword:- '+ Fn.items [dtDate], NULL [sCategory], NULL [dAmount], NULL [sNotes], NULL [iCategory], NULL [dSearchAmt], Fn.items [items], NULL [dtDateOrderBy], 1 [IsReadOnly]
+	(SELECT 1 [Sort], NULL RowNum, NULL [hKey], 'Keyword:- '+ Fn.items [dtDate], NULL [sCategory], NULL [dAmount], NULL [sNotes], NULL [iCategory], NULL [dSearchAmt], Fn.items [items], NULL [dtDateOrderBy], 1 [IsReadOnly], NULL [CategoryName]
 			  FROM  dbo.Fn_searchstrsplit(@P_SearchStr, ',') Fn
 			
 	 UNION ALL
@@ -806,7 +806,8 @@ AS
 		   dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount),
 		   E.items,
 		   E.dtDate,
-		   0
+		   0,
+		   E.sCategory [CategoryName]
 	FROM   dbo.Fn_DataStore(@P_FromDate, @P_ToDate, 0, @P_SearchStr, 0) E
 		   LEFT OUTER JOIN tbl_EOY Y ON Y.YEAR# = YEAR(E.dtDate)
 	WHERE  1 = CASE WHEN LEN(ISNULL(@P_Category, '')) > 0 AND CHARINDEX(E.sCategory, ISNULL(@P_Category, '')) > 0 THEN 1
@@ -828,7 +829,8 @@ AS
 		   SUM(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)),
 		   E.items,
 		   NULL,
-		   1
+		   1,
+		   NULL
 	FROM   dbo.Fn_DataStore(@P_FromDate, @P_ToDate, 0, @P_SearchStr, 0) E
 	WHERE  1 = CASE WHEN LEN(ISNULL(@P_Category, '')) > 0 AND CHARINDEX(E.sCategory, ISNULL(@P_Category, '')) > 0 THEN 1
 					WHEN LEN(ISNULL(@P_Category, '')) = 0 THEN 1
@@ -841,12 +843,12 @@ AS
 	SELECT	Y.Sort, Y.hKey, 
 			CASE WHEN (Y.Sort = 3 AND Y.hKey IS NULL AND Y.dtDate = 'TOTAL' AND Y.Notes IS NULL) THEN 'GRAND TOTAL' 
 				 ELSE Y.dtDate 
-			 END [Date], Y.iCategory, Y.SearchAmt [Amount], Y.Notes, Y.IsReadOnly, NULL [bDelete], 0 [IsDummy], 0 [IsDummyRowAdded]
+			 END [Date], Y.iCategory, Y.SearchAmt [Amount], Y.Notes, Y.IsReadOnly, NULL [bDelete], 0 [IsDummy], 0 [IsDummyRowAdded], Y.CategoryName [CategoryName]
 	  FROM (SELECT X.Sort, X.hKey, X.dtDate, X.iCategory, X.SearchAmt,
 				   CASE WHEN X.Sort = 3 THEN (SELECT 'Count = '+ CONVERT(VARCHAR,MAX(Y.RowNum)) FROM X Y WHERE Y.items  = X.items GROUP BY Y.items) 
 						ELSE X.sNotes 
 					END [Notes],
-				   X.IsReadOnly, X.sCategory, X.dtDateOrderBy, X.items
+				   X.IsReadOnly, X.sCategory, X.dtDateOrderBy, X.items, X.CategoryName
 			  FROM X) Y
       ORDER  BY CASE WHEN Y.items IS NULL THEN 'zzz' 
 					 ELSE Y.items 
