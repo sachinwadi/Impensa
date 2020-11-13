@@ -589,7 +589,7 @@ AS
 GO
 /*############################################################################################################################################################*/
 
-IF OBJECT_ID('Fn_GetChartData_Categorywise') IS NOT NULL 
+/*IF OBJECT_ID('Fn_GetChartData_Categorywise') IS NOT NULL 
 DROP FUNCTION Fn_GetChartData_Categorywise
 GO
 
@@ -599,7 +599,7 @@ AS
 RETURN (SELECT CASE WHEN X.[Month] IS NULL THEN 'TOTAL' ELSE X.[Month] END [Month], X.Amount FROM (
 SELECT DATENAME(mm,dtdate) [Month], SUM(dAmount) Amount FROM tbl_ExpenditureDet E INNER JOIN tbl_CategoryList C ON C.hKey = E.iCategory WHERE C.sCategory = @P_Category
 group BY DATENAME(mm,dtdate) WITH ROLLUP ) X)
-GO
+GO*/
 /*############################################################################################################################################################*/
 
 IF OBJECT_ID('sp_GetChartData_1') IS NOT NULL 

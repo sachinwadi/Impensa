@@ -1002,8 +1002,8 @@ Public Class frmMain
             dv.RowFilter = "Category <> 'TOTAL' AND DifferenceSign < 0"
             tsMenuUBCats.Text = "Under Budget: #" & dv.ToTable.Rows.Count
 
-            DataGridThrLimits.Columns("TAmount").HeaderText = "Budgeted Amount (Rs.)"
-            DataGridThrLimits.Columns("SAmount").HeaderText = "Amount Spent(Rs.)"
+            DataGridThrLimits.Columns("TAmount").HeaderText = "Amount Forecast (Rs.)"
+            DataGridThrLimits.Columns("SAmount").HeaderText = "Amount Spent (Rs.)"
             DataGridThrLimits.Columns("DifferenceSign").Visible = False
 
             DataGridThrLimits.AllowUserToAddRows = False

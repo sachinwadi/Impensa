@@ -857,7 +857,7 @@ Partial Class frmMain
         Me.TabBudget.Padding = New System.Windows.Forms.Padding(3)
         Me.TabBudget.Size = New System.Drawing.Size(1031, 426)
         Me.TabBudget.TabIndex = 7
-        Me.TabBudget.Text = "Monthly Budget"
+        Me.TabBudget.Text = "Monthly Forecast"
         Me.TabBudget.UseVisualStyleBackColor = True
         '
         'Panel7
