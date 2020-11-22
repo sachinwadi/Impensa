@@ -868,7 +868,7 @@ Public Class frmMain
 
                 If Reader.Read Then
                     If Not Reader.GetValue(1) = Format(DateSerial(Today.Year, Today.Month, 1), "yyyy-MM-dd") Then
-                        ImpensaAlert("Last month's budgeted amounts are being copied over to this month. To change the budgeted amounts for this month go to ""Monthly Budget"" Tab", MsgBoxStyle.OkOnly + MsgBoxStyle.Information)
+                        ImpensaAlert("Last month's forecast amounts are being copied over to this month. To change the Forecast amounts for this month go to ""Monthly Forecast"" Tab", MsgBoxStyle.OkOnly + MsgBoxStyle.Information)
                     End If
                 End If
                 Reader.Close()
@@ -950,7 +950,7 @@ Public Class frmMain
             DataGridThrLimits.DataSource = Nothing
             DataGridThrLimits.Columns.Clear()
 
-            Label15.Text = "Loading Monthly Budget..."
+            Label15.Text = "Loading Monthly Forecast..."
             Panel5.Refresh()
 
             Using Connection = GetConnection()
@@ -3034,23 +3034,23 @@ Public Class frmMain
                                     If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 AndAlso dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
                                         If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
                                             DataGridExpSumm.Cursor = Cursors.Hand
-                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Budgeted Amount: Not Defined"
+                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Forecast Amount: Not Defined"
                                         Else
-                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: Not Defined"
+                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Forecast Amount: Not Defined"
                                         End If
                                     ElseIf Not dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
                                         If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
                                             If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
                                                 DataGridExpSumm.Cursor = Cursors.Hand
-                                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Budgeted Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
+                                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Forecast Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
                                             Else
-                                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
+                                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Forecast Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
                                             End If
                                         ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value = 0 Then
-                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
+                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Forecast Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
                                         End If
                                     ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value = 0 Then
-                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Budgeted Amount: Not Defined"
+                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Forecast Amount: Not Defined"
                                     ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
                                         DataGridExpSumm.Cursor = Cursors.Hand
                                         DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary."

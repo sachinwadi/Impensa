@@ -1625,7 +1625,7 @@ Partial Class frmMain
         Me.Label23.Name = "Label23"
         Me.Label23.Size = New System.Drawing.Size(196, 15)
         Me.Label23.TabIndex = 18
-        Me.Label23.Text = "YTD Summary  (Actual / Budget):"
+        Me.Label23.Text = "YTD Summary  (Actual / Forecast):"
         '
         'Label24
         '
@@ -1636,7 +1636,7 @@ Partial Class frmMain
         Me.Label24.Name = "Label24"
         Me.Label24.Size = New System.Drawing.Size(196, 15)
         Me.Label24.TabIndex = 19
-        Me.Label24.Text = "MTD Summary (Actual / Budget):"
+        Me.Label24.Text = "MTD Summary (Actual / Forecast):"
         '
         'tmrTicker
         '
