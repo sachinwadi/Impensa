@@ -1623,7 +1623,7 @@ Partial Class frmMain
         Me.Label23.ForeColor = System.Drawing.Color.Blue
         Me.Label23.Location = New System.Drawing.Point(0, 26)
         Me.Label23.Name = "Label23"
-        Me.Label23.Size = New System.Drawing.Size(196, 15)
+        Me.Label23.Size = New System.Drawing.Size(205, 15)
         Me.Label23.TabIndex = 18
         Me.Label23.Text = "YTD Summary  (Actual / Forecast):"
         '
@@ -1634,7 +1634,7 @@ Partial Class frmMain
         Me.Label24.ForeColor = System.Drawing.Color.Blue
         Me.Label24.Location = New System.Drawing.Point(0, 6)
         Me.Label24.Name = "Label24"
-        Me.Label24.Size = New System.Drawing.Size(196, 15)
+        Me.Label24.Size = New System.Drawing.Size(205, 15)
         Me.Label24.TabIndex = 19
         Me.Label24.Text = "MTD Summary (Actual / Forecast):"
         '

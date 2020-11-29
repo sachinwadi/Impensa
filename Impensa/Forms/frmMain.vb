@@ -1202,6 +1202,7 @@ Public Class frmMain
         Dim dtTo As Date
         Dim lst As New List(Of String)
         Dim bShowLabel = True
+        Dim countColumnIdentifier As String = ""
 
         Try
             DataAvailableForChart = True
@@ -1211,6 +1212,7 @@ Public Class frmMain
 
             If SelectChartCombo = "Chart 1" Then
                 dt = mdlChart1.GetChartData(dtpFrom, dtpTo, ListingCombo.key, SearchStr)
+                countColumnIdentifier = "Count"
             ElseIf SelectChartCombo = "Chart 2" Then
                 If ListingCombo.key = CDate("2100-01-01") Then
                     dtFrom = dtpFrom
@@ -1238,6 +1240,7 @@ Public Class frmMain
                 End If
 
                 dt = mdlChart2.GetChartData(dtFrom, dtTo, SearchStr)
+                countColumnIdentifier = "Count"
             ElseIf SelectChartCombo = "Chart MTD" Then
                 ChkLBYearsItemsList = Today.Year.ToString
                 dt = mdlChart2.GetChartData(New DateTime(Today.Year, Today.Month, 1), Today.Date, Nothing)
@@ -1258,10 +1261,13 @@ Public Class frmMain
                 dt = dv.ToTable
             ElseIf SelectChartCombo = "Chart 3A" Then
                 dt = mdlChart3.GetChartData(dtpFrom, dtpTo, ListingCombo.key, SearchStr, chkPeriodLevel.Checked)
+                countColumnIdentifier = "_CNT"
             ElseIf SelectChartCombo = "Chart 3B" Then
                 dt = mdlChart3.GetChartData_3B(dtpFrom, dtpTo, ListingCombo.key, SearchStr, chkPeriodLevel.Checked)
+                countColumnIdentifier = "_CNT"
             ElseIf SelectChartCombo = "Chart 4" Then
                 dt = mdlChart4.GetChartData(dtpFrom, dtpTo, ListingCombo.key, SearchStr, chkPeriodLevel.Checked)
+                countColumnIdentifier = "Count"
             End If
 
             If (dt.Rows.Count = 0) Then
@@ -1269,7 +1275,7 @@ Public Class frmMain
                 Exit Sub
             End If
 
-            For i As Int32 = 1 To dt.Columns.Count - 1
+            For i As Int32 = 1 To dt.Columns().Cast(Of DataColumn).Where(Function(x) Not x.ColumnName.Contains(countColumnIdentifier)).Count - 1
                 If (SelectChartCombo = "Chart 3A" OrElse SelectChartCombo = "Chart 3B") Then
                     lst.Add(dt.Columns(i).ColumnName & " - Rs." & Format(dt.Compute("SUM([" & dt.Columns(i).ColumnName & "])", ""), "#,##0.00"))
                 Else
@@ -1342,7 +1348,7 @@ Public Class frmMain
             End If
             Chart_Analysis.Legends("Legend1").TextWrapThreshold = 0
 
-            For i As Integer = 1 To dt.Columns.Count - 1
+            For i As Integer = 1 To dt.Columns().Cast(Of DataColumn).Where(Function(x) Not x.ColumnName.Contains(countColumnIdentifier)).Count - 1
                 Chart_Analysis.Series.Add(dt.Columns(i).ColumnName)
                 If InStr("Chart MTD, Chart YTD, Chart BKSDTD", SelectChartCombo) = 0 Then
                     Chart_Analysis.Series(dt.Columns(i).ColumnName).ChartType = ChartTypeCombo.Key
@@ -1403,10 +1409,16 @@ Public Class frmMain
                             p.IsValueShownAsLabel = False
                             p.LabelForeColor = Color.Transparent
                         Else
-                            If SelectChartCombo = "Chart 3A" OrElse SelectChartCombo = "Chart 3B" Then
-                                p.ToolTip = s.Name & "-" & p.AxisLabel & ": Rs. " & "#VAL{#,##0.00}"
-                            Else
-                                p.ToolTip = p.AxisLabel & ": Rs. " & "#VAL{#,##0.00} (#PERCENT)"
+                            If SelectChartCombo = "Chart 3A" Then
+                                p.ToolTip = s.Name & "-" & p.AxisLabel & ":" & vbNewLine & "Amount - Rs. " & "#VAL{#,##0.00}" & vbNewLine & "Count - " & Convert.ToInt32(dt.Select("Month = '" & p.AxisLabel & "'").First.Item(s.Name + countColumnIdentifier))
+                            ElseIf SelectChartCombo = "Chart 3B" Then
+                                p.ToolTip = s.Name & "-" & p.AxisLabel & ":" & vbNewLine & "Amount - Rs. " & "#VAL{#,##0.00}" & vbNewLine & "Count - " & Convert.ToInt32(dt.Select("Category = '" & p.AxisLabel & "'").First.Item(s.Name + countColumnIdentifier))
+                            ElseIf SelectChartCombo = "Chart 1" Then
+                                p.ToolTip = p.AxisLabel & ":" & vbNewLine & "Amount - Rs. " & "#VAL{#,##0.00}" & vbNewLine & "Count - " & Convert.ToInt32(dt.Select("Month = '" & p.AxisLabel & "'").First.Item("Count")) & vbNewLine & "Percentage - #PERCENT"
+                            ElseIf SelectChartCombo = "Chart 2" Then
+                                p.ToolTip = p.AxisLabel & ":" & vbNewLine & "Amount - Rs. " & "#VAL{#,##0.00}" & vbNewLine & "Count - " & Convert.ToInt32(dt.Select("Category = '" & p.AxisLabel & "'").First.Item("Count")) & vbNewLine & "Percentage - #PERCENT"
+                            ElseIf SelectChartCombo = "Chart 4" Then
+                                p.ToolTip = p.AxisLabel & ":" & vbNewLine & "Amount - Rs. " & "#VAL{#,##0.00}" & vbNewLine & "Count - " & Convert.ToInt32(dt.Select("Year = '" & p.AxisLabel & "'").First.Item("Count")) & vbNewLine & "Percentage - #PERCENT"
                             End If
                         End If
                     Next

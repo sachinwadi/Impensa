@@ -639,7 +639,7 @@ BEGIN
 	SELECT C.sCategory [Category], ISNULL(X.Amount, 0) Amount, ISNULL(X.Count, 0) Count
 	  FROM (SELECT e.iCategory, 
 				   SUM(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) 'Amount',
-				   SUM(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) 'Count' 
+				   COUNT(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) 'Count' 
 	          FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, 0, @P_SearchStr, 0) E 
 	         WHERE (@P_Years != '' AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), @P_Years) > 0)
 	          GROUP BY e.iCategory)X
@@ -648,6 +648,83 @@ BEGIN
 								      LEFT JOIN dbo.Fn_ListObsoleteCategories(@P_FromDate, @P_ToDate) Fn ON c1.hKey = Fn.iCategory 
 						        WHERE Fn.iCategory IS NULL)c ON c.hKey = X.iCategory
 	 ORDER BY C.sCategory
+END
+GO
+/*############################################################################################################################################################*/
+
+IF OBJECT_ID('sp_GetChartData_3') IS NOT NULL 
+	DROP PROCEDURE sp_GetChartData_3
+GO
+
+CREATE PROCEDURE sp_GetChartData_3(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX), @P_PeriodLimit BIT = 0)
+AS
+BEGIN
+	DECLARE @Col1 VARCHAR(MAX) = '', 
+			@Col2 VARCHAR(MAX) = '',
+			@Col3 VARCHAR(MAX) = '',
+			@Col4 VARCHAR(MAX) = '',
+			@Sql  VARCHAR(MAX), 
+			@Years INTEGER, 
+			@CounterYears INTEGER = 0, 
+			@StartingYear INTEGER
+		
+	SET @Years = DATEDIFF(YYYY, @P_FromDate, @P_ToDate)
+	SET @StartingYear = YEAR(@P_FromDate)
+		
+	WHILE @CounterYears <= @Years
+	BEGIN
+		IF CHARINDEX(CONVERT(VARCHAR, (@StartingYear + @CounterYears)), @P_Years) > 0
+		BEGIN
+			SET @Col1 = @Col1 + 'ISNULL(['  + CONVERT(VARCHAR, (@StartingYear + @CounterYears)) + '],0) ['  + CONVERT(VARCHAR, (@StartingYear + @CounterYears)) + '], '
+			SET @Col2 = @Col2 + '['  + CONVERT(VARCHAR, (@StartingYear + @CounterYears)) + '], '
+			SET @Col3 = @Col3 + 'ISNULL(['  + CONVERT(VARCHAR, (@StartingYear + @CounterYears)) + '_CNT],0) ['  + CONVERT(VARCHAR, (@StartingYear + @CounterYears)) + '_CNT], '
+			SET @Col4 = @Col4 + '['  + CONVERT(VARCHAR, (@StartingYear + @CounterYears)) + '_CNT], '
+		END
+		SET @CounterYears = @CounterYears + 1
+		CONTINUE
+	END
+	
+	SET @Col1 = SUBSTRING (@Col1,1, Len(@Col1)- 1)
+	SET @Col2 = SUBSTRING (@Col2,1, Len(@Col2)- 1)
+	SET @Col3 = SUBSTRING (@Col3,1, Len(@Col3)- 1)
+	SET @Col4 = SUBSTRING (@Col4,1, Len(@Col4)- 1)
+	
+
+	SET @Sql = 'SELECT * INTO #Temp_Data 
+				  FROM (SELECT Y.Month, L.Amount, L.iYear, Y.iMonth 
+			             FROM (SELECT DATENAME(MM,dtDate) [Month], dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) Amount, YEAR(dtDate) iYear, Month(dtDate) MonthNum
+						         FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'', <@P_iCategory>, ''<@P_SearchStr>'', <@P_PeriodLimit>) E
+								WHERE (''<@P_Years>'' != '''' AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), ''<@P_Years>'') > 0)) L
+							   RIGHT JOIN (SELECT DATENAME(M, CONVERT(DATE, ''1900-'' + CONVERT(VARCHAR, Z.iMonth) + ''-01'')) Month, Z.iMonth, Z.iYear  
+					                         FROM (SELECT X.iMonth, X.iYear 
+													FROM (SELECT Row_number() OVER (PARTITION BY YEAR(dtDate) ORDER BY dtDate) iMonth, YEAR(dtDate) iYear 
+														    FROM tbl_ExpenditureDet e 
+														   WHERE e.dtDate BETWEEN ''<@P_FromDate>'' AND ''<@P_ToDate>''
+															 AND (''<@P_Years>'' != '''' 
+															 AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), ''<@P_Years>'') > 0))X 
+					                               WHERE X.iMonth <= 12)Z) Y ON Y.Month = L.Month AND Y.iYear = L.iYear) Z; ' + 
+
+				'SELECT X.Month, <@Col1>, <@Col3> 
+				   FROM (SELECT Month, iMonth, <@Col1>
+			               FROM (SELECT Month, Amount, iYear, iMonth FROM #Temp_Data) T
+			              PIVOT (SUM(T.Amount) FOR T.iYear IN (<@Col2>)) AS pvt) X
+			            INNER JOIN (SELECT Month, iMonth, <@Col3>
+			                         FROM (SELECT Month, Amount, CONVERT(VARCHAR, iYear) + ''_CNT'' iYear, iMonth FROM #Temp_Data) T
+			                        PIVOT (COUNT(T.Amount) FOR T.iYear IN (<@Col4>)) AS pvt) Y ON X.Month = Y.Month
+			   ORDER BY X.iMonth'
+	
+	  SET @sql = REPLACE(@sql, '<@col1>', @col1)
+	  SET @sql = REPLACE(@sql, '<@col2>', @col2)
+	  SET @sql = REPLACE(@sql, '<@col3>', @col3)
+	  SET @sql = REPLACE(@sql, '<@col4>', @col4)
+	  SET @sql = REPLACE(@sql, '<@P_FromDate>', @P_FromDate)
+	  SET @sql = REPLACE(@sql, '<@P_ToDate>', @P_ToDate)
+	  SET @sql = REPLACE(@sql, '<@P_iCategory>', @P_iCategory)
+	  SET @sql = REPLACE(@sql, '<@P_SearchStr>', @P_SearchStr)
+	  SET @sql = REPLACE(@sql, '<@P_Years>', @P_Years)
+	  SET @sql = REPLACE(@sql, '<@P_PeriodLimit>', @P_PeriodLimit)
+	  
+	EXEC(@Sql)
 END
 GO
 /*############################################################################################################################################################*/
@@ -709,44 +786,6 @@ END
 GO
 /*############################################################################################################################################################*/
 
-IF OBJECT_ID('sp_GetChartData_3B') IS NOT NULL 
-	DROP PROCEDURE sp_GetChartData_3B
-GO
-
-CREATE PROCEDURE sp_GetChartData_3B(@P_FromDate DATE, @P_ToDate DATE, @P_iMonth INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX), @P_PeriodLimit BIT = 0)
-AS
-BEGIN
-	DECLARE @col1 VARCHAR(MAX),  @col2 VARCHAR(MAX), @sql VARCHAR(MAX)
-	
-	SELECT DISTINCT CONVERT(VARCHAR, YEAR(E.dtDate)) dtDate INTO #Temp 
-	  FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, 0, @P_SearchStr, @P_PeriodLimit) E
-	 WHERE (@P_Years != '' AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), @P_Years) > 0)
-				
-	SET @col1  = STUFF((SELECT ',ISNULL([' + dtDate + '],0) [' + dtDate + ']' FROM #Temp FOR XML PATH('')),1,1,'')
-	SET @col2  = STUFF((SELECT ',[' + dtDate + ']' FROM #Temp FOR XML PATH('')),1,1,'')
-	
-	SET @sql = 'SELECT Category, <@Col1> FROM (SELECT E.sCategory, E.iCategory, SUM(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) Amount, YEAR(dtDate) [iYear]
-													   FROM dbo.Fn_DataStore(''<@P_FromDate>'', ''<@P_ToDate>'', 0, ''<@P_SearchStr>'', <@P_PeriodLimit>) E
-													  WHERE 1 = CASE WHEN <@P_iMonth> = 0 THEN 1 WHEN DATEPART(M, E.dtDate) = <@P_iMonth> THEN 1 ELSE 0 END 
-															AND (''<@P_Years>'' != '''' AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), ''<@P_Years>'') > 0) GROUP BY E.sCategory, E.iCategory, YEAR(dtDate))X' +
-												   ' RIGHT JOIN (SELECT c1.sCategory Category, c1.hKey FROM tbl_CategoryList c1 LEFT JOIN dbo.Fn_ListObsoleteCategories(''<@P_FromDate>'', ''<@P_ToDate>'') Fn ON c1.hKey = Fn.iCategory WHERE Fn.iCategory IS NULL)c ON c.hKey = X.iCategory' +
-						                           ' PIVOT(SUM(X.Amount) FOR X.iYear IN (<@Col2>)) AS PVT ' +
-										           ' ORDER BY Category' 
-
-      SET @sql = REPLACE(@sql, '<@col1>', @col1)
-	  SET @sql = REPLACE(@sql, '<@col2>', @col2)
-	  SET @sql = REPLACE(@sql, '<@P_FromDate>', @P_FromDate)
-	  SET @sql = REPLACE(@sql, '<@P_ToDate>', @P_ToDate)
-	  SET @sql = REPLACE(@sql, '<@P_iMonth>', @P_iMonth)
-	  SET @sql = REPLACE(@sql, '<@P_SearchStr>', @P_SearchStr)
-	  SET @sql = REPLACE(@sql, '<@P_Years>', @P_Years)
-	  SET @sql = REPLACE(@sql, '<@P_PeriodLimit>', @P_PeriodLimit)
-	  
-	EXEC (@sql)
-END
-GO
-/*############################################################################################################################################################*/
-
 IF OBJECT_ID('sp_GetChartData_4') IS NOT NULL 
 	DROP PROCEDURE sp_GetChartData_4
 GO
@@ -755,7 +794,9 @@ CREATE PROCEDURE sp_GetChartData_4(@P_FromDate DATE, @P_ToDate DATE, @P_iCategor
 AS
 BEGIN
 	
-	SELECT CONVERT(VARCHAR, YEAR(E.dtDate)) [Year], SUM(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) [Amount] 
+	SELECT 	CONVERT(VARCHAR, YEAR(E.dtDate)) [Year], 
+			SUM(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) [Amount],
+			COUNT(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) [Count]
 	  FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, @P_iCategory, @P_SearchStr, @P_PeriodLimit) E
 	 WHERE (@P_Years  != '' AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), @P_Years ) > 0)
 	 GROUP BY CONVERT(VARCHAR, YEAR(E.dtDate))
