@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend13 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -53,7 +53,6 @@ Partial Class frmMain
         Me.chkPeriodLevel = New System.Windows.Forms.CheckBox()
         Me.cmbSort = New System.Windows.Forms.ComboBox()
         Me.chkSort = New System.Windows.Forms.CheckBox()
-        Me.Label10 = New System.Windows.Forms.Label()
         Me.cmbChartType = New System.Windows.Forms.ComboBox()
         Me.Label2 = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
@@ -411,9 +410,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend1.Name = "Legend1"
-        Legend1.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend1)
+        Legend13.Name = "Legend1"
+        Legend13.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend13)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Name = "Chart_Analysis"
         Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
@@ -431,7 +430,6 @@ Partial Class frmMain
         Me.Panel2.Controls.Add(Me.chkPeriodLevel)
         Me.Panel2.Controls.Add(Me.cmbSort)
         Me.Panel2.Controls.Add(Me.chkSort)
-        Me.Panel2.Controls.Add(Me.Label10)
         Me.Panel2.Controls.Add(Me.cmbChartType)
         Me.Panel2.Controls.Add(Me.Label2)
         Me.Panel2.Controls.Add(Me.Label6)
@@ -524,19 +522,6 @@ Partial Class frmMain
         Me.chkSort.TabIndex = 9
         Me.chkSort.Text = "Sort By Amount"
         Me.chkSort.UseVisualStyleBackColor = True
-        '
-        'Label10
-        '
-        Me.Label10.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Label10.AutoSize = True
-        Me.Label10.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label10.ForeColor = System.Drawing.Color.FromArgb(CType(CType(192, Byte), Integer), CType(CType(0, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.Label10.Location = New System.Drawing.Point(329, 130)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(103, 15)
-        Me.Label10.TabIndex = 8
-        Me.Label10.Text = "Filters applied."
         '
         'cmbChartType
         '
@@ -1405,11 +1390,11 @@ Partial Class frmMain
         Me.chkShowAllDet.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.chkShowAllDet.AutoSize = True
         Me.chkShowAllDet.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkShowAllDet.Location = New System.Drawing.Point(796, 466)
+        Me.chkShowAllDet.Location = New System.Drawing.Point(797, 466)
         Me.chkShowAllDet.Name = "chkShowAllDet"
-        Me.chkShowAllDet.Size = New System.Drawing.Size(218, 17)
+        Me.chkShowAllDet.Size = New System.Drawing.Size(126, 17)
         Me.chkShowAllDet.TabIndex = 13
-        Me.chkShowAllDet.Text = "Show All Records (Filters Applied)"
+        Me.chkShowAllDet.Text = "Show All Records"
         Me.chkShowAllDet.UseVisualStyleBackColor = True
         Me.chkShowAllDet.Visible = False
         '
@@ -1657,7 +1642,7 @@ Partial Class frmMain
         'Panel10
         '
         Me.Panel10.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.Panel10.BackColor = System.Drawing.Color.LightBlue
+        Me.Panel10.BackColor = System.Drawing.Color.GreenYellow
         Me.Panel10.Controls.Add(Me.lblAlertText)
         Me.Panel10.Location = New System.Drawing.Point(0, 489)
         Me.Panel10.Name = "Panel10"
@@ -1816,7 +1801,6 @@ Partial Class frmMain
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents Label9 As System.Windows.Forms.Label
     Friend WithEvents txtSearch As System.Windows.Forms.TextBox
-    Friend WithEvents Label10 As System.Windows.Forms.Label
     Friend WithEvents TabSettings As System.Windows.Forms.TabPage
     Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
     Friend WithEvents txtHighlightDet As System.Windows.Forms.TextBox

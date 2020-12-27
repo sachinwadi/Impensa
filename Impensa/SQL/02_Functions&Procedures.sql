@@ -1188,7 +1188,6 @@ GO
 CREATE PROCEDURE sp_GetExpenditureSummary_AllInOne(	@P_InceptionDate DATE, 
 													@P_Category  VARCHAR(MAX), 
 													@P_SearchStr VARCHAR(500), 
-													@P_SummaryType AS CHAR(3) = 'SUM',
 													@P_FromDate DATE = NULL,
 													@P_ToDate DATE = NULL)
 AS
@@ -1200,7 +1199,7 @@ AS
 	CREATE TABLE #MTD(iCategory NUMERIC(18,0), MTD MONEY)
 	CREATE TABLE #YTD(iCategory NUMERIC(18,0), YTD MONEY)
 	CREATE TABLE #ITD(iCategory NUMERIC(18,0), ITD MONEY)
-	CREATE TABLE #Temp_AllInOne(Sort INT, iCategory NUMERIC(18,0), sCategory VARCHAR(100), dAmount MONEY, Total MONEY)
+	CREATE TABLE #Temp_AllInOne(Sort INT, iCategory NUMERIC(18,0), sCategory VARCHAR(100), dAmount MONEY, Cnt INT, Bdg MONEY, Total MONEY)
 	
 	--MTD
 	IF @P_FromDate IS NULL
@@ -1213,7 +1212,7 @@ AS
 	ELSE
 		SET	@ToDate = @P_ToDate
 	
-	INSERT INTO #Temp_AllInOne EXEC sp_GetExpenditureSummary_Monthly @FromDate, @ToDate, @P_Category, @P_SearchStr, @P_SummaryType
+	INSERT INTO #Temp_AllInOne EXEC sp_GetExpenditureSummary_Monthly @FromDate, @ToDate, @P_Category, @P_SearchStr
 	INSERT INTO #MTD(iCategory, MTD) SELECT iCategory, dAmount FROM #Temp_AllInOne
 	
 	--YTD
@@ -1221,33 +1220,34 @@ AS
 	
 	TRUNCATE TABLE #Temp_AllInOne
 	
-	INSERT INTO #Temp_AllInOne EXEC sp_GetExpenditureSummary_Yearly @FromDate, @ToDate, @P_Category, @P_SearchStr, NULL, @P_SummaryType
+	INSERT INTO #Temp_AllInOne EXEC sp_GetExpenditureSummary_Yearly @FromDate, @ToDate, @P_Category, @P_SearchStr, NULL
 	INSERT INTO #YTD(iCategory, YTD) SELECT iCategory, dAmount FROM #Temp_AllInOne
 
 	TRUNCATE TABLE #Temp_AllInOne
 
 	--ITD
-    SET @sql = 'SELECT 1 Sort, iCategory, Category, ITD, [TOTAL] FROM (SELECT ''ITD'' dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_InceptionDate>'', ''<@ToDate>'', 0, ''<@P_SearchStr>'', 0) E'
-               + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
-               + ' RIGHT JOIN (SELECT c1.sCategory Category, c1.hKey iCategory FROM tbl_CategoryList c1 LEFT JOIN dbo.Fn_ListObsoleteCategories(''<@P_InceptionDate>'', ''<@ToDate>'') Fn ON c1.hKey = Fn.iCategory WHERE Fn.iCategory IS NULL'
-               + ' AND 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(C1.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END)c ON c.iCategory = X.hKey'
-               + ' PIVOT (' + CASE @P_SummaryType WHEN 'CNT' THEN 'COUNT' ELSE 'SUM' END + '(x.dAmount) FOR X.dtDate in (ITD, [TOTAL])) AS pvt'
-		             
-    IF @P_SummaryType != 'CNT'
-		SET @sql = @sql
-	             + ' UNION ALL'
-	             + ' SELECT 2 Sort, 999, ''TOTAL'', SUM(ITD), SUM([TOTAL])' 
-                 + ' FROM (SELECT ''ITD'' dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount FROM dbo.Fn_DataStore(''<@P_InceptionDate>'', ''<@ToDate>'', 0, ''<@P_SearchStr>'', 0) E' 
-                 + ' WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X'
-				 + ' PIVOT (SUM(x.dAmount) FOR X.dtDate in (ITD, [TOTAL])) AS pvt' +
-	             + ' ORDER BY sort,category'
+    SET @sql = 'SELECT 1 Sort, iCategory, Category, ITD, NULL, NULL, [TOTAL] 
+				  FROM (SELECT ''ITD'' dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount 
+						  FROM dbo.Fn_DataStore(''<@P_InceptionDate>'', ''<@ToDate>'', 0, ''<@P_SearchStr>'', 0) E
+						 WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X
+					   RIGHT JOIN (SELECT c1.sCategory Category, c1.hKey iCategory 
+								     FROM tbl_CategoryList c1 
+										  LEFT JOIN dbo.Fn_ListObsoleteCategories(''<@P_InceptionDate>'', ''<@ToDate>'') Fn ON c1.hKey = Fn.iCategory 
+								    WHERE Fn.iCategory IS NULL
+									  AND 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(C1.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END)c ON c.iCategory = X.hKey
+					   PIVOT (SUM(x.dAmount) FOR X.dtDate in (ITD, [TOTAL])) AS pvt
+	           UNION ALL
+	           SELECT 2 Sort, 999, ''TOTAL'', SUM(ITD), NULL, NULL, SUM([TOTAL]) 
+				 FROM (SELECT ''ITD'' dtdate, E.sCategory, E.iCategory hKey, dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount) dAmount 
+						 FROM dbo.Fn_DataStore(''<@P_InceptionDate>'', ''<@ToDate>'', 0, ''<@P_SearchStr>'', 0) E 
+                WHERE 1 = CASE WHEN LEN(ISNULL(''<@P_Category>'','''')) > 0 AND CHARINDEX(E.sCategory, ISNULL(''<@P_Category>'','''')) > 0 THEN 1 WHEN LEN(ISNULL(''<@P_Category>'','''')) = 0 THEN 1 ELSE 0 END) AS X
+			    PIVOT (SUM(x.dAmount) FOR X.dtDate in (ITD, [TOTAL])) AS pvt
+	            ORDER BY sort,category'
 
 	  SET @sql = REPLACE(@sql, '<@P_InceptionDate>', @P_InceptionDate)
 	  SET @sql = REPLACE(@sql, '<@ToDate>', @ToDate)
 	  SET @sql = REPLACE(@sql, '<@P_Category>', @P_Category)
 	  SET @sql = REPLACE(@sql, '<@P_SearchStr>', @P_SearchStr)
-	
-		print @sql
 	
 	  INSERT INTO #Temp_AllInOne EXEC (@sql)
 	  INSERT INTO #ITD(iCategory, ITD) SELECT iCategory, dAmount FROM #Temp_AllInOne

@@ -90,6 +90,7 @@ Public Class frmMain
     Private dtThresholdData As DataTable
     Private dtShowUntil As Date
     Private FirstTimeLoadInBkg As Boolean
+    Private dtGridSummaryAll As DataTable
 #End Region
 
 #Region "Methods"
@@ -539,10 +540,12 @@ Public Class frmMain
                 Else
                     strSQL = "Execute " & procName & " '" & dtpFrom & "', '" & dtpTo & "', '" & Categories & "', '" & SearchStr & "'"
                 End If
-                dtGridSummary = New DataTable
+                dtGridSummaryAll = New DataTable
                 da = New SqlDataAdapter(strSQL, Connection)
-                da.Fill(dtGridSummary)
+                da.Fill(dtGridSummaryAll)
             End Using
+
+            dtGridSummary = (dtGridSummaryAll.DefaultView).ToTable("dtGridSummaryAll", False, dtGridSummaryAll.Columns().Cast(Of DataColumn).Where(Function(x) Not (x.ColumnName.Contains("_CNT") Or x.ColumnName.Contains("_BDG"))).Select(Function(x) x.ColumnName).ToArray)
 
             If dtGridSummary.Rows.Count > 0 Then
 
@@ -745,11 +748,8 @@ Public Class frmMain
                 Next
 
                 If Not (SummaryType = SummaryTypes.RunningTotals Or SummaryType = SummaryTypes.AllInOne) Then
-                    Call GetBudgets()
-
-                    If dtBudget.Rows.Count > 0 Then
-                        Call CheckSummaryActualVsBudget()
-                    End If
+                    dtBudget = GetBudgets()
+                    Call CheckSummaryActualVsBudget()
                 End If
             End If
 
@@ -766,6 +766,7 @@ Public Class frmMain
             Dim CategoryColIndex As Integer = DataGridExpSumm.Columns("Category").Index
             Dim TotalColIndex As Integer = DataGridExpSumm.Columns("Total").Index
             Dim ApplyColorFormatting As Boolean
+           
 
             If dtBudget.Rows.Count > 0 Then
                 For ColId As Integer = CategoryColIndex + 1 To TotalColIndex - 1
@@ -819,29 +820,19 @@ Public Class frmMain
         End Try
     End Sub
 
-    Private Sub GetBudgets()
-        Dim strSQL As String = ""
+    Private Function GetBudgets() As DataTable
+        Dim columnsList As New List(Of String)
 
-        If SearchStr Is Nothing Then
-            If CallSearchFunction Then
-                Call SetDefaultPropValue(True)
-            Else
-                Call SetDefaultPropValue()
-            End If
+        columnsList.Add("Sort")
+        columnsList.Add("iCategory")
+        columnsList.Add("Category")
+        columnsList.AddRange(dtGridSummaryAll.Columns().Cast(Of DataColumn).Where(Function(x) x.ColumnName.Contains("_BDG")).Select(Function(x) x.ColumnName).ToList)
+        columnsList.Add("Total")
 
-            If SummaryType = SummaryTypes.Monthly Then
-                strSQL = "Execute sp_GetExpenditureSummaryBudget_Monthly '" & dtpFrom & "', '" & dtpTo & "', '" & Categories & "'"
-            ElseIf SummaryType = SummaryTypes.Yearly OrElse SummaryType = SummaryTypes.Variance Then
-                strSQL = "Execute sp_GetExpenditureSummaryBudget_Yearly '" & dtpFrom & "', '" & dtpTo & "', '" & Categories & "', '" & ChkLBYearsItemsList & "'"
-            End If
+        dtBudget = (dtGridSummaryAll.DefaultView).ToTable("dtGridSummaryAll", False, columnsList.ToArray)
 
-            Using Connection = GetConnection()
-                dtBudget = New DataTable
-                da = New SqlDataAdapter(strSQL, Connection)
-                da.Fill(dtBudget)
-            End Using
-        End If
-    End Sub
+        Return dtBudget
+    End Function
 #End Region
 
 #Region "Monthly Budget/Threshold"
@@ -959,6 +950,8 @@ Public Class frmMain
             End Using
 
             If dtThresholdData.Rows.Count = 0 Then Exit Sub
+
+            tslblRecdCnt.Text = "Total Records Displayed: #" & dtThresholdData.Select("hKey IS NOT NULL").ToArray.Count
 
             dv = dtThresholdData.DefaultView
 
@@ -1202,7 +1195,7 @@ Public Class frmMain
         Dim dtTo As Date
         Dim lst As New List(Of String)
         Dim bShowLabel = True
-        Dim countColumnIdentifier As String = ""
+        Dim countColumnIdentifier As String = "Count"
 
         Try
             DataAvailableForChart = True
@@ -1652,7 +1645,6 @@ Public Class frmMain
             ReminderText = txtReminder.Text
             EnableImport = chkStartImport.Checked
             DeleteOldRowsFromExcel = chkExcelDelRows.Checked
-            'Call AlertTicker(ShowReminder)
 
             ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
 
@@ -1704,13 +1696,8 @@ Public Class frmMain
     Private Function ValidateEmailAddress(ByVal email As String) As Boolean
         Dim regex As Regex = New Regex("^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$")
         Dim emails As String() = email.Split(";")
-
-        'If String.IsNullOrEmpty(email) Then Return True 'skip validation
-
         For Each Id As String In emails
-            'If Not String.IsNullOrEmpty(Id) Then
             If Not regex.IsMatch(Id) Then Return False
-            'End If
         Next
         Return True
     End Function
@@ -1813,7 +1800,6 @@ Public Class frmMain
         cmbPeriod.SelectedIndex = Period.CurrentMonth
         txtSearch.Text = DefaultSearchStr
         txtSearch.ForeColor = Color.DarkGray
-        'Call GetNonObseletCategoriesList()
         Call PopulateLstCategoryFilter()
         If P_bCallRefreshGrids Then
             Call RefreshGrids()
@@ -1853,7 +1839,6 @@ Public Class frmMain
         chkLBYears.Items.Clear()
         chkLBVarComparision.Items.Clear()
         Call ResetChartControl(Chart_Analysis)
-        'Call ShowErrorsAndExceptions()
     End Sub '23
 
     Private Sub ResetChartControl(ByVal Chart_Analysis As System.Windows.Forms.DataVisualization.Charting.Chart)
@@ -1975,12 +1960,11 @@ Public Class frmMain
             lblAlertText.ForeColor = Color.Red
         ElseIf Not String.IsNullOrEmpty(ReminderText) Then
             AlertText = IIf(ShowReminder, ReminderText, String.Empty)
-            lblAlertText.ForeColor = Color.White
+            lblAlertText.ForeColor = Color.DarkRed
         End If
 
         If Not String.IsNullOrEmpty(AlertText) Then
             lblAlertText.Width = AlertText.Length
-            'lblAlertText.Left = Me.Width
             Panel10.Visible = True
             tmrAlert.Enabled = True
         Else
@@ -2208,7 +2192,7 @@ Public Class frmMain
             Panel1.Enabled = False
             btnSave.Enabled = False
             btnExport.Enabled = False
-            'Application.DoEvents()
+            pnlHighlight.Enabled = False
 
             If Not CallSearchFunction Then
                 chkShowAllDet.Visible = False
@@ -2253,6 +2237,7 @@ Public Class frmMain
             Panel1.Enabled = True
             btnSave.Enabled = True
             btnExport.Enabled = True
+            pnlHighlight.Enabled = True
         End Try
 
     End Sub '20
@@ -2519,20 +2504,6 @@ Public Class frmMain
         Panel9.Width = Me.Width
         Panel10.Width = Me.Width
     End Sub
-
-    'Private Sub SendSummaryEmailOnceInMonth()
-    '    If LatestSummaryMailedDate = Nothing OrElse Month(LatestSummaryMailedDate) < Date.Today.Month Then
-    '        Dim dtFirstDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, 1)
-    '        Dim dtLastDayOfLastMonth As Date = New Date(Date.Now.Year, Date.Now.Month - 1, (New Date(Date.Now.Year, Date.Now.Month, 1)).AddDays(-1).Day)
-    '        Try
-    '            Call clsLibrary.SendSummaryEmailOnceInMonth(dtFirstDayOfLastMonth, dtLastDayOfLastMonth)
-    '            LatestSummaryMailedDate = Date.Now.Date
-    '        Catch ex As Exception
-    '            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
-    '            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-    '        End Try
-    '    End If
-    'End Sub
 #End Region
 #End Region
 
@@ -2597,7 +2568,6 @@ Public Class frmMain
 
             Call CheckOpenYears()
             Call CheckCurrentMonthThresholds()
-            'If SendEmails And Not BgWorker_Email.IsBusy Then BgWorker_Email.RunWorkerAsync()
 
             If (CDate(LastUsedTimeStamp).Month <> DateTime.Today.Month) Then
                 Call InsertCategoryPrevMonthOccurrences()
@@ -3033,7 +3003,6 @@ Public Class frmMain
     Private Sub DataGridExpSumm_CellMouseEnter(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridExpSumm.CellMouseEnter
         Try
             If Panel5.Visible = True Then Exit Sub
-
             DataGridExpSumm.Cursor = Cursors.Default
 
             If e.ColumnIndex >= 0 AndAlso e.RowIndex >= 0 Then
@@ -3042,42 +3011,10 @@ Public Class frmMain
 
                         If SearchStr Is Nothing Then
                             If Not (SummaryType = SummaryTypes.RunningTotals Or SummaryType = SummaryTypes.AllInOne) Then
-                                If Not dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is Nothing Then
-                                    If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 AndAlso dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
-                                        If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
-                                            DataGridExpSumm.Cursor = Cursors.Hand
-                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Forecast Amount: Not Defined"
-                                        Else
-                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Forecast Amount: Not Defined"
-                                        End If
-                                    ElseIf Not dtBudget.Rows(e.RowIndex)(e.ColumnIndex) Is DBNull.Value Then
-                                        If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
-                                            If DataGridExpSumm("Sort", e.RowIndex).Value = 1 Then
-                                                DataGridExpSumm.Cursor = Cursors.Hand
-                                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & "Forecast Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
-                                            Else
-                                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Forecast Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
-                                            End If
-                                        ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value = 0 Then
-                                            DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Forecast Amount: " & Format(dtBudget.Rows(e.RowIndex)(e.ColumnIndex), "#,##0.00")
-                                        End If
-                                    ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value = 0 Then
-                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Forecast Amount: Not Defined"
-                                    ElseIf DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
-                                        DataGridExpSumm.Cursor = Cursors.Hand
-                                        DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary."
-                                    End If
-                                End If
-                            Else
-                                If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
-                                    DataGridExpSumm.Cursor = Cursors.Hand
-                                    DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary."
-                                End If
-                            End If
-                        Else
-                            If DataGridExpSumm(e.ColumnIndex, e.RowIndex).Value > 0 Then
                                 DataGridExpSumm.Cursor = Cursors.Hand
-                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary."
+                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & _
+                                    "Forecast Amount: " & Format(dtGridSummaryAll.Select("Category = '" & DataGridExpSumm("Category", e.RowIndex).Value & "'").First.Item(DataGridExpSumm.Columns(e.ColumnIndex).Name & "_BDG"), "#,##0.00") & vbNewLine & _
+                                    "Count: " & dtGridSummaryAll.Select("Category = '" & DataGridExpSumm("Category", e.RowIndex).Value & "'").First.Item(DataGridExpSumm.Columns(e.ColumnIndex).Name & "_CNT")
                             End If
                         End If
                     End If
@@ -3714,6 +3651,7 @@ Public Class frmMain
             chkShowAllDet.Visible = False
             pnlHighlight.Visible = False
             tsCmbBudgetBuckets.Visible = False
+            pnlHighlight.Enabled = False
 
             If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) Then
                 HighlightAmt = HighlightDetail
@@ -3728,6 +3666,7 @@ Public Class frmMain
                 Panel1.Enabled = True
                 btnExport.Enabled = True
                 btnSave.Enabled = True
+                pnlHighlight.Enabled = True
             End If
 
             If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabCategories) Then
@@ -3752,8 +3691,8 @@ Public Class frmMain
                 Panel5.Visible = True
                 HighlightAmt = IIf(SummaryType = SummaryTypes.Monthly, HighlightSummMonthly, HighlightSummYearly)
                 pnlHighlight.Visible = True
-                btnSave.Enabled = False
-                btnExport.Enabled = False
+                'btnSave.Enabled = False
+                'btnExport.Enabled = False
                 tslblRecdCnt.Text = "Total Records Displayed: #" & IIf((DataGridExpSumm.Rows.Count - 1) < 0, 0, (DataGridExpSumm.Rows.Count - 1))
                 tslblRecdCnt.Visible = True
                 tslblSeperator2.Visible = True
@@ -3771,7 +3710,7 @@ Public Class frmMain
 
                 chkPeriodLevel.Text = "Period: " & CDate(dtpFrom).Day.ToString.PadLeft(2, "0") & "/" & MonthName(Month(dtpFrom)).ToString.Substring(0, 3) & " - " & _
                                                    CDate(dtpTo).Day.ToString.PadLeft(2, "0") & "/" & MonthName(Month(dtpTo)).ToString.Substring(0, 3)
-                btnSave.Enabled = False
+                'btnSave.Enabled = False
 
                 If CallSearchFunction = True Then
                     Call SetDefaultPropValue(True)
@@ -3801,9 +3740,9 @@ Public Class frmMain
             End If
 
             If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) And SummaryType = SummaryTypes.AllInOne Then
-                pnlHighlight.Visible = False
+                pnlHighlight.Enabled = False
             Else
-                pnlHighlight.Visible = True
+                pnlHighlight.Enabled = True
             End If
 
         Catch ex As Exception
@@ -3922,7 +3861,6 @@ Public Class frmMain
     Private Sub BgWorker_Email_DoWork(ByVal sender As System.Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BgWorker_Email.DoWork
         Try
             Call SendDailyEmail(dtEmail)
-            'Call SendSummaryEmailOnceInMonth()
         Catch ex As Exception
             If (TypeOf (ex) Is SmtpException) Then
                 ImpensaAlert("Unable to send notification email" + vbCrLf + vbCrLf + "Error Details:" + vbCrLf + ex.Message, MsgBoxStyle.Critical)
