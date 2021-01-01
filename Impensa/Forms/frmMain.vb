@@ -143,6 +143,8 @@ Public Class frmMain
             DataGridExpDet.DataSource = Nothing
             DoNotChkRowAdded = True
 
+            Panel5.BringToFront()
+            Panel5.Visible = True
             Label15.Text = "Loading Details..."
             Panel5.Refresh()
 
@@ -208,6 +210,9 @@ Public Class frmMain
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        Finally
+            Panel5.SendToBack()
+            Panel5.Visible = False
         End Try
 
     End Sub '7
@@ -1270,7 +1275,7 @@ Public Class frmMain
 
             For i As Int32 = 1 To dt.Columns().Cast(Of DataColumn).Where(Function(x) Not x.ColumnName.Contains(countColumnIdentifier)).Count - 1
                 If (SelectChartCombo = "Chart 3A" OrElse SelectChartCombo = "Chart 3B") Then
-                    lst.Add(dt.Columns(i).ColumnName & " - Rs." & Format(dt.Compute("SUM([" & dt.Columns(i).ColumnName & "])", ""), "#,##0.00"))
+                    lst.Add("Rs." & Format(dt.Compute("SUM([" & dt.Columns(i).ColumnName & "])", ""), "#,##0.00") & " (" & dt.Columns(i).ColumnName & ")")
                 Else
                     lst.Add("Rs." & Format(dt.Compute("SUM([" & dt.Columns(i).ColumnName & "])", ""), "#,##0.00"))
                 End If
@@ -1322,16 +1327,9 @@ Public Class frmMain
             Chart_Analysis.Titles(0).ForeColor = Color.Blue
             Chart_Analysis.Titles(0).BackColor = Color.Yellow
             Chart_Analysis.Titles(0).BorderColor = Color.Black
-
-            Dim ChartSubTitle As String = "Total: "
-
-            For Each item As String In lst
-                ChartSubTitle = ChartSubTitle & item & "; "
-            Next
-
-            Chart_Analysis.Titles.Add(ChartSubTitle)
+            Chart_Analysis.Titles.Add("Total: " + String.Join(" | ", lst.ToArray))
             Chart_Analysis.Titles(1).Alignment = ContentAlignment.MiddleRight
-            Chart_Analysis.Titles(1).Font = New System.Drawing.Font(ImpensaFont.FontFamily, 10, FontStyle.Bold)
+            Chart_Analysis.Titles(1).Font = New System.Drawing.Font(ImpensaFont.FontFamily, 10, FontStyle.Regular)
             Chart_Analysis.Titles(1).ForeColor = Color.Blue
 
             If InStr("Chart MTD, Chart YTD, Chart BKSDTD", SelectChartCombo) = 0 Then

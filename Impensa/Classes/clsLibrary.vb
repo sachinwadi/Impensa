@@ -878,7 +878,7 @@ Public Class clsLibrary
 
         Try
             Using Connection = GetConnection()
-                strSQL = "Execute sp_GetExpenditureSummary_AllInOne " & " '" & RecordKeepingStartDate.ToString("yyyy-MM-dd") & "', '', '','SUM','" & P_FromDate.ToString("yyyy-MM-dd") & "','" & P_ToDate.ToString("yyyy-MM-dd") & "'"
+                strSQL = "Execute sp_GetExpenditureSummary_AllInOne " & " '" & RecordKeepingStartDate.ToString("yyyy-MM-dd") & "', '', '','" & P_FromDate.ToString("yyyy-MM-dd") & "','" & P_ToDate.ToString("yyyy-MM-dd") & "'"
                 da = New SqlDataAdapter(strSQL, Connection)
                 da.Fill(dtGridSummary)
             End Using
