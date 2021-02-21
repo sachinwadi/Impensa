@@ -16,6 +16,7 @@ Imports System.Net.Mail
 
 Public Class frmMain
     Dim dtEmail As DataTable
+    Dim oldAmountCellValue As Decimal = 0.0
 
 #Region "Enums"
     Private Enum CSVCreationFrequency
@@ -178,6 +179,7 @@ Public Class frmMain
             DataGridExpDet.Columns("sCategory").Visible = False
             DataGridExpDet.Columns("IsDummyRowAdded").Visible = False
             DataGridExpDet.Columns("CategoryName").Visible = False
+            DataGridExpDet.Columns("DateOriginal").Visible = False
             DataGridExpDet.Columns("bDelete").DisplayIndex = 0
             DataGridExpDet.Columns("iCategory").DisplayIndex = 3
             DataGridExpDet.Columns("Notes").DisplayIndex = 5
@@ -285,13 +287,20 @@ Public Class frmMain
                 Label15.Text = "Saving Records..."
                 Panel5.Refresh()
 
-                dtGrid = DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges
-                dtEmail = dtGrid.Select("iCategory IS NOT NULL").CopyToDataTable
+                If dtGrid.Select("iCategory IS NOT NULL").Length > 0 Then
+                    dtEmail = dtGrid.Select("iCategory IS NOT NULL").CopyToDataTable
+                End If
 
                 For Each dr As DataRow In dtGrid.Rows
-                    If dr.RowState = DataRowState.Modified And dr("hKey") Is DBNull.Value Then
+                    If dr.RowState = DataRowState.Modified AndAlso dr("hKey") Is DBNull.Value Then
                         dr.AcceptChanges()
-                        dr.SetAdded()
+                        If Not String.IsNullOrEmpty(dr("iCategory").ToString) Then
+                            dr.SetAdded()
+                        End If
+                    End If
+
+                    If (New List(Of String) From {"TOTAL", "GRAND TOTAL"}).Contains(dr("Date")) Then
+                        dr.AcceptChanges()
                     End If
 
                     If dr("hKey") Is DBNull.Value And dr("Amount") Is DBNull.Value Then
@@ -323,13 +332,14 @@ Public Class frmMain
                     Next
 
                     da.Update(dtGrid)
+
                 End Using
 
+                ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
                 Call RefreshGrids()
 
-                ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
 
-                If SendEmails AndAlso Not BgWorker_Email.IsBusy Then
+                If SendEmails AndAlso Not dtEmail Is Nothing AndAlso Not BgWorker_Email.IsBusy Then
                     BgWorker_Email.RunWorkerAsync()
                 End If
             End If
@@ -1548,7 +1558,7 @@ Public Class frmMain
     Private Sub GetConfig()
         Try
             If AssemblyLocation Is Nothing Then
-                AssemblyLocation = System.Reflection.Assembly.GetEntryAssembly().Location & " -startup"
+                AssemblyLocation = System.Reflection.Assembly.GetEntryAssembly().Location & " - Startup"
             End If
 
             If HighlightDetail Is Nothing Then
@@ -2316,6 +2326,7 @@ Public Class frmMain
                 Dim dr As DataRow = dt.NewRow()
                 dr("UnpaidCategory") = "No Unpaid Bills"
                 LstUnpaidBillsCurrentMonth.Items.Add(dr.Item("UnpaidCategory").ToString)
+                LstUnpaidBillsCurrentMonth.ForeColor = Color.Green
             Else
                 UnpaidBills = True
             End If
@@ -2346,6 +2357,7 @@ Public Class frmMain
                 Dim dr As DataRow = dt.NewRow()
                 dr("UnpaidCategory") = "No Unpaid Bills"
                 LstUnpaidBillsPrevMonth.Items.Add(dr.Item("UnpaidCategory").ToString)
+                LstUnpaidBillsPrevMonth.ForeColor = Color.Green
             Else
                 UnpaidBills = True
             End If
@@ -2748,6 +2760,17 @@ Public Class frmMain
             Else
                 dtp.Visible = False
             End If
+
+            'To trigger Change in Total and Grand Total
+            If DataGridExpDet.CurrentCell.ColumnIndex = DataGridExpDet.Columns("Amount").Index Then
+                If DataGridExpDet.CurrentCell.Value Is DBNull.Value Then
+                    oldAmountCellValue = 0D
+                Else
+                    oldAmountCellValue = Convert.ToDecimal(DataGridExpDet.CurrentCell.Value)
+                End If
+
+            End If
+
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
@@ -2755,6 +2778,8 @@ Public Class frmMain
     End Sub
 
     Private Sub DataGridExpDet_CellEndEdit(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridExpDet.CellEndEdit
+        Dim riTotal As Integer = -1
+        Dim currentAmountCellValue As Decimal = 0D
         Try
             dtp.Visible = False
 
@@ -2781,6 +2806,27 @@ Public Class frmMain
 
             DgvTextBox = Nothing
             DgvComboBox = Nothing
+
+            'Trigger Change in Total and Grand Total : START
+            If DataGridExpDet.CurrentCell.ColumnIndex = DataGridExpDet.Columns("Amount").Index AndAlso Not DataGridExpDet.CurrentCell.Value Is DBNull.Value Then
+                currentAmountCellValue = Convert.ToDecimal(DataGridExpDet.CurrentCell.Value)
+            End If
+
+            If DataGridExpDet.CurrentCell.ColumnIndex = DataGridExpDet.Columns("Amount").Index AndAlso Not oldAmountCellValue = currentAmountCellValue Then
+                Dim totalRow = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) (x.Cells("DateOriginal").Value.Equals(DataGridExpDet("Date", e.RowIndex).Value) And x.Cells("Date").Value.Equals("TOTAL"))).FirstOrDefault()
+                Dim riGrandTotal = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) (x.Cells("DateOriginal").Value.Equals("01/01/2100") And x.Cells("Date").Value.Equals("GRAND TOTAL"))).First().Index
+
+                Dim changedAmountDiff = currentAmountCellValue - oldAmountCellValue
+
+                If Not DataGridExpDet("hKey", e.RowIndex).Value Is DBNull.Value Then
+                    If Not totalRow Is Nothing Then riTotal = totalRow.Index
+                    DataGridExpDet("Amount", riTotal).Value += changedAmountDiff
+                End If
+
+                DataGridExpDet("Amount", riGrandTotal).Value += changedAmountDiff
+                tslblGridTotal.Text = "Grid Total: Rs. " & Format(DataGridExpDet("Amount", riGrandTotal).Value, "#,##0.00")
+            End If
+            'END
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
@@ -2818,7 +2864,9 @@ Public Class frmMain
 
     Private Sub DataGridExpDet_CellValueChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridExpDet.CellValueChanged
         If e.RowIndex >= 0 AndAlso e.ColumnIndex >= 0 Then
-            DataGridExpDet(e.ColumnIndex, e.RowIndex).Style.BackColor = Color.LightCyan
+            If Not (New List(Of String) From {"TOTAL", "GRAND TOTAL"}).Contains(DataGridExpDet("Date", e.RowIndex).Value) Then
+                DataGridExpDet(e.ColumnIndex, e.RowIndex).Style.BackColor = Color.LightCyan
+            End If
         End If
     End Sub
 
