@@ -1661,7 +1661,7 @@ Public Class frmMain
                 Call ResetFilters(P_bCallRefreshGrids:=False)
             End If
 
-            Call StartImportService()
+            'Call StartImportService()
             SaveValidationFailed = False
             Return True
         Catch ex As Exception
@@ -2126,7 +2126,7 @@ Public Class frmMain
         End If
         MyBase.SetVisibleCore(value)
 
-        Call StartImportService()
+        'Call StartImportService()
     End Sub
 
     Private Sub GetConnectionInfo()
@@ -3895,9 +3895,13 @@ Public Class frmMain
     End Sub
 
     Private Sub BGWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BGWorker.DoWork
-        Do While Not File.GetLastWriteTime(CSVBackupPath + "\Impensa.xlsm").ToString = ImportFileTimeStamp
+        'Do While Not File.GetLastWriteTime(CSVBackupPath + "\Impensa.xlsm").ToString = ImportFileTimeStamp
+        'Call DataImport()
+        'Loop
+
+        If Not File.GetLastWriteTime(CSVBackupPath + "\Impensa.xlsm").ToString = ImportFileTimeStamp Then
             Call DataImport()
-        Loop
+        End If
     End Sub
 
     Private Sub BGWorker_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles BGWorker.RunWorkerCompleted
@@ -3915,6 +3919,10 @@ Public Class frmMain
                 ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
             End If
         End Try
+    End Sub
+
+    Private Sub Timer_Import_Tick(sender As Object, e As EventArgs) Handles Timer_Import.Tick
+        Call StartImportService()
     End Sub
 #End Region
 

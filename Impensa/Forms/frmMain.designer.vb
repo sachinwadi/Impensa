@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend13 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend5 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -166,6 +166,7 @@ Partial Class frmMain
         Me.tmrRefresh = New System.Windows.Forms.Timer(Me.components)
         Me.btnExport = New System.Windows.Forms.Button()
         Me.BgWorker_Email = New System.ComponentModel.BackgroundWorker()
+        Me.Timer_Import = New System.Windows.Forms.Timer(Me.components)
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabCategories.SuspendLayout()
@@ -224,34 +225,37 @@ Partial Class frmMain
         Me.Panel1.Location = New System.Drawing.Point(0, 0)
         Me.Panel1.Margin = New System.Windows.Forms.Padding(0)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(206, 454)
+        Me.Panel1.Size = New System.Drawing.Size(308, 697)
         Me.Panel1.TabIndex = 1
         '
         'cmbPeriod
         '
         Me.cmbPeriod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbPeriod.FormattingEnabled = True
-        Me.cmbPeriod.Location = New System.Drawing.Point(16, 111)
+        Me.cmbPeriod.Location = New System.Drawing.Point(24, 171)
+        Me.cmbPeriod.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbPeriod.Name = "cmbPeriod"
-        Me.cmbPeriod.Size = New System.Drawing.Size(175, 21)
+        Me.cmbPeriod.Size = New System.Drawing.Size(260, 28)
         Me.cmbPeriod.TabIndex = 19
         '
         'Label18
         '
         Me.Label18.AutoSize = True
         Me.Label18.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label18.Location = New System.Drawing.Point(38, 94)
+        Me.Label18.Location = New System.Drawing.Point(57, 145)
+        Me.Label18.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label18.Name = "Label18"
-        Me.Label18.Size = New System.Drawing.Size(131, 13)
+        Me.Label18.Size = New System.Drawing.Size(197, 20)
         Me.Label18.TabIndex = 18
         Me.Label18.Text = "Select Period (Preset)"
         '
         'LinkLabel2
         '
         Me.LinkLabel2.AutoSize = True
-        Me.LinkLabel2.Location = New System.Drawing.Point(73, 435)
+        Me.LinkLabel2.Location = New System.Drawing.Point(110, 669)
+        Me.LinkLabel2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LinkLabel2.Name = "LinkLabel2"
-        Me.LinkLabel2.Size = New System.Drawing.Size(65, 13)
+        Me.LinkLabel2.Size = New System.Drawing.Size(99, 20)
         Me.LinkLabel2.TabIndex = 17
         Me.LinkLabel2.TabStop = True
         Me.LinkLabel2.Text = "Reset Filters"
@@ -259,20 +263,22 @@ Partial Class frmMain
         'txtSearch
         '
         Me.txtSearch.ForeColor = System.Drawing.Color.DarkGray
-        Me.txtSearch.Location = New System.Drawing.Point(13, 342)
+        Me.txtSearch.Location = New System.Drawing.Point(20, 526)
+        Me.txtSearch.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtSearch.MaxLength = 500
         Me.txtSearch.Multiline = True
         Me.txtSearch.Name = "txtSearch"
-        Me.txtSearch.Size = New System.Drawing.Size(178, 40)
+        Me.txtSearch.Size = New System.Drawing.Size(265, 59)
         Me.txtSearch.TabIndex = 15
         Me.txtSearch.Text = "Multiple Keywords Seperated By Comma"
         '
         'Label9
         '
         Me.Label9.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label9.Location = New System.Drawing.Point(10, 319)
+        Me.Label9.Location = New System.Drawing.Point(15, 491)
+        Me.Label9.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label9.Name = "Label9"
-        Me.Label9.Size = New System.Drawing.Size(178, 23)
+        Me.Label9.Size = New System.Drawing.Size(267, 35)
         Me.Label9.TabIndex = 14
         Me.Label9.Text = "Search Item(s) In Notes"
         Me.Label9.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -280,9 +286,10 @@ Partial Class frmMain
         'PictureBox1
         '
         Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
-        Me.PictureBox1.Location = New System.Drawing.Point(0, -1)
+        Me.PictureBox1.Location = New System.Drawing.Point(0, -2)
+        Me.PictureBox1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.Size = New System.Drawing.Size(205, 89)
+        Me.PictureBox1.Size = New System.Drawing.Size(308, 137)
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         Me.PictureBox1.TabIndex = 12
         Me.PictureBox1.TabStop = False
@@ -290,9 +297,10 @@ Partial Class frmMain
         'btnSubmit
         '
         Me.btnSubmit.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnSubmit.Location = New System.Drawing.Point(13, 393)
+        Me.btnSubmit.Location = New System.Drawing.Point(20, 605)
+        Me.btnSubmit.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnSubmit.Name = "btnSubmit"
-        Me.btnSubmit.Size = New System.Drawing.Size(178, 33)
+        Me.btnSubmit.Size = New System.Drawing.Size(267, 51)
         Me.btnSubmit.TabIndex = 3
         Me.btnSubmit.Text = "Submit"
         Me.btnSubmit.UseVisualStyleBackColor = True
@@ -300,9 +308,10 @@ Partial Class frmMain
         'Label4
         '
         Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label4.Location = New System.Drawing.Point(13, 199)
+        Me.Label4.Location = New System.Drawing.Point(20, 306)
+        Me.Label4.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(178, 23)
+        Me.Label4.Size = New System.Drawing.Size(267, 35)
         Me.Label4.TabIndex = 7
         Me.Label4.Text = "Select Categories"
         Me.Label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -310,9 +319,10 @@ Partial Class frmMain
         'LstCategory
         '
         Me.LstCategory.FormattingEnabled = True
-        Me.LstCategory.Location = New System.Drawing.Point(13, 225)
+        Me.LstCategory.Location = New System.Drawing.Point(20, 346)
+        Me.LstCategory.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.LstCategory.Name = "LstCategory"
-        Me.LstCategory.Size = New System.Drawing.Size(178, 94)
+        Me.LstCategory.Size = New System.Drawing.Size(265, 142)
         Me.LstCategory.Sorted = True
         Me.LstCategory.TabIndex = 2
         Me.LstCategory.ThreeDCheckBoxes = True
@@ -321,28 +331,31 @@ Partial Class frmMain
         '
         Me.dtPickerTo.CustomFormat = "dd/MM/yyyy"
         Me.dtPickerTo.Format = System.Windows.Forms.DateTimePickerFormat.Custom
-        Me.dtPickerTo.Location = New System.Drawing.Point(91, 174)
+        Me.dtPickerTo.Location = New System.Drawing.Point(136, 268)
+        Me.dtPickerTo.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.dtPickerTo.MaxDate = New Date(2100, 1, 1, 0, 0, 0, 0)
         Me.dtPickerTo.MinDate = New Date(1900, 1, 1, 0, 0, 0, 0)
         Me.dtPickerTo.Name = "dtPickerTo"
-        Me.dtPickerTo.Size = New System.Drawing.Size(100, 20)
+        Me.dtPickerTo.Size = New System.Drawing.Size(148, 26)
         Me.dtPickerTo.TabIndex = 1
         '
         'Label3
         '
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label3.Location = New System.Drawing.Point(10, 177)
+        Me.Label3.Location = New System.Drawing.Point(15, 272)
+        Me.Label3.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(75, 14)
+        Me.Label3.Size = New System.Drawing.Size(112, 22)
         Me.Label3.TabIndex = 3
         Me.Label3.Text = "To Date"
         '
         'Label1
         '
         Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label1.Location = New System.Drawing.Point(10, 146)
+        Me.Label1.Location = New System.Drawing.Point(15, 225)
+        Me.Label1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(75, 14)
+        Me.Label1.Size = New System.Drawing.Size(112, 22)
         Me.Label1.TabIndex = 1
         Me.Label1.Text = "From Date"
         '
@@ -350,21 +363,23 @@ Partial Class frmMain
         '
         Me.dtPickerFrom.CustomFormat = "dd/MM/yyyy"
         Me.dtPickerFrom.Format = System.Windows.Forms.DateTimePickerFormat.Custom
-        Me.dtPickerFrom.Location = New System.Drawing.Point(91, 142)
+        Me.dtPickerFrom.Location = New System.Drawing.Point(136, 218)
+        Me.dtPickerFrom.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.dtPickerFrom.MaxDate = New Date(2100, 1, 1, 0, 0, 0, 0)
         Me.dtPickerFrom.MinDate = New Date(1900, 1, 1, 0, 0, 0, 0)
         Me.dtPickerFrom.Name = "dtPickerFrom"
-        Me.dtPickerFrom.Size = New System.Drawing.Size(100, 20)
+        Me.dtPickerFrom.Size = New System.Drawing.Size(148, 26)
         Me.dtPickerFrom.TabIndex = 0
         '
         'TabCategories
         '
         Me.TabCategories.BackColor = System.Drawing.Color.Transparent
         Me.TabCategories.Controls.Add(Me.DataGridCatList)
-        Me.TabCategories.Location = New System.Drawing.Point(4, 22)
+        Me.TabCategories.Location = New System.Drawing.Point(4, 29)
+        Me.TabCategories.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.TabCategories.Name = "TabCategories"
-        Me.TabCategories.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabCategories.Size = New System.Drawing.Size(1031, 426)
+        Me.TabCategories.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.TabCategories.Size = New System.Drawing.Size(1550, 662)
         Me.TabCategories.TabIndex = 5
         Me.TabCategories.Text = "Categories"
         '
@@ -376,9 +391,11 @@ Partial Class frmMain
         Me.DataGridCatList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridCatList.Dock = System.Windows.Forms.DockStyle.Fill
         Me.DataGridCatList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter
-        Me.DataGridCatList.Location = New System.Drawing.Point(3, 3)
+        Me.DataGridCatList.Location = New System.Drawing.Point(4, 5)
+        Me.DataGridCatList.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.DataGridCatList.Name = "DataGridCatList"
-        Me.DataGridCatList.Size = New System.Drawing.Size(1025, 420)
+        Me.DataGridCatList.RowHeadersWidth = 62
+        Me.DataGridCatList.Size = New System.Drawing.Size(1542, 652)
         Me.DataGridCatList.TabIndex = 4
         Me.DataGridCatList.TabStop = False
         '
@@ -386,10 +403,11 @@ Partial Class frmMain
         '
         Me.TabCharts.Controls.Add(Me.Panel4)
         Me.TabCharts.Controls.Add(Me.Panel2)
-        Me.TabCharts.Location = New System.Drawing.Point(4, 22)
+        Me.TabCharts.Location = New System.Drawing.Point(4, 29)
+        Me.TabCharts.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.TabCharts.Name = "TabCharts"
-        Me.TabCharts.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabCharts.Size = New System.Drawing.Size(1031, 426)
+        Me.TabCharts.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.TabCharts.Size = New System.Drawing.Size(1550, 662)
         Me.TabCharts.TabIndex = 2
         Me.TabCharts.Text = "Graphical Analysis"
         Me.TabCharts.UseVisualStyleBackColor = True
@@ -400,9 +418,10 @@ Partial Class frmMain
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel4.Controls.Add(Me.Chart_Analysis)
-        Me.Panel4.Location = New System.Drawing.Point(3, 169)
+        Me.Panel4.Location = New System.Drawing.Point(4, 260)
+        Me.Panel4.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(1025, 254)
+        Me.Panel4.Size = New System.Drawing.Size(1538, 391)
         Me.Panel4.TabIndex = 2
         '
         'Chart_Analysis
@@ -410,12 +429,13 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend13.Name = "Legend1"
-        Legend13.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend13)
+        Legend5.Name = "Legend1"
+        Legend5.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend5)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
+        Me.Chart_Analysis.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Chart_Analysis.Name = "Chart_Analysis"
-        Me.Chart_Analysis.Size = New System.Drawing.Size(1025, 254)
+        Me.Chart_Analysis.Size = New System.Drawing.Size(1538, 391)
         Me.Chart_Analysis.TabIndex = 0
         Me.Chart_Analysis.Text = "Chart1"
         '
@@ -437,9 +457,10 @@ Partial Class frmMain
         Me.Panel2.Controls.Add(Me.cmbListing)
         Me.Panel2.Controls.Add(Me.cmbSelectChart)
         Me.Panel2.Dock = System.Windows.Forms.DockStyle.Top
-        Me.Panel2.Location = New System.Drawing.Point(3, 3)
+        Me.Panel2.Location = New System.Drawing.Point(4, 5)
+        Me.Panel2.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(1025, 160)
+        Me.Panel2.Size = New System.Drawing.Size(1542, 245)
         Me.Panel2.TabIndex = 1
         '
         'chkShowLabel
@@ -447,9 +468,10 @@ Partial Class frmMain
         Me.chkShowLabel.AutoSize = True
         Me.chkShowLabel.Checked = True
         Me.chkShowLabel.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkShowLabel.Location = New System.Drawing.Point(154, 129)
+        Me.chkShowLabel.Location = New System.Drawing.Point(231, 198)
+        Me.chkShowLabel.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkShowLabel.Name = "chkShowLabel"
-        Me.chkShowLabel.Size = New System.Drawing.Size(108, 17)
+        Me.chkShowLabel.Size = New System.Drawing.Size(157, 24)
         Me.chkShowLabel.TabIndex = 16
         Me.chkShowLabel.Text = "Show Data Label"
         Me.chkShowLabel.UseVisualStyleBackColor = True
@@ -457,9 +479,10 @@ Partial Class frmMain
         'btnGo
         '
         Me.btnGo.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnGo.Location = New System.Drawing.Point(261, 126)
+        Me.btnGo.Location = New System.Drawing.Point(392, 194)
+        Me.btnGo.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnGo.Name = "btnGo"
-        Me.btnGo.Size = New System.Drawing.Size(62, 23)
+        Me.btnGo.Size = New System.Drawing.Size(93, 35)
         Me.btnGo.TabIndex = 2
         Me.btnGo.Text = "GO"
         Me.btnGo.UseVisualStyleBackColor = True
@@ -467,27 +490,30 @@ Partial Class frmMain
         'Label25
         '
         Me.Label25.AutoSize = True
-        Me.Label25.Location = New System.Drawing.Point(35, 85)
+        Me.Label25.Location = New System.Drawing.Point(52, 131)
+        Me.Label25.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label25.Name = "Label25"
-        Me.Label25.Size = New System.Drawing.Size(40, 13)
+        Me.Label25.Size = New System.Drawing.Size(61, 20)
         Me.Label25.TabIndex = 15
         Me.Label25.Text = "Year(s)"
         '
         'chkLBYears
         '
         Me.chkLBYears.FormattingEnabled = True
-        Me.chkLBYears.Location = New System.Drawing.Point(79, 85)
+        Me.chkLBYears.Location = New System.Drawing.Point(118, 131)
+        Me.chkLBYears.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkLBYears.Name = "chkLBYears"
-        Me.chkLBYears.Size = New System.Drawing.Size(69, 64)
+        Me.chkLBYears.Size = New System.Drawing.Size(102, 96)
         Me.chkLBYears.TabIndex = 14
         '
         'Label8
         '
         Me.Label8.AutoSize = True
         Me.Label8.ForeColor = System.Drawing.Color.Navy
-        Me.Label8.Location = New System.Drawing.Point(328, 11)
+        Me.Label8.Location = New System.Drawing.Point(492, 17)
+        Me.Label8.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(39, 13)
+        Me.Label8.Size = New System.Drawing.Size(57, 20)
         Me.Label8.TabIndex = 13
         Me.Label8.Text = "Label8"
         Me.Label8.Visible = False
@@ -496,9 +522,10 @@ Partial Class frmMain
         '
         Me.chkPeriodLevel.AutoSize = True
         Me.chkPeriodLevel.Enabled = False
-        Me.chkPeriodLevel.Location = New System.Drawing.Point(154, 85)
+        Me.chkPeriodLevel.Location = New System.Drawing.Point(231, 131)
+        Me.chkPeriodLevel.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkPeriodLevel.Name = "chkPeriodLevel"
-        Me.chkPeriodLevel.Size = New System.Drawing.Size(59, 17)
+        Me.chkPeriodLevel.Size = New System.Drawing.Size(84, 24)
         Me.chkPeriodLevel.TabIndex = 12
         Me.chkPeriodLevel.Text = "Period:"
         Me.chkPeriodLevel.UseVisualStyleBackColor = True
@@ -508,17 +535,19 @@ Partial Class frmMain
         Me.cmbSort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbSort.Enabled = False
         Me.cmbSort.FormattingEnabled = True
-        Me.cmbSort.Location = New System.Drawing.Point(261, 103)
+        Me.cmbSort.Location = New System.Drawing.Point(392, 158)
+        Me.cmbSort.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbSort.Name = "cmbSort"
-        Me.cmbSort.Size = New System.Drawing.Size(62, 21)
+        Me.cmbSort.Size = New System.Drawing.Size(91, 28)
         Me.cmbSort.TabIndex = 10
         '
         'chkSort
         '
         Me.chkSort.AutoSize = True
-        Me.chkSort.Location = New System.Drawing.Point(154, 105)
+        Me.chkSort.Location = New System.Drawing.Point(231, 162)
+        Me.chkSort.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkSort.Name = "chkSort"
-        Me.chkSort.Size = New System.Drawing.Size(99, 17)
+        Me.chkSort.Size = New System.Drawing.Size(147, 24)
         Me.chkSort.TabIndex = 9
         Me.chkSort.Text = "Sort By Amount"
         Me.chkSort.UseVisualStyleBackColor = True
@@ -527,35 +556,39 @@ Partial Class frmMain
         '
         Me.cmbChartType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbChartType.FormattingEnabled = True
-        Me.cmbChartType.Location = New System.Drawing.Point(79, 58)
+        Me.cmbChartType.Location = New System.Drawing.Point(118, 89)
+        Me.cmbChartType.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbChartType.Name = "cmbChartType"
-        Me.cmbChartType.Size = New System.Drawing.Size(244, 21)
+        Me.cmbChartType.Size = New System.Drawing.Size(364, 28)
         Me.cmbChartType.TabIndex = 7
         '
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(16, 62)
+        Me.Label2.Location = New System.Drawing.Point(24, 95)
+        Me.Label2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(59, 13)
+        Me.Label2.Size = New System.Drawing.Size(86, 20)
         Me.Label2.TabIndex = 6
         Me.Label2.Text = "Chart Type"
         '
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(38, 36)
+        Me.Label6.Location = New System.Drawing.Point(57, 55)
+        Me.Label6.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(37, 13)
+        Me.Label6.Size = New System.Drawing.Size(55, 20)
         Me.Label6.TabIndex = 4
         Me.Label6.Text = "Listing"
         '
         'Label5
         '
         Me.Label5.AutoSize = True
-        Me.Label5.Location = New System.Drawing.Point(43, 11)
+        Me.Label5.Location = New System.Drawing.Point(64, 17)
+        Me.Label5.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(32, 13)
+        Me.Label5.Size = New System.Drawing.Size(48, 20)
         Me.Label5.TabIndex = 3
         Me.Label5.Text = "Chart"
         '
@@ -563,18 +596,20 @@ Partial Class frmMain
         '
         Me.cmbListing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbListing.FormattingEnabled = True
-        Me.cmbListing.Location = New System.Drawing.Point(79, 32)
+        Me.cmbListing.Location = New System.Drawing.Point(118, 49)
+        Me.cmbListing.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbListing.Name = "cmbListing"
-        Me.cmbListing.Size = New System.Drawing.Size(244, 21)
+        Me.cmbListing.Size = New System.Drawing.Size(364, 28)
         Me.cmbListing.TabIndex = 1
         '
         'cmbSelectChart
         '
         Me.cmbSelectChart.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbSelectChart.FormattingEnabled = True
-        Me.cmbSelectChart.Location = New System.Drawing.Point(79, 7)
+        Me.cmbSelectChart.Location = New System.Drawing.Point(118, 11)
+        Me.cmbSelectChart.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbSelectChart.Name = "cmbSelectChart"
-        Me.cmbSelectChart.Size = New System.Drawing.Size(244, 21)
+        Me.cmbSelectChart.Size = New System.Drawing.Size(364, 28)
         Me.cmbSelectChart.TabIndex = 0
         '
         'TabSummary
@@ -582,10 +617,11 @@ Partial Class frmMain
         Me.TabSummary.AutoScroll = True
         Me.TabSummary.Controls.Add(Me.Panel8)
         Me.TabSummary.Controls.Add(Me.DataGridExpSumm)
-        Me.TabSummary.Location = New System.Drawing.Point(4, 22)
+        Me.TabSummary.Location = New System.Drawing.Point(4, 29)
+        Me.TabSummary.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.TabSummary.Name = "TabSummary"
-        Me.TabSummary.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabSummary.Size = New System.Drawing.Size(1031, 426)
+        Me.TabSummary.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.TabSummary.Size = New System.Drawing.Size(1550, 662)
         Me.TabSummary.TabIndex = 1
         Me.TabSummary.Text = "Expenditure Summary"
         Me.TabSummary.UseVisualStyleBackColor = True
@@ -600,18 +636,20 @@ Partial Class frmMain
         Me.Panel8.Controls.Add(Me.cmbCatListRunTot)
         Me.Panel8.Controls.Add(Me.Label22)
         Me.Panel8.Dock = System.Windows.Forms.DockStyle.Top
-        Me.Panel8.Location = New System.Drawing.Point(3, 3)
+        Me.Panel8.Location = New System.Drawing.Point(4, 5)
+        Me.Panel8.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel8.Name = "Panel8"
-        Me.Panel8.Size = New System.Drawing.Size(1025, 51)
+        Me.Panel8.Size = New System.Drawing.Size(1542, 78)
         Me.Panel8.TabIndex = 1
         '
         'Label19
         '
         Me.Label19.AutoSize = True
         Me.Label19.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label19.Location = New System.Drawing.Point(3, 17)
+        Me.Label19.Location = New System.Drawing.Point(4, 26)
+        Me.Label19.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label19.Name = "Label19"
-        Me.Label19.Size = New System.Drawing.Size(80, 13)
+        Me.Label19.Size = New System.Drawing.Size(126, 20)
         Me.Label19.TabIndex = 0
         Me.Label19.Text = "Summary Type:"
         '
@@ -620,18 +658,20 @@ Partial Class frmMain
         Me.cmbSummaryType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbSummaryType.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.cmbSummaryType.FormattingEnabled = True
-        Me.cmbSummaryType.Location = New System.Drawing.Point(89, 13)
+        Me.cmbSummaryType.Location = New System.Drawing.Point(134, 20)
+        Me.cmbSummaryType.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbSummaryType.Name = "cmbSummaryType"
-        Me.cmbSummaryType.Size = New System.Drawing.Size(163, 21)
+        Me.cmbSummaryType.Size = New System.Drawing.Size(242, 28)
         Me.cmbSummaryType.TabIndex = 1
         '
         'btnVarCompare
         '
         Me.btnVarCompare.AutoSize = True
         Me.btnVarCompare.Enabled = False
-        Me.btnVarCompare.Location = New System.Drawing.Point(736, 15)
+        Me.btnVarCompare.Location = New System.Drawing.Point(1104, 23)
+        Me.btnVarCompare.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnVarCompare.Name = "btnVarCompare"
-        Me.btnVarCompare.Size = New System.Drawing.Size(31, 23)
+        Me.btnVarCompare.Size = New System.Drawing.Size(62, 46)
         Me.btnVarCompare.TabIndex = 5
         Me.btnVarCompare.Text = "Go"
         Me.btnVarCompare.UseVisualStyleBackColor = True
@@ -639,9 +679,10 @@ Partial Class frmMain
         'Label26
         '
         Me.Label26.AutoSize = True
-        Me.Label26.Location = New System.Drawing.Point(540, 10)
+        Me.Label26.Location = New System.Drawing.Point(810, 15)
+        Me.Label26.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label26.Name = "Label26"
-        Me.Label26.Size = New System.Drawing.Size(118, 26)
+        Me.Label26.Size = New System.Drawing.Size(174, 40)
         Me.Label26.TabIndex = 4
         Me.Label26.Text = "Select Years (Any Two)" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "[Variance Comparision]"
         Me.Label26.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -650,9 +691,10 @@ Partial Class frmMain
         '
         Me.chkLBVarComparision.Enabled = False
         Me.chkLBVarComparision.FormattingEnabled = True
-        Me.chkLBVarComparision.Location = New System.Drawing.Point(663, 9)
+        Me.chkLBVarComparision.Location = New System.Drawing.Point(994, 14)
+        Me.chkLBVarComparision.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkLBVarComparision.Name = "chkLBVarComparision"
-        Me.chkLBVarComparision.Size = New System.Drawing.Size(67, 34)
+        Me.chkLBVarComparision.Size = New System.Drawing.Size(98, 50)
         Me.chkLBVarComparision.TabIndex = 3
         '
         'cmbCatListRunTot
@@ -660,17 +702,19 @@ Partial Class frmMain
         Me.cmbCatListRunTot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbCatListRunTot.Enabled = False
         Me.cmbCatListRunTot.FormattingEnabled = True
-        Me.cmbCatListRunTot.Location = New System.Drawing.Point(324, 13)
+        Me.cmbCatListRunTot.Location = New System.Drawing.Point(486, 20)
+        Me.cmbCatListRunTot.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbCatListRunTot.Name = "cmbCatListRunTot"
-        Me.cmbCatListRunTot.Size = New System.Drawing.Size(200, 21)
+        Me.cmbCatListRunTot.Size = New System.Drawing.Size(298, 28)
         Me.cmbCatListRunTot.TabIndex = 2
         '
         'Label22
         '
         Me.Label22.AutoSize = True
-        Me.Label22.Location = New System.Drawing.Point(268, 17)
+        Me.Label22.Location = New System.Drawing.Point(402, 26)
+        Me.Label22.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label22.Name = "Label22"
-        Me.Label22.Size = New System.Drawing.Size(52, 13)
+        Me.Label22.Size = New System.Drawing.Size(77, 20)
         Me.Label22.TabIndex = 0
         Me.Label22.Text = "Category:"
         '
@@ -680,9 +724,11 @@ Partial Class frmMain
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.DataGridExpSumm.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridExpSumm.Location = New System.Drawing.Point(3, 53)
+        Me.DataGridExpSumm.Location = New System.Drawing.Point(4, 82)
+        Me.DataGridExpSumm.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.DataGridExpSumm.Name = "DataGridExpSumm"
-        Me.DataGridExpSumm.Size = New System.Drawing.Size(1025, 368)
+        Me.DataGridExpSumm.RowHeadersWidth = 62
+        Me.DataGridExpSumm.Size = New System.Drawing.Size(1538, 566)
         Me.DataGridExpSumm.TabIndex = 0
         Me.DataGridExpSumm.VirtualMode = True
         '
@@ -695,10 +741,11 @@ Partial Class frmMain
         Me.TabDetails.Controls.Add(Me.Label28)
         Me.TabDetails.Controls.Add(Me.DataGridExpDet)
         Me.TabDetails.Controls.Add(Me.Panel5)
-        Me.TabDetails.Location = New System.Drawing.Point(4, 22)
+        Me.TabDetails.Location = New System.Drawing.Point(4, 29)
+        Me.TabDetails.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.TabDetails.Name = "TabDetails"
-        Me.TabDetails.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabDetails.Size = New System.Drawing.Size(1031, 426)
+        Me.TabDetails.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.TabDetails.Size = New System.Drawing.Size(1550, 662)
         Me.TabDetails.TabIndex = 0
         Me.TabDetails.Text = "Expenditure Details"
         Me.TabDetails.UseVisualStyleBackColor = True
@@ -710,11 +757,12 @@ Partial Class frmMain
         Me.LstUnpaidBillsPrevMonth.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LstUnpaidBillsPrevMonth.ForeColor = System.Drawing.Color.Red
         Me.LstUnpaidBillsPrevMonth.HorizontalScrollbar = True
-        Me.LstUnpaidBillsPrevMonth.ItemHeight = 16
-        Me.LstUnpaidBillsPrevMonth.Location = New System.Drawing.Point(836, 206)
+        Me.LstUnpaidBillsPrevMonth.ItemHeight = 25
+        Me.LstUnpaidBillsPrevMonth.Location = New System.Drawing.Point(1254, 317)
+        Me.LstUnpaidBillsPrevMonth.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.LstUnpaidBillsPrevMonth.Name = "LstUnpaidBillsPrevMonth"
         Me.LstUnpaidBillsPrevMonth.SelectionMode = System.Windows.Forms.SelectionMode.None
-        Me.LstUnpaidBillsPrevMonth.Size = New System.Drawing.Size(163, 146)
+        Me.LstUnpaidBillsPrevMonth.Size = New System.Drawing.Size(244, 202)
         Me.LstUnpaidBillsPrevMonth.TabIndex = 6
         Me.LstUnpaidBillsPrevMonth.TabStop = False
         '
@@ -723,9 +771,10 @@ Partial Class frmMain
         Me.Label29.Anchor = System.Windows.Forms.AnchorStyles.Top
         Me.Label29.AutoSize = True
         Me.Label29.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label29.Location = New System.Drawing.Point(831, 184)
+        Me.Label29.Location = New System.Drawing.Point(1246, 283)
+        Me.Label29.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label29.Name = "Label29"
-        Me.Label29.Size = New System.Drawing.Size(189, 16)
+        Me.Label29.Size = New System.Drawing.Size(264, 25)
         Me.Label29.TabIndex = 5
         Me.Label29.Text = "Prev. Month's Unpaid Bills"
         '
@@ -736,11 +785,12 @@ Partial Class frmMain
         Me.LstUnpaidBillsCurrentMonth.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.LstUnpaidBillsCurrentMonth.ForeColor = System.Drawing.Color.Red
         Me.LstUnpaidBillsCurrentMonth.HorizontalScrollbar = True
-        Me.LstUnpaidBillsCurrentMonth.ItemHeight = 16
-        Me.LstUnpaidBillsCurrentMonth.Location = New System.Drawing.Point(836, 23)
+        Me.LstUnpaidBillsCurrentMonth.ItemHeight = 25
+        Me.LstUnpaidBillsCurrentMonth.Location = New System.Drawing.Point(1254, 35)
+        Me.LstUnpaidBillsCurrentMonth.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.LstUnpaidBillsCurrentMonth.Name = "LstUnpaidBillsCurrentMonth"
         Me.LstUnpaidBillsCurrentMonth.SelectionMode = System.Windows.Forms.SelectionMode.None
-        Me.LstUnpaidBillsCurrentMonth.Size = New System.Drawing.Size(163, 146)
+        Me.LstUnpaidBillsCurrentMonth.Size = New System.Drawing.Size(244, 202)
         Me.LstUnpaidBillsCurrentMonth.TabIndex = 4
         Me.LstUnpaidBillsCurrentMonth.TabStop = False
         '
@@ -749,9 +799,10 @@ Partial Class frmMain
         Me.Label28.Anchor = System.Windows.Forms.AnchorStyles.Top
         Me.Label28.AutoSize = True
         Me.Label28.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label28.Location = New System.Drawing.Point(831, 3)
+        Me.Label28.Location = New System.Drawing.Point(1246, 5)
+        Me.Label28.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label28.Name = "Label28"
-        Me.Label28.Size = New System.Drawing.Size(202, 16)
+        Me.Label28.Size = New System.Drawing.Size(286, 25)
         Me.Label28.TabIndex = 3
         Me.Label28.Text = "Current Month's Unpaid Bills"
         '
@@ -759,9 +810,11 @@ Partial Class frmMain
         '
         Me.DataGridExpDet.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridExpDet.Dock = System.Windows.Forms.DockStyle.Left
-        Me.DataGridExpDet.Location = New System.Drawing.Point(3, 3)
+        Me.DataGridExpDet.Location = New System.Drawing.Point(4, 5)
+        Me.DataGridExpDet.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.DataGridExpDet.Name = "DataGridExpDet"
-        Me.DataGridExpDet.Size = New System.Drawing.Size(822, 420)
+        Me.DataGridExpDet.RowHeadersWidth = 62
+        Me.DataGridExpDet.Size = New System.Drawing.Size(1233, 652)
         Me.DataGridExpDet.TabIndex = 2
         Me.DataGridExpDet.VirtualMode = True
         '
@@ -770,18 +823,20 @@ Partial Class frmMain
         Me.Panel5.Controls.Add(Me.Label15)
         Me.Panel5.Controls.Add(Me.Label14)
         Me.Panel5.Controls.Add(Me.PictureBox2)
-        Me.Panel5.Location = New System.Drawing.Point(415, 206)
+        Me.Panel5.Location = New System.Drawing.Point(622, 317)
+        Me.Panel5.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel5.Name = "Panel5"
-        Me.Panel5.Size = New System.Drawing.Size(244, 66)
+        Me.Panel5.Size = New System.Drawing.Size(366, 102)
         Me.Panel5.TabIndex = 1
         Me.Panel5.Visible = False
         '
         'Label15
         '
         Me.Label15.AutoSize = True
-        Me.Label15.Location = New System.Drawing.Point(61, 39)
+        Me.Label15.Location = New System.Drawing.Point(92, 60)
+        Me.Label15.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label15.Name = "Label15"
-        Me.Label15.Size = New System.Drawing.Size(45, 13)
+        Me.Label15.Size = New System.Drawing.Size(66, 20)
         Me.Label15.TabIndex = 2
         Me.Label15.Text = "Label15"
         '
@@ -789,18 +844,20 @@ Partial Class frmMain
         '
         Me.Label14.AutoSize = True
         Me.Label14.Font = New System.Drawing.Font("Microsoft Sans Serif", 14.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label14.Location = New System.Drawing.Point(57, 16)
+        Me.Label14.Location = New System.Drawing.Point(86, 25)
+        Me.Label14.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label14.Name = "Label14"
-        Me.Label14.Size = New System.Drawing.Size(137, 24)
+        Me.Label14.Size = New System.Drawing.Size(208, 33)
         Me.Label14.TabIndex = 1
         Me.Label14.Text = "Please Wait..."
         '
         'PictureBox2
         '
         Me.PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), System.Drawing.Image)
-        Me.PictureBox2.Location = New System.Drawing.Point(4, 9)
+        Me.PictureBox2.Location = New System.Drawing.Point(6, 14)
+        Me.PictureBox2.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.PictureBox2.Name = "PictureBox2"
-        Me.PictureBox2.Size = New System.Drawing.Size(46, 50)
+        Me.PictureBox2.Size = New System.Drawing.Size(69, 77)
         Me.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage
         Me.PictureBox2.TabIndex = 0
         Me.PictureBox2.TabStop = False
@@ -810,9 +867,10 @@ Partial Class frmMain
         Me.btnSave.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.btnSave.Enabled = False
         Me.btnSave.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnSave.Location = New System.Drawing.Point(209, 462)
+        Me.btnSave.Location = New System.Drawing.Point(314, 711)
+        Me.btnSave.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnSave.Name = "btnSave"
-        Me.btnSave.Size = New System.Drawing.Size(165, 23)
+        Me.btnSave.Size = New System.Drawing.Size(248, 35)
         Me.btnSave.TabIndex = 5
         Me.btnSave.Text = "Save"
         Me.btnSave.UseVisualStyleBackColor = True
@@ -830,17 +888,18 @@ Partial Class frmMain
         Me.ImpensaTabControl.Margin = New System.Windows.Forms.Padding(0)
         Me.ImpensaTabControl.Name = "ImpensaTabControl"
         Me.ImpensaTabControl.SelectedIndex = 0
-        Me.ImpensaTabControl.Size = New System.Drawing.Size(1039, 452)
+        Me.ImpensaTabControl.Size = New System.Drawing.Size(1558, 695)
         Me.ImpensaTabControl.TabIndex = 4
         '
         'TabBudget
         '
         Me.TabBudget.Controls.Add(Me.Panel7)
         Me.TabBudget.Controls.Add(Me.Panel6)
-        Me.TabBudget.Location = New System.Drawing.Point(4, 22)
+        Me.TabBudget.Location = New System.Drawing.Point(4, 29)
+        Me.TabBudget.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.TabBudget.Name = "TabBudget"
-        Me.TabBudget.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabBudget.Size = New System.Drawing.Size(1031, 426)
+        Me.TabBudget.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.TabBudget.Size = New System.Drawing.Size(1550, 662)
         Me.TabBudget.TabIndex = 7
         Me.TabBudget.Text = "Monthly Forecast"
         Me.TabBudget.UseVisualStyleBackColor = True
@@ -851,9 +910,10 @@ Partial Class frmMain
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel7.Controls.Add(Me.DataGridThrLimits)
-        Me.Panel7.Location = New System.Drawing.Point(3, 49)
+        Me.Panel7.Location = New System.Drawing.Point(4, 75)
+        Me.Panel7.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel7.Name = "Panel7"
-        Me.Panel7.Size = New System.Drawing.Size(1025, 374)
+        Me.Panel7.Size = New System.Drawing.Size(1538, 575)
         Me.Panel7.TabIndex = 1
         '
         'DataGridThrLimits
@@ -861,8 +921,10 @@ Partial Class frmMain
         Me.DataGridThrLimits.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.DataGridThrLimits.Dock = System.Windows.Forms.DockStyle.Fill
         Me.DataGridThrLimits.Location = New System.Drawing.Point(0, 0)
+        Me.DataGridThrLimits.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.DataGridThrLimits.Name = "DataGridThrLimits"
-        Me.DataGridThrLimits.Size = New System.Drawing.Size(1025, 374)
+        Me.DataGridThrLimits.RowHeadersWidth = 62
+        Me.DataGridThrLimits.Size = New System.Drawing.Size(1538, 575)
         Me.DataGridThrLimits.TabIndex = 0
         '
         'Panel6
@@ -870,26 +932,29 @@ Partial Class frmMain
         Me.Panel6.Controls.Add(Me.cmbThrMonth)
         Me.Panel6.Controls.Add(Me.Label17)
         Me.Panel6.Dock = System.Windows.Forms.DockStyle.Top
-        Me.Panel6.Location = New System.Drawing.Point(3, 3)
+        Me.Panel6.Location = New System.Drawing.Point(4, 5)
+        Me.Panel6.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel6.Name = "Panel6"
-        Me.Panel6.Size = New System.Drawing.Size(1025, 40)
+        Me.Panel6.Size = New System.Drawing.Size(1542, 62)
         Me.Panel6.TabIndex = 0
         '
         'cmbThrMonth
         '
         Me.cmbThrMonth.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbThrMonth.FormattingEnabled = True
-        Me.cmbThrMonth.Location = New System.Drawing.Point(47, 10)
+        Me.cmbThrMonth.Location = New System.Drawing.Point(70, 15)
+        Me.cmbThrMonth.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbThrMonth.Name = "cmbThrMonth"
-        Me.cmbThrMonth.Size = New System.Drawing.Size(200, 21)
+        Me.cmbThrMonth.Size = New System.Drawing.Size(298, 28)
         Me.cmbThrMonth.TabIndex = 2
         '
         'Label17
         '
         Me.Label17.AutoSize = True
-        Me.Label17.Location = New System.Drawing.Point(4, 14)
+        Me.Label17.Location = New System.Drawing.Point(6, 22)
+        Me.Label17.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label17.Name = "Label17"
-        Me.Label17.Size = New System.Drawing.Size(37, 13)
+        Me.Label17.Size = New System.Drawing.Size(54, 20)
         Me.Label17.TabIndex = 0
         Me.Label17.Text = "Month"
         '
@@ -905,10 +970,11 @@ Partial Class frmMain
         Me.TabSettings.Controls.Add(Me.GroupBox5)
         Me.TabSettings.Controls.Add(Me.GroupBox3)
         Me.TabSettings.Controls.Add(Me.GroupBox2)
-        Me.TabSettings.Location = New System.Drawing.Point(4, 22)
+        Me.TabSettings.Location = New System.Drawing.Point(4, 29)
+        Me.TabSettings.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.TabSettings.Name = "TabSettings"
-        Me.TabSettings.Padding = New System.Windows.Forms.Padding(3)
-        Me.TabSettings.Size = New System.Drawing.Size(1031, 426)
+        Me.TabSettings.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.TabSettings.Size = New System.Drawing.Size(1550, 662)
         Me.TabSettings.TabIndex = 6
         Me.TabSettings.Text = "Settings"
         Me.TabSettings.UseVisualStyleBackColor = True
@@ -917,9 +983,10 @@ Partial Class frmMain
         '
         Me.Label36.AutoSize = True
         Me.Label36.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label36.Location = New System.Drawing.Point(172, 12)
+        Me.Label36.Location = New System.Drawing.Point(258, 18)
+        Me.Label36.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label36.Name = "Label36"
-        Me.Label36.Size = New System.Drawing.Size(59, 13)
+        Me.Label36.Size = New System.Drawing.Size(87, 20)
         Me.Label36.TabIndex = 11
         Me.Label36.Text = "Db Name"
         '
@@ -927,9 +994,11 @@ Partial Class frmMain
         '
         Me.GroupBox7.Controls.Add(Me.chkExcelDelRows)
         Me.GroupBox7.Controls.Add(Me.chkStartImport)
-        Me.GroupBox7.Location = New System.Drawing.Point(6, 32)
+        Me.GroupBox7.Location = New System.Drawing.Point(9, 49)
+        Me.GroupBox7.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.GroupBox7.Name = "GroupBox7"
-        Me.GroupBox7.Size = New System.Drawing.Size(331, 61)
+        Me.GroupBox7.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.GroupBox7.Size = New System.Drawing.Size(496, 94)
         Me.GroupBox7.TabIndex = 10
         Me.GroupBox7.TabStop = False
         Me.GroupBox7.Text = "Import Service Options"
@@ -937,10 +1006,11 @@ Partial Class frmMain
         'chkExcelDelRows
         '
         Me.chkExcelDelRows.AutoSize = True
-        Me.chkExcelDelRows.Location = New System.Drawing.Point(6, 36)
+        Me.chkExcelDelRows.Location = New System.Drawing.Point(9, 55)
+        Me.chkExcelDelRows.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkExcelDelRows.Name = "chkExcelDelRows"
         Me.chkExcelDelRows.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.chkExcelDelRows.Size = New System.Drawing.Size(196, 17)
+        Me.chkExcelDelRows.Size = New System.Drawing.Size(294, 24)
         Me.chkExcelDelRows.TabIndex = 2
         Me.chkExcelDelRows.Text = "Delete Old Records From Import File"
         Me.chkExcelDelRows.UseVisualStyleBackColor = True
@@ -948,10 +1018,11 @@ Partial Class frmMain
         'chkStartImport
         '
         Me.chkStartImport.AutoSize = True
-        Me.chkStartImport.Location = New System.Drawing.Point(3, 19)
+        Me.chkStartImport.Location = New System.Drawing.Point(4, 29)
+        Me.chkStartImport.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkStartImport.Name = "chkStartImport"
         Me.chkStartImport.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.chkStartImport.Size = New System.Drawing.Size(199, 17)
+        Me.chkStartImport.Size = New System.Drawing.Size(296, 24)
         Me.chkStartImport.TabIndex = 1
         Me.chkStartImport.Text = "Enable Impensa Data Import Service"
         Me.chkStartImport.UseVisualStyleBackColor = True
@@ -959,9 +1030,10 @@ Partial Class frmMain
         'LinkLabel1
         '
         Me.LinkLabel1.AutoSize = True
-        Me.LinkLabel1.Location = New System.Drawing.Point(9, 12)
+        Me.LinkLabel1.Location = New System.Drawing.Point(14, 18)
+        Me.LinkLabel1.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LinkLabel1.Name = "LinkLabel1"
-        Me.LinkLabel1.Size = New System.Drawing.Size(157, 13)
+        Me.LinkLabel1.Size = New System.Drawing.Size(235, 20)
         Me.LinkLabel1.TabIndex = 0
         Me.LinkLabel1.TabStop = True
         Me.LinkLabel1.Text = "Change Database Login Details"
@@ -972,9 +1044,11 @@ Partial Class frmMain
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.gbEmailConfig.Controls.Add(Me.grpEmailSettings)
         Me.gbEmailConfig.Controls.Add(Me.chkSendEmails)
-        Me.gbEmailConfig.Location = New System.Drawing.Point(343, 239)
+        Me.gbEmailConfig.Location = New System.Drawing.Point(514, 368)
+        Me.gbEmailConfig.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.gbEmailConfig.Name = "gbEmailConfig"
-        Me.gbEmailConfig.Size = New System.Drawing.Size(423, 180)
+        Me.gbEmailConfig.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.gbEmailConfig.Size = New System.Drawing.Size(634, 277)
         Me.gbEmailConfig.TabIndex = 9
         Me.gbEmailConfig.TabStop = False
         '
@@ -993,21 +1067,22 @@ Partial Class frmMain
         Me.grpEmailSettings.Controls.Add(Me.Label32)
         Me.grpEmailSettings.Controls.Add(Me.Label31)
         Me.grpEmailSettings.Controls.Add(Me.Label35)
-        Me.grpEmailSettings.Location = New System.Drawing.Point(13, 25)
+        Me.grpEmailSettings.Location = New System.Drawing.Point(20, 38)
         Me.grpEmailSettings.Margin = New System.Windows.Forms.Padding(0)
         Me.grpEmailSettings.Name = "grpEmailSettings"
         Me.grpEmailSettings.Padding = New System.Windows.Forms.Padding(0)
-        Me.grpEmailSettings.Size = New System.Drawing.Size(404, 149)
+        Me.grpEmailSettings.Size = New System.Drawing.Size(606, 229)
         Me.grpEmailSettings.TabIndex = 1
         Me.grpEmailSettings.TabStop = False
         '
         'chkIncludeExpSummary
         '
         Me.chkIncludeExpSummary.AutoSize = True
-        Me.chkIncludeExpSummary.Location = New System.Drawing.Point(78, 10)
+        Me.chkIncludeExpSummary.Location = New System.Drawing.Point(117, 15)
+        Me.chkIncludeExpSummary.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkIncludeExpSummary.Name = "chkIncludeExpSummary"
         Me.chkIncludeExpSummary.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.chkIncludeExpSummary.Size = New System.Drawing.Size(151, 17)
+        Me.chkIncludeExpSummary.Size = New System.Drawing.Size(224, 24)
         Me.chkIncludeExpSummary.TabIndex = 2
         Me.chkIncludeExpSummary.Text = "Include Expense Summary"
         Me.chkIncludeExpSummary.UseVisualStyleBackColor = True
@@ -1016,100 +1091,111 @@ Partial Class frmMain
         '
         Me.txtEmailPassword.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtEmailPassword.Location = New System.Drawing.Point(83, 52)
+        Me.txtEmailPassword.Location = New System.Drawing.Point(124, 80)
+        Me.txtEmailPassword.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtEmailPassword.Name = "txtEmailPassword"
         Me.txtEmailPassword.PasswordChar = Global.Microsoft.VisualBasic.ChrW(42)
-        Me.txtEmailPassword.Size = New System.Drawing.Size(318, 20)
+        Me.txtEmailPassword.Size = New System.Drawing.Size(475, 26)
         Me.txtEmailPassword.TabIndex = 9
         '
         'txtEmailTo
         '
         Me.txtEmailTo.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtEmailTo.Location = New System.Drawing.Point(83, 121)
+        Me.txtEmailTo.Location = New System.Drawing.Point(124, 186)
+        Me.txtEmailTo.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtEmailTo.Name = "txtEmailTo"
-        Me.txtEmailTo.Size = New System.Drawing.Size(318, 20)
+        Me.txtEmailTo.Size = New System.Drawing.Size(475, 26)
         Me.txtEmailTo.TabIndex = 8
         '
         'txtSmtpPort
         '
         Me.txtSmtpPort.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtSmtpPort.Location = New System.Drawing.Point(83, 98)
+        Me.txtSmtpPort.Location = New System.Drawing.Point(124, 151)
+        Me.txtSmtpPort.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtSmtpPort.Name = "txtSmtpPort"
-        Me.txtSmtpPort.Size = New System.Drawing.Size(318, 20)
+        Me.txtSmtpPort.Size = New System.Drawing.Size(475, 26)
         Me.txtSmtpPort.TabIndex = 7
         '
         'txtSmtpHost
         '
         Me.txtSmtpHost.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtSmtpHost.Location = New System.Drawing.Point(83, 75)
+        Me.txtSmtpHost.Location = New System.Drawing.Point(124, 115)
+        Me.txtSmtpHost.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtSmtpHost.Name = "txtSmtpHost"
-        Me.txtSmtpHost.Size = New System.Drawing.Size(318, 20)
+        Me.txtSmtpHost.Size = New System.Drawing.Size(475, 26)
         Me.txtSmtpHost.TabIndex = 6
         '
         'txtEmailFrom
         '
         Me.txtEmailFrom.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtEmailFrom.Location = New System.Drawing.Point(83, 29)
+        Me.txtEmailFrom.Location = New System.Drawing.Point(124, 45)
+        Me.txtEmailFrom.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtEmailFrom.Name = "txtEmailFrom"
-        Me.txtEmailFrom.Size = New System.Drawing.Size(318, 20)
+        Me.txtEmailFrom.Size = New System.Drawing.Size(475, 26)
         Me.txtEmailFrom.TabIndex = 5
         '
         'Label34
         '
         Me.Label34.AutoSize = True
-        Me.Label34.Location = New System.Drawing.Point(15, 102)
+        Me.Label34.Location = New System.Drawing.Point(22, 157)
+        Me.Label34.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label34.Name = "Label34"
-        Me.Label34.Size = New System.Drawing.Size(62, 13)
+        Me.Label34.Size = New System.Drawing.Size(89, 20)
         Me.Label34.TabIndex = 4
         Me.Label34.Text = "SMTP Port:"
         '
         'Label33
         '
         Me.Label33.AutoSize = True
-        Me.Label33.Location = New System.Drawing.Point(12, 79)
+        Me.Label33.Location = New System.Drawing.Point(18, 122)
+        Me.Label33.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label33.Name = "Label33"
-        Me.Label33.Size = New System.Drawing.Size(65, 13)
+        Me.Label33.Size = New System.Drawing.Size(94, 20)
         Me.Label33.TabIndex = 3
         Me.Label33.Text = "SMTP Host:"
         '
         'Label32
         '
         Me.Label32.AutoSize = True
-        Me.Label32.Location = New System.Drawing.Point(3, 125)
+        Me.Label32.Location = New System.Drawing.Point(4, 192)
+        Me.Label32.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label32.Name = "Label32"
-        Me.Label32.Size = New System.Drawing.Size(74, 13)
+        Me.Label32.Size = New System.Drawing.Size(109, 20)
         Me.Label32.TabIndex = 2
         Me.Label32.Text = "Recipient List:"
         '
         'Label31
         '
         Me.Label31.AutoSize = True
-        Me.Label31.Location = New System.Drawing.Point(21, 56)
+        Me.Label31.Location = New System.Drawing.Point(32, 86)
+        Me.Label31.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label31.Name = "Label31"
-        Me.Label31.Size = New System.Drawing.Size(56, 13)
+        Me.Label31.Size = New System.Drawing.Size(82, 20)
         Me.Label31.TabIndex = 1
         Me.Label31.Text = "Password:"
         '
         'Label35
         '
         Me.Label35.AutoSize = True
-        Me.Label35.Location = New System.Drawing.Point(19, 33)
+        Me.Label35.Location = New System.Drawing.Point(28, 51)
+        Me.Label35.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label35.Name = "Label35"
-        Me.Label35.Size = New System.Drawing.Size(58, 13)
+        Me.Label35.Size = New System.Drawing.Size(87, 20)
         Me.Label35.TabIndex = 0
         Me.Label35.Text = "Username:"
         '
         'chkSendEmails
         '
         Me.chkSendEmails.AutoSize = True
-        Me.chkSendEmails.Location = New System.Drawing.Point(9, 10)
+        Me.chkSendEmails.Location = New System.Drawing.Point(14, 15)
+        Me.chkSendEmails.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkSendEmails.Name = "chkSendEmails"
         Me.chkSendEmails.RightToLeft = System.Windows.Forms.RightToLeft.Yes
-        Me.chkSendEmails.Size = New System.Drawing.Size(140, 17)
+        Me.chkSendEmails.Size = New System.Drawing.Size(207, 24)
         Me.chkSendEmails.TabIndex = 0
         Me.chkSendEmails.Text = "Send Notification Emails"
         Me.chkSendEmails.UseVisualStyleBackColor = True
@@ -1119,9 +1205,10 @@ Partial Class frmMain
         Me.Label30.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Label30.AutoSize = True
         Me.Label30.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label30.Location = New System.Drawing.Point(858, 406)
+        Me.Label30.Location = New System.Drawing.Point(1287, 625)
+        Me.Label30.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label30.Name = "Label30"
-        Me.Label30.Size = New System.Drawing.Size(166, 13)
+        Me.Label30.Size = New System.Drawing.Size(242, 20)
         Me.Label30.TabIndex = 7
         Me.Label30.Text = "Developed By: Sachin Wadi"
         '
@@ -1131,9 +1218,11 @@ Partial Class frmMain
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.GroupBox1.Controls.Add(Me.txtReminder)
         Me.GroupBox1.Controls.Add(Me.chkShowReminder)
-        Me.GroupBox1.Location = New System.Drawing.Point(343, 85)
+        Me.GroupBox1.Location = New System.Drawing.Point(514, 131)
+        Me.GroupBox1.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(423, 150)
+        Me.GroupBox1.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.GroupBox1.Size = New System.Drawing.Size(634, 231)
         Me.GroupBox1.TabIndex = 6
         Me.GroupBox1.TabStop = False
         '
@@ -1141,20 +1230,22 @@ Partial Class frmMain
         '
         Me.txtReminder.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.txtReminder.Location = New System.Drawing.Point(11, 31)
+        Me.txtReminder.Location = New System.Drawing.Point(16, 48)
+        Me.txtReminder.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtReminder.MaxLength = 1000
         Me.txtReminder.Multiline = True
         Me.txtReminder.Name = "txtReminder"
-        Me.txtReminder.Size = New System.Drawing.Size(406, 111)
+        Me.txtReminder.Size = New System.Drawing.Size(607, 169)
         Me.txtReminder.TabIndex = 1
         '
         'chkShowReminder
         '
         Me.chkShowReminder.AutoSize = True
         Me.chkShowReminder.CheckAlign = System.Drawing.ContentAlignment.MiddleRight
-        Me.chkShowReminder.Location = New System.Drawing.Point(6, 10)
+        Me.chkShowReminder.Location = New System.Drawing.Point(9, 15)
+        Me.chkShowReminder.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkShowReminder.Name = "chkShowReminder"
-        Me.chkShowReminder.Size = New System.Drawing.Size(77, 17)
+        Me.chkShowReminder.Size = New System.Drawing.Size(112, 24)
         Me.chkShowReminder.TabIndex = 0
         Me.chkShowReminder.Text = "Show Alert"
         Me.chkShowReminder.UseVisualStyleBackColor = True
@@ -1167,29 +1258,33 @@ Partial Class frmMain
         Me.GroupBox6.Controls.Add(Me.btnBrowse)
         Me.GroupBox6.Controls.Add(Me.txtCSVBackupPath)
         Me.GroupBox6.Controls.Add(Me.Label13)
-        Me.GroupBox6.Location = New System.Drawing.Point(343, 0)
+        Me.GroupBox6.Location = New System.Drawing.Point(514, 0)
+        Me.GroupBox6.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.GroupBox6.Name = "GroupBox6"
-        Me.GroupBox6.Size = New System.Drawing.Size(423, 85)
+        Me.GroupBox6.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.GroupBox6.Size = New System.Drawing.Size(634, 131)
         Me.GroupBox6.TabIndex = 4
         Me.GroupBox6.TabStop = False
         '
         'Label27
         '
         Me.Label27.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label27.Location = New System.Drawing.Point(8, 40)
+        Me.Label27.Location = New System.Drawing.Point(12, 62)
+        Me.Label27.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label27.Name = "Label27"
-        Me.Label27.Size = New System.Drawing.Size(410, 45)
+        Me.Label27.Size = New System.Drawing.Size(615, 69)
         Me.Label27.TabIndex = 3
-        Me.Label27.Text = "Mention the location from where import service should pull the changes.This locat" & _
-    "ion usually should be the location shared with the cloud service providers such " & _
+        Me.Label27.Text = "Mention the location from where import service should pull the changes.This locat" &
+    "ion usually should be the location shared with the cloud service providers such " &
     "as Google Drive, Dropbox, OneDrive etc."
         '
         'btnBrowse
         '
         Me.btnBrowse.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnBrowse.Location = New System.Drawing.Point(343, 11)
+        Me.btnBrowse.Location = New System.Drawing.Point(514, 17)
+        Me.btnBrowse.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnBrowse.Name = "btnBrowse"
-        Me.btnBrowse.Size = New System.Drawing.Size(75, 20)
+        Me.btnBrowse.Size = New System.Drawing.Size(112, 31)
         Me.btnBrowse.TabIndex = 2
         Me.btnBrowse.Text = "Browse"
         Me.btnBrowse.UseVisualStyleBackColor = True
@@ -1197,18 +1292,20 @@ Partial Class frmMain
         'txtCSVBackupPath
         '
         Me.txtCSVBackupPath.BackColor = System.Drawing.SystemColors.Window
-        Me.txtCSVBackupPath.Location = New System.Drawing.Point(38, 12)
+        Me.txtCSVBackupPath.Location = New System.Drawing.Point(57, 18)
+        Me.txtCSVBackupPath.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtCSVBackupPath.Name = "txtCSVBackupPath"
         Me.txtCSVBackupPath.ReadOnly = True
-        Me.txtCSVBackupPath.Size = New System.Drawing.Size(299, 20)
+        Me.txtCSVBackupPath.Size = New System.Drawing.Size(446, 26)
         Me.txtCSVBackupPath.TabIndex = 1
         '
         'Label13
         '
         Me.Label13.AutoSize = True
-        Me.Label13.Location = New System.Drawing.Point(6, 16)
+        Me.Label13.Location = New System.Drawing.Point(9, 25)
+        Me.Label13.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label13.Name = "Label13"
-        Me.Label13.Size = New System.Drawing.Size(32, 13)
+        Me.Label13.Size = New System.Drawing.Size(46, 20)
         Me.Label13.TabIndex = 0
         Me.Label13.Text = "Path:"
         '
@@ -1217,9 +1314,11 @@ Partial Class frmMain
         Me.GroupBox5.Controls.Add(Me.dtpRecdKeeping)
         Me.GroupBox5.Controls.Add(Me.Label12)
         Me.GroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.GroupBox5.Location = New System.Drawing.Point(6, 94)
+        Me.GroupBox5.Location = New System.Drawing.Point(9, 145)
+        Me.GroupBox5.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.GroupBox5.Name = "GroupBox5"
-        Me.GroupBox5.Size = New System.Drawing.Size(331, 44)
+        Me.GroupBox5.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.GroupBox5.Size = New System.Drawing.Size(496, 68)
         Me.GroupBox5.TabIndex = 3
         Me.GroupBox5.TabStop = False
         '
@@ -1227,18 +1326,20 @@ Partial Class frmMain
         '
         Me.dtpRecdKeeping.CustomFormat = "dd/MM/yyyy"
         Me.dtpRecdKeeping.Format = System.Windows.Forms.DateTimePickerFormat.Custom
-        Me.dtpRecdKeeping.Location = New System.Drawing.Point(147, 13)
+        Me.dtpRecdKeeping.Location = New System.Drawing.Point(220, 20)
+        Me.dtpRecdKeeping.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.dtpRecdKeeping.Name = "dtpRecdKeeping"
-        Me.dtpRecdKeeping.Size = New System.Drawing.Size(131, 20)
+        Me.dtpRecdKeeping.Size = New System.Drawing.Size(194, 26)
         Me.dtpRecdKeeping.TabIndex = 3
         '
         'Label12
         '
         Me.Label12.AutoSize = True
         Me.Label12.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label12.Location = New System.Drawing.Point(3, 17)
+        Me.Label12.Location = New System.Drawing.Point(4, 26)
+        Me.Label12.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label12.Name = "Label12"
-        Me.Label12.Size = New System.Drawing.Size(128, 13)
+        Me.Label12.Size = New System.Drawing.Size(199, 20)
         Me.Label12.TabIndex = 2
         Me.Label12.Text = "Book Keeping Start Date:"
         '
@@ -1248,9 +1349,11 @@ Partial Class frmMain
         Me.GroupBox3.Controls.Add(Me.rbOpenYr)
         Me.GroupBox3.Controls.Add(Me.rbCloseYr)
         Me.GroupBox3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.GroupBox3.Location = New System.Drawing.Point(6, 253)
+        Me.GroupBox3.Location = New System.Drawing.Point(9, 389)
+        Me.GroupBox3.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.GroupBox3.Name = "GroupBox3"
-        Me.GroupBox3.Size = New System.Drawing.Size(331, 76)
+        Me.GroupBox3.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.GroupBox3.Size = New System.Drawing.Size(496, 117)
         Me.GroupBox3.TabIndex = 1
         Me.GroupBox3.TabStop = False
         Me.GroupBox3.Text = "End Of Year"
@@ -1259,18 +1362,20 @@ Partial Class frmMain
         '
         Me.cmbSelectYear.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbSelectYear.FormattingEnabled = True
-        Me.cmbSelectYear.Location = New System.Drawing.Point(6, 46)
+        Me.cmbSelectYear.Location = New System.Drawing.Point(9, 71)
+        Me.cmbSelectYear.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.cmbSelectYear.Name = "cmbSelectYear"
-        Me.cmbSelectYear.Size = New System.Drawing.Size(203, 21)
+        Me.cmbSelectYear.Size = New System.Drawing.Size(302, 28)
         Me.cmbSelectYear.TabIndex = 2
         '
         'rbOpenYr
         '
         Me.rbOpenYr.AutoSize = True
         Me.rbOpenYr.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.rbOpenYr.Location = New System.Drawing.Point(100, 22)
+        Me.rbOpenYr.Location = New System.Drawing.Point(150, 34)
+        Me.rbOpenYr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.rbOpenYr.Name = "rbOpenYr"
-        Me.rbOpenYr.Size = New System.Drawing.Size(76, 17)
+        Me.rbOpenYr.Size = New System.Drawing.Size(113, 24)
         Me.rbOpenYr.TabIndex = 1
         Me.rbOpenYr.TabStop = True
         Me.rbOpenYr.Text = "Open Year"
@@ -1280,9 +1385,10 @@ Partial Class frmMain
         '
         Me.rbCloseYr.AutoSize = True
         Me.rbCloseYr.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.rbCloseYr.Location = New System.Drawing.Point(6, 22)
+        Me.rbCloseYr.Location = New System.Drawing.Point(9, 34)
+        Me.rbCloseYr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.rbCloseYr.Name = "rbCloseYr"
-        Me.rbCloseYr.Size = New System.Drawing.Size(76, 17)
+        Me.rbCloseYr.Size = New System.Drawing.Size(116, 24)
         Me.rbCloseYr.TabIndex = 0
         Me.rbCloseYr.TabStop = True
         Me.rbCloseYr.Text = "Close Year"
@@ -1297,36 +1403,41 @@ Partial Class frmMain
         Me.GroupBox2.Controls.Add(Me.Label7)
         Me.GroupBox2.Controls.Add(Me.txtHighlightDet)
         Me.GroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.GroupBox2.Location = New System.Drawing.Point(6, 140)
+        Me.GroupBox2.Location = New System.Drawing.Point(9, 215)
+        Me.GroupBox2.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(331, 111)
+        Me.GroupBox2.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
+        Me.GroupBox2.Size = New System.Drawing.Size(496, 171)
         Me.GroupBox2.TabIndex = 0
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Highlight Amount >= "
         '
         'txtHighlightSummYr
         '
-        Me.txtHighlightSummYr.Location = New System.Drawing.Point(102, 81)
+        Me.txtHighlightSummYr.Location = New System.Drawing.Point(153, 125)
+        Me.txtHighlightSummYr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtHighlightSummYr.MaxLength = 6
         Me.txtHighlightSummYr.Name = "txtHighlightSummYr"
-        Me.txtHighlightSummYr.Size = New System.Drawing.Size(100, 20)
+        Me.txtHighlightSummYr.Size = New System.Drawing.Size(148, 26)
         Me.txtHighlightSummYr.TabIndex = 7
         '
         'txtHighlightSummMth
         '
-        Me.txtHighlightSummMth.Location = New System.Drawing.Point(102, 51)
+        Me.txtHighlightSummMth.Location = New System.Drawing.Point(153, 78)
+        Me.txtHighlightSummMth.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtHighlightSummMth.MaxLength = 6
         Me.txtHighlightSummMth.Name = "txtHighlightSummMth"
-        Me.txtHighlightSummMth.Size = New System.Drawing.Size(100, 20)
+        Me.txtHighlightSummMth.Size = New System.Drawing.Size(148, 26)
         Me.txtHighlightSummMth.TabIndex = 6
         '
         'Label21
         '
         Me.Label21.AutoSize = True
         Me.Label21.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label21.Location = New System.Drawing.Point(60, 28)
+        Me.Label21.Location = New System.Drawing.Point(90, 43)
+        Me.Label21.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label21.Name = "Label21"
-        Me.Label21.Size = New System.Drawing.Size(42, 13)
+        Me.Label21.Size = New System.Drawing.Size(67, 20)
         Me.Label21.TabIndex = 5
         Me.Label21.Text = "Details:"
         '
@@ -1334,9 +1445,10 @@ Partial Class frmMain
         '
         Me.Label16.AutoSize = True
         Me.Label16.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label16.Location = New System.Drawing.Point(3, 55)
+        Me.Label16.Location = New System.Drawing.Point(4, 85)
+        Me.Label16.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label16.Name = "Label16"
-        Me.Label16.Size = New System.Drawing.Size(99, 13)
+        Me.Label16.Size = New System.Drawing.Size(160, 20)
         Me.Label16.TabIndex = 4
         Me.Label16.Text = "Summary (Monthly):"
         '
@@ -1344,18 +1456,20 @@ Partial Class frmMain
         '
         Me.Label7.AutoSize = True
         Me.Label7.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label7.Location = New System.Drawing.Point(11, 85)
+        Me.Label7.Location = New System.Drawing.Point(16, 131)
+        Me.Label7.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(91, 13)
+        Me.Label7.Size = New System.Drawing.Size(148, 20)
         Me.Label7.TabIndex = 3
         Me.Label7.Text = "Summary (Yearly):"
         '
         'txtHighlightDet
         '
-        Me.txtHighlightDet.Location = New System.Drawing.Point(102, 24)
+        Me.txtHighlightDet.Location = New System.Drawing.Point(153, 37)
+        Me.txtHighlightDet.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtHighlightDet.MaxLength = 6
         Me.txtHighlightDet.Name = "txtHighlightDet"
-        Me.txtHighlightDet.Size = New System.Drawing.Size(100, 20)
+        Me.txtHighlightDet.Size = New System.Drawing.Size(148, 26)
         Me.txtHighlightDet.TabIndex = 0
         '
         'Panel3
@@ -1365,9 +1479,10 @@ Partial Class frmMain
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Panel3.Controls.Add(Me.ImpensaTabControl)
-        Me.Panel3.Location = New System.Drawing.Point(209, 0)
+        Me.Panel3.Location = New System.Drawing.Point(314, 0)
+        Me.Panel3.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(1041, 454)
+        Me.Panel3.Size = New System.Drawing.Size(1560, 697)
         Me.Panel3.TabIndex = 5
         '
         'tmrAlert
@@ -1379,9 +1494,10 @@ Partial Class frmMain
         Me.lblAlertText.AutoSize = True
         Me.lblAlertText.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblAlertText.ForeColor = System.Drawing.Color.White
-        Me.lblAlertText.Location = New System.Drawing.Point(0, 4)
+        Me.lblAlertText.Location = New System.Drawing.Point(0, 6)
+        Me.lblAlertText.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.lblAlertText.Name = "lblAlertText"
-        Me.lblAlertText.Size = New System.Drawing.Size(52, 13)
+        Me.lblAlertText.Size = New System.Drawing.Size(75, 20)
         Me.lblAlertText.TabIndex = 1
         Me.lblAlertText.Text = "Label20"
         '
@@ -1390,9 +1506,10 @@ Partial Class frmMain
         Me.chkShowAllDet.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.chkShowAllDet.AutoSize = True
         Me.chkShowAllDet.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkShowAllDet.Location = New System.Drawing.Point(797, 466)
+        Me.chkShowAllDet.Location = New System.Drawing.Point(1196, 719)
+        Me.chkShowAllDet.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkShowAllDet.Name = "chkShowAllDet"
-        Me.chkShowAllDet.Size = New System.Drawing.Size(126, 17)
+        Me.chkShowAllDet.Size = New System.Drawing.Size(184, 24)
         Me.chkShowAllDet.TabIndex = 13
         Me.chkShowAllDet.Text = "Show All Records"
         Me.chkShowAllDet.UseVisualStyleBackColor = True
@@ -1402,20 +1519,21 @@ Partial Class frmMain
         '
         Me.Label20.AutoSize = True
         Me.Label20.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label20.Location = New System.Drawing.Point(-1, 12)
+        Me.Label20.Location = New System.Drawing.Point(-2, 18)
         Me.Label20.Margin = New System.Windows.Forms.Padding(0)
         Me.Label20.Name = "Label20"
-        Me.Label20.Size = New System.Drawing.Size(121, 13)
+        Me.Label20.Size = New System.Drawing.Size(181, 20)
         Me.Label20.TabIndex = 2
         Me.Label20.Text = "Highlight Amount >="
         '
         'txtHighlight
         '
         Me.txtHighlight.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtHighlight.Location = New System.Drawing.Point(123, 8)
+        Me.txtHighlight.Location = New System.Drawing.Point(184, 12)
+        Me.txtHighlight.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtHighlight.MaxLength = 6
         Me.txtHighlight.Name = "txtHighlight"
-        Me.txtHighlight.Size = New System.Drawing.Size(68, 20)
+        Me.txtHighlight.Size = New System.Drawing.Size(100, 26)
         Me.txtHighlight.TabIndex = 3
         '
         'pnlHighlight
@@ -1424,18 +1542,20 @@ Partial Class frmMain
         Me.pnlHighlight.Controls.Add(Me.btnHighlight)
         Me.pnlHighlight.Controls.Add(Me.Label20)
         Me.pnlHighlight.Controls.Add(Me.txtHighlight)
-        Me.pnlHighlight.Location = New System.Drawing.Point(551, 455)
+        Me.pnlHighlight.Location = New System.Drawing.Point(826, 700)
+        Me.pnlHighlight.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.pnlHighlight.Name = "pnlHighlight"
-        Me.pnlHighlight.Size = New System.Drawing.Size(240, 39)
+        Me.pnlHighlight.Size = New System.Drawing.Size(360, 60)
         Me.pnlHighlight.TabIndex = 14
         '
         'btnHighlight
         '
         Me.btnHighlight.AutoSize = True
         Me.btnHighlight.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnHighlight.Location = New System.Drawing.Point(198, 7)
+        Me.btnHighlight.Location = New System.Drawing.Point(297, 11)
+        Me.btnHighlight.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnHighlight.Name = "btnHighlight"
-        Me.btnHighlight.Size = New System.Drawing.Size(33, 23)
+        Me.btnHighlight.Size = New System.Drawing.Size(64, 46)
         Me.btnHighlight.TabIndex = 4
         Me.btnHighlight.Text = "Go"
         Me.btnHighlight.UseVisualStyleBackColor = True
@@ -1443,10 +1563,12 @@ Partial Class frmMain
         'StatusStrip
         '
         Me.StatusStrip.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.StatusStrip.ImageScalingSize = New System.Drawing.Size(24, 24)
         Me.StatusStrip.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tslblGridTotal, Me.tslblSeperator1, Me.tslblRecdCnt, Me.tsCmbBudgetBuckets, Me.tslblSeperator2, Me.tslblMTD, Me.tslblSeperator6, Me.tslblYTD, Me.tslblSeperator7, Me.tslblBKSDTD})
-        Me.StatusStrip.Location = New System.Drawing.Point(0, 553)
+        Me.StatusStrip.Location = New System.Drawing.Point(0, 853)
         Me.StatusStrip.Name = "StatusStrip"
-        Me.StatusStrip.Size = New System.Drawing.Size(1250, 24)
+        Me.StatusStrip.Padding = New System.Windows.Forms.Padding(2, 0, 21, 0)
+        Me.StatusStrip.Size = New System.Drawing.Size(1875, 35)
         Me.StatusStrip.SizingGrip = False
         Me.StatusStrip.TabIndex = 15
         Me.StatusStrip.Text = "StatusStrip1"
@@ -1457,7 +1579,7 @@ Partial Class frmMain
         Me.tslblGridTotal.ForeColor = System.Drawing.Color.Green
         Me.tslblGridTotal.LinkColor = System.Drawing.Color.Green
         Me.tslblGridTotal.Name = "tslblGridTotal"
-        Me.tslblGridTotal.Size = New System.Drawing.Size(0, 19)
+        Me.tslblGridTotal.Size = New System.Drawing.Size(0, 28)
         Me.tslblGridTotal.VisitedLinkColor = System.Drawing.Color.Green
         '
         'tslblSeperator1
@@ -1465,7 +1587,7 @@ Partial Class frmMain
         Me.tslblSeperator1.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
         Me.tslblSeperator1.ForeColor = System.Drawing.Color.Blue
         Me.tslblSeperator1.Name = "tslblSeperator1"
-        Me.tslblSeperator1.Size = New System.Drawing.Size(19, 19)
+        Me.tslblSeperator1.Size = New System.Drawing.Size(26, 28)
         Me.tslblSeperator1.Text = "||"
         '
         'tslblRecdCnt
@@ -1475,7 +1597,7 @@ Partial Class frmMain
         Me.tslblRecdCnt.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline
         Me.tslblRecdCnt.LinkColor = System.Drawing.Color.Green
         Me.tslblRecdCnt.Name = "tslblRecdCnt"
-        Me.tslblRecdCnt.Size = New System.Drawing.Size(0, 19)
+        Me.tslblRecdCnt.Size = New System.Drawing.Size(0, 28)
         Me.tslblRecdCnt.VisitedLinkColor = System.Drawing.Color.Green
         '
         'tsCmbBudgetBuckets
@@ -1484,7 +1606,7 @@ Partial Class frmMain
         Me.tsCmbBudgetBuckets.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tsMenuOBCats, Me.tsMenuAPCats, Me.tsMenuUBCats})
         Me.tsCmbBudgetBuckets.ImageTransparentColor = System.Drawing.Color.Magenta
         Me.tsCmbBudgetBuckets.Name = "tsCmbBudgetBuckets"
-        Me.tsCmbBudgetBuckets.Size = New System.Drawing.Size(13, 22)
+        Me.tsCmbBudgetBuckets.Size = New System.Drawing.Size(18, 32)
         Me.tsCmbBudgetBuckets.Visible = False
         '
         'tsMenuOBCats
@@ -1492,7 +1614,7 @@ Partial Class frmMain
         Me.tsMenuOBCats.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.tsMenuOBCats.ForeColor = System.Drawing.Color.Red
         Me.tsMenuOBCats.Name = "tsMenuOBCats"
-        Me.tsMenuOBCats.Size = New System.Drawing.Size(179, 22)
+        Me.tsMenuOBCats.Size = New System.Drawing.Size(254, 34)
         Me.tsMenuOBCats.Text = "Over Budget: #"
         '
         'tsMenuAPCats
@@ -1500,7 +1622,7 @@ Partial Class frmMain
         Me.tsMenuAPCats.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!)
         Me.tsMenuAPCats.ForeColor = System.Drawing.Color.Orange
         Me.tsMenuAPCats.Name = "tsMenuAPCats"
-        Me.tsMenuAPCats.Size = New System.Drawing.Size(179, 22)
+        Me.tsMenuAPCats.Size = New System.Drawing.Size(254, 34)
         Me.tsMenuAPCats.Text = "At Par: #"
         '
         'tsMenuUBCats
@@ -1508,7 +1630,7 @@ Partial Class frmMain
         Me.tsMenuUBCats.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!)
         Me.tsMenuUBCats.ForeColor = System.Drawing.Color.Green
         Me.tsMenuUBCats.Name = "tsMenuUBCats"
-        Me.tsMenuUBCats.Size = New System.Drawing.Size(179, 22)
+        Me.tsMenuUBCats.Size = New System.Drawing.Size(254, 34)
         Me.tsMenuUBCats.Text = "Under Budget: #"
         '
         'tslblSeperator2
@@ -1516,7 +1638,7 @@ Partial Class frmMain
         Me.tslblSeperator2.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
         Me.tslblSeperator2.ForeColor = System.Drawing.Color.Blue
         Me.tslblSeperator2.Name = "tslblSeperator2"
-        Me.tslblSeperator2.Size = New System.Drawing.Size(19, 19)
+        Me.tslblSeperator2.Size = New System.Drawing.Size(26, 28)
         Me.tslblSeperator2.Text = "||"
         '
         'tslblMTD
@@ -1526,7 +1648,7 @@ Partial Class frmMain
         Me.tslblMTD.IsLink = True
         Me.tslblMTD.LinkColor = System.Drawing.Color.Green
         Me.tslblMTD.Name = "tslblMTD"
-        Me.tslblMTD.Size = New System.Drawing.Size(0, 19)
+        Me.tslblMTD.Size = New System.Drawing.Size(0, 28)
         Me.tslblMTD.VisitedLinkColor = System.Drawing.Color.Green
         '
         'tslblSeperator6
@@ -1534,7 +1656,7 @@ Partial Class frmMain
         Me.tslblSeperator6.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
         Me.tslblSeperator6.ForeColor = System.Drawing.Color.Blue
         Me.tslblSeperator6.Name = "tslblSeperator6"
-        Me.tslblSeperator6.Size = New System.Drawing.Size(19, 19)
+        Me.tslblSeperator6.Size = New System.Drawing.Size(26, 28)
         Me.tslblSeperator6.Text = "||"
         '
         'tslblYTD
@@ -1544,7 +1666,7 @@ Partial Class frmMain
         Me.tslblYTD.IsLink = True
         Me.tslblYTD.LinkColor = System.Drawing.Color.Green
         Me.tslblYTD.Name = "tslblYTD"
-        Me.tslblYTD.Size = New System.Drawing.Size(0, 19)
+        Me.tslblYTD.Size = New System.Drawing.Size(0, 28)
         Me.tslblYTD.VisitedLinkColor = System.Drawing.Color.Green
         '
         'tslblSeperator7
@@ -1552,7 +1674,7 @@ Partial Class frmMain
         Me.tslblSeperator7.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold)
         Me.tslblSeperator7.ForeColor = System.Drawing.Color.Blue
         Me.tslblSeperator7.Name = "tslblSeperator7"
-        Me.tslblSeperator7.Size = New System.Drawing.Size(19, 19)
+        Me.tslblSeperator7.Size = New System.Drawing.Size(26, 28)
         Me.tslblSeperator7.Text = "||"
         '
         'tslblBKSDTD
@@ -1562,7 +1684,7 @@ Partial Class frmMain
         Me.tslblBKSDTD.IsLink = True
         Me.tslblBKSDTD.LinkColor = System.Drawing.Color.Green
         Me.tslblBKSDTD.Name = "tslblBKSDTD"
-        Me.tslblBKSDTD.Size = New System.Drawing.Size(0, 19)
+        Me.tslblBKSDTD.Size = New System.Drawing.Size(0, 28)
         Me.tslblBKSDTD.VisitedLinkColor = System.Drawing.Color.Green
         '
         'RchTB_MTDTicker
@@ -1571,13 +1693,13 @@ Partial Class frmMain
         Me.RchTB_MTDTicker.BackColor = System.Drawing.SystemColors.Control
         Me.RchTB_MTDTicker.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RchTB_MTDTicker.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.RchTB_MTDTicker.Location = New System.Drawing.Point(101, 8)
-        Me.RchTB_MTDTicker.Margin = New System.Windows.Forms.Padding(3, 0, 3, 0)
+        Me.RchTB_MTDTicker.Location = New System.Drawing.Point(152, 12)
+        Me.RchTB_MTDTicker.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.RchTB_MTDTicker.Multiline = False
         Me.RchTB_MTDTicker.Name = "RchTB_MTDTicker"
         Me.RchTB_MTDTicker.ReadOnly = True
         Me.RchTB_MTDTicker.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None
-        Me.RchTB_MTDTicker.Size = New System.Drawing.Size(716, 13)
+        Me.RchTB_MTDTicker.Size = New System.Drawing.Size(1074, 20)
         Me.RchTB_MTDTicker.TabIndex = 16
         Me.RchTB_MTDTicker.TabStop = False
         Me.RchTB_MTDTicker.Text = ""
@@ -1589,12 +1711,13 @@ Partial Class frmMain
         Me.RchTB_YTDTicker.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.RchTB_YTDTicker.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me.RchTB_YTDTicker.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.RchTB_YTDTicker.Location = New System.Drawing.Point(101, 28)
+        Me.RchTB_YTDTicker.Location = New System.Drawing.Point(152, 43)
+        Me.RchTB_YTDTicker.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.RchTB_YTDTicker.Multiline = False
         Me.RchTB_YTDTicker.Name = "RchTB_YTDTicker"
         Me.RchTB_YTDTicker.ReadOnly = True
         Me.RchTB_YTDTicker.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None
-        Me.RchTB_YTDTicker.Size = New System.Drawing.Size(397, 13)
+        Me.RchTB_YTDTicker.Size = New System.Drawing.Size(596, 20)
         Me.RchTB_YTDTicker.TabIndex = 17
         Me.RchTB_YTDTicker.TabStop = False
         Me.RchTB_YTDTicker.Text = ""
@@ -1606,9 +1729,10 @@ Partial Class frmMain
         Me.Label23.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Label23.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label23.ForeColor = System.Drawing.Color.Blue
-        Me.Label23.Location = New System.Drawing.Point(0, 26)
+        Me.Label23.Location = New System.Drawing.Point(0, 40)
+        Me.Label23.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label23.Name = "Label23"
-        Me.Label23.Size = New System.Drawing.Size(205, 15)
+        Me.Label23.Size = New System.Drawing.Size(308, 23)
         Me.Label23.TabIndex = 18
         Me.Label23.Text = "YTD Summary  (Actual / Forecast):"
         '
@@ -1617,9 +1741,10 @@ Partial Class frmMain
         Me.Label24.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Label24.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.Label24.ForeColor = System.Drawing.Color.Blue
-        Me.Label24.Location = New System.Drawing.Point(0, 6)
+        Me.Label24.Location = New System.Drawing.Point(0, 9)
+        Me.Label24.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.Label24.Name = "Label24"
-        Me.Label24.Size = New System.Drawing.Size(205, 15)
+        Me.Label24.Size = New System.Drawing.Size(308, 23)
         Me.Label24.TabIndex = 19
         Me.Label24.Text = "MTD Summary (Actual / Forecast):"
         '
@@ -1634,9 +1759,10 @@ Partial Class frmMain
         Me.Panel9.Controls.Add(Me.RchTB_MTDTicker)
         Me.Panel9.Controls.Add(Me.RchTB_YTDTicker)
         Me.Panel9.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Panel9.Location = New System.Drawing.Point(0, 505)
+        Me.Panel9.Location = New System.Drawing.Point(0, 777)
+        Me.Panel9.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel9.Name = "Panel9"
-        Me.Panel9.Size = New System.Drawing.Size(1130, 48)
+        Me.Panel9.Size = New System.Drawing.Size(1695, 74)
         Me.Panel9.TabIndex = 20
         '
         'Panel10
@@ -1644,9 +1770,10 @@ Partial Class frmMain
         Me.Panel10.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.Panel10.BackColor = System.Drawing.Color.GreenYellow
         Me.Panel10.Controls.Add(Me.lblAlertText)
-        Me.Panel10.Location = New System.Drawing.Point(0, 489)
+        Me.Panel10.Location = New System.Drawing.Point(0, 752)
+        Me.Panel10.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Panel10.Name = "Panel10"
-        Me.Panel10.Size = New System.Drawing.Size(200, 21)
+        Me.Panel10.Size = New System.Drawing.Size(300, 32)
         Me.Panel10.TabIndex = 21
         Me.Panel10.Visible = False
         '
@@ -1663,14 +1790,15 @@ Partial Class frmMain
         '
         'ctxContextMenu
         '
+        Me.ctxContextMenu.ImageScalingSize = New System.Drawing.Size(24, 24)
         Me.ctxContextMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ExitToolStripMenuItem})
         Me.ctxContextMenu.Name = "ContextMenu"
-        Me.ctxContextMenu.Size = New System.Drawing.Size(94, 26)
+        Me.ctxContextMenu.Size = New System.Drawing.Size(112, 36)
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(93, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(111, 32)
         Me.ExitToolStripMenuItem.Text = "Exit"
         '
         'tmrRefresh
@@ -1683,9 +1811,10 @@ Partial Class frmMain
         Me.btnExport.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.btnExport.Enabled = False
         Me.btnExport.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnExport.Location = New System.Drawing.Point(380, 462)
+        Me.btnExport.Location = New System.Drawing.Point(570, 711)
+        Me.btnExport.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnExport.Name = "btnExport"
-        Me.btnExport.Size = New System.Drawing.Size(165, 23)
+        Me.btnExport.Size = New System.Drawing.Size(248, 35)
         Me.btnExport.TabIndex = 22
         Me.btnExport.Text = "Export To PDF"
         Me.btnExport.UseVisualStyleBackColor = True
@@ -1693,12 +1822,17 @@ Partial Class frmMain
         'BgWorker_Email
         '
         '
+        'Timer_Import
+        '
+        Me.Timer_Import.Enabled = True
+        Me.Timer_Import.Interval = 300000
+        '
         'frmMain
         '
         Me.AcceptButton = Me.btnSubmit
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1250, 577)
+        Me.ClientSize = New System.Drawing.Size(1875, 888)
         Me.Controls.Add(Me.btnExport)
         Me.Controls.Add(Me.chkShowAllDet)
         Me.Controls.Add(Me.Panel10)
@@ -1709,6 +1843,7 @@ Partial Class frmMain
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.Panel9)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+        Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "frmMain"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Impensa"
@@ -1915,5 +2050,5 @@ Partial Class frmMain
     Friend WithEvents GroupBox7 As System.Windows.Forms.GroupBox
     Friend WithEvents chkExcelDelRows As System.Windows.Forms.CheckBox
     Friend WithEvents Label36 As System.Windows.Forms.Label
-
+    Friend WithEvents Timer_Import As Timer
 End Class
