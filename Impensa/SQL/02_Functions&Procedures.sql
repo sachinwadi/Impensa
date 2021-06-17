@@ -749,7 +749,7 @@ IF OBJECT_ID('sp_GetChartData_1') IS NOT NULL
 	DROP PROCEDURE sp_GetChartData_1
 GO
 
-CREATE PROCEDURE sp_GetChartData_1(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX))
+CREATE PROCEDURE sp_GetChartData_1(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX), @P_ExcludeZeroEntry BIT = 0)
 AS
 BEGIN	
 	SELECT Y.Month, ISNULL(X.Amount, 0) Amount, ISNULL(X.Count, 0) Count
@@ -767,6 +767,10 @@ BEGIN
 										    WHERE e.dtDate BETWEEN @P_FromDate AND @P_ToDate
 												  AND @P_Years != '' AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), @P_Years) > 0)X
                                   WHERE  X.iMonth <= 12)Z) Y ON Y.Month = X.Month
+	 WHERE 1 = CASE WHEN ISNULL(@P_ExcludeZeroEntry, 0) = 0 THEN 1
+					WHEN ISNULL(@P_ExcludeZeroEntry, 0) = 1 AND ISNULL(X.Amount, 0) != 0 THEN 1
+					ELSE 0
+				END
      ORDER BY Y.iYear, Y.iMonth
 END
 GO
@@ -776,7 +780,7 @@ IF OBJECT_ID('sp_GetChartData_2') IS NOT NULL
 	DROP PROCEDURE sp_GetChartData_2
 GO
 
-CREATE PROCEDURE sp_GetChartData_2(@P_FromDate DATE, @P_ToDate DATE, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX))
+CREATE PROCEDURE sp_GetChartData_2(@P_FromDate DATE, @P_ToDate DATE, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX), @P_ExcludeZeroEntry BIT = 0)
 AS
 BEGIN
 	SELECT C.sCategory [Category], ISNULL(X.Amount, 0) Amount, ISNULL(X.Count, 0) Count
@@ -790,6 +794,10 @@ BEGIN
 						         FROM tbl_CategoryList c1 
 								      LEFT JOIN dbo.Fn_ListObsoleteCategories(@P_FromDate, @P_ToDate) Fn ON c1.hKey = Fn.iCategory 
 						        WHERE Fn.iCategory IS NULL)c ON c.hKey = X.iCategory
+	 WHERE 1 = CASE WHEN ISNULL(@P_ExcludeZeroEntry, 0) = 0 THEN 1
+					WHEN ISNULL(@P_ExcludeZeroEntry, 0) = 1 AND ISNULL(X.Amount, 0) != 0 THEN 1
+					ELSE 0
+				END
 	 ORDER BY C.sCategory
 END
 GO
@@ -933,16 +941,27 @@ IF OBJECT_ID('sp_GetChartData_4') IS NOT NULL
 	DROP PROCEDURE sp_GetChartData_4
 GO
 
-CREATE PROCEDURE sp_GetChartData_4(@P_FromDate DATE, @P_ToDate DATE, @P_iCategory INTEGER, @P_SearchStr VARCHAR(500), @P_Years VARCHAR(MAX), @P_PeriodLimit BIT = 0)
+CREATE PROCEDURE sp_GetChartData_4(	@P_FromDate DATE, 
+									@P_ToDate DATE, 
+									@P_iCategory INTEGER, 
+									@P_SearchStr VARCHAR(500), 
+									@P_Years VARCHAR(MAX), 
+									@P_PeriodLimit BIT = 0,
+									@P_ExcludeZeroEntry BIT = 0)
 AS
 BEGIN
-	
-	SELECT 	CONVERT(VARCHAR, YEAR(E.dtDate)) [Year], 
-			SUM(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) [Amount],
-			COUNT(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) [Count]
-	  FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, @P_iCategory, @P_SearchStr, @P_PeriodLimit) E
-	 WHERE (@P_Years  != '' AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), @P_Years ) > 0)
-	 GROUP BY CONVERT(VARCHAR, YEAR(E.dtDate))
+	SELECT X.[Year], X.Amount, X.[Count]
+	  FROM (SELECT CONVERT(VARCHAR, YEAR(E.dtDate)) [Year], 
+				   SUM(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) [Amount],
+				   COUNT(dbo.Fn_dAmount(E.sNotes, E.items, E.dAmount)) [Count]
+	          FROM dbo.Fn_DataStore(@P_FromDate, @P_ToDate, @P_iCategory, @P_SearchStr, @P_PeriodLimit) E
+	         WHERE @P_Years  != '' 
+			   AND CHARINDEX(CONVERT(VARCHAR, YEAR(E.dtDate)), @P_Years ) > 0
+			 GROUP BY CONVERT(VARCHAR, YEAR(E.dtDate))) X
+	 WHERE 1 = CASE WHEN ISNULL(@P_ExcludeZeroEntry, 0) = 0 THEN 1
+					WHEN ISNULL(@P_ExcludeZeroEntry, 0) = 1 AND ISNULL(X.Amount, 0) != 0 THEN 1
+					ELSE 0
+				END
 END
 GO
 /*############################################################################################################################################################*/

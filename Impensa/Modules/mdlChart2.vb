@@ -69,6 +69,13 @@ Module mdlChart2
                 Params.DbType = DbType.String
                 Comm.Parameters.Add(Params)
 
+                If ChartTypeCombo.value = "Pie" Then
+                    Params = New SqlParameter("@P_ExcludeZeroEntry", True)
+                    Params.Direction = ParameterDirection.Input
+                    Params.DbType = DbType.Boolean
+                    Comm.Parameters.Add(Params)
+                End If
+
                 Da = New SqlDataAdapter(Comm)
                 Da.Fill(dt)
             End Using
