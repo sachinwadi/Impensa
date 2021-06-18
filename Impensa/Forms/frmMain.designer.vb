@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend5 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -429,9 +429,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend5.Name = "Legend1"
-        Legend5.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend5)
+        Legend1.Name = "Legend1"
+        Legend1.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend1)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Chart_Analysis.Name = "Chart_Analysis"
@@ -1006,7 +1006,7 @@ Partial Class frmMain
         'chkExcelDelRows
         '
         Me.chkExcelDelRows.AutoSize = True
-        Me.chkExcelDelRows.Location = New System.Drawing.Point(9, 55)
+        Me.chkExcelDelRows.Location = New System.Drawing.Point(6, 55)
         Me.chkExcelDelRows.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkExcelDelRows.Name = "chkExcelDelRows"
         Me.chkExcelDelRows.RightToLeft = System.Windows.Forms.RightToLeft.Yes

@@ -344,10 +344,10 @@ Public Class frmMain
                 End If
             End If
 
-            If Not String.IsNullOrEmpty(CSVBackupPath) Then
-                Call CreateMonthlyCSV()
-                Call CreateAdhocCSV()
-            End If
+            'If Not String.IsNullOrEmpty(CSVBackupPath) Then
+            '    Call CreateMonthlyCSV()
+            '    Call CreateAdhocCSV()
+            'End If
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
@@ -1372,7 +1372,7 @@ Public Class frmMain
                     Chart_Analysis.Series(dt.Columns(i).ColumnName).MarkerStyle = MarkerStyle.Circle
                     Chart_Analysis.Series(dt.Columns(i).ColumnName).MarkerSize = 5
                 ElseIf InStr("Pie", [Enum].GetName(GetType(SeriesChartType), Chart_Analysis.Series(dt.Columns(i).ColumnName).ChartType).ToString) > 0 Then
-                    Chart_Analysis.Series(dt.Columns(i).ColumnName).Label = "#VALX --> Rs. #VALY{#,##0.00} (#PERCENT)"
+                    Chart_Analysis.Series(dt.Columns(i).ColumnName).Label = "#VALX => Rs. #VALY{#,##0.00} (#PERCENT)"
                 End If
             Next
 
