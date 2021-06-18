@@ -1113,25 +1113,21 @@ Public Class frmMain
 
 #Region "Graphical Analysis"
 
-    Private Sub PopulateChartTypeCombo()
-        Dim dir As New Dictionary(Of Integer, String)
-        Dim binding As BindingSource
+    Private Sub PopulateChartTypeCombo(Optional P_ChartType As String = "")
+        cmbChartType.Items.Clear()
 
-        For Each iChart As Integer In [Enum].GetValues(GetType(SeriesChartType))
-            If InStr("Line, Column, Pie", [Enum].GetName(GetType(SeriesChartType), iChart).ToString) > 0 Then
-                dir.Add(iChart, [Enum].GetName(GetType(SeriesChartType), iChart).ToString)
-            End If
-        Next
+        If SelectChartCombo = "Chart 3A" OrElse SelectChartCombo = "Chart 3B" Then
+            cmbChartType.Items.Add(New With {.Key = Convert.ToInt32(SeriesChartType.Column), .Value = "Column"})
+            cmbChartType.Items.Add(New With {.Key = Convert.ToInt32(SeriesChartType.Line), .Value = "Line"})
+        Else
+            cmbChartType.Items.Add(New With {.Key = Convert.ToInt32(SeriesChartType.Column), .Value = "Column"})
+            cmbChartType.Items.Add(New With {.Key = Convert.ToInt32(SeriesChartType.Line), .Value = "Line"})
+            cmbChartType.Items.Add(New With {.Key = Convert.ToInt32(SeriesChartType.Pie), .Value = "Pie"})
+        End If
 
-        Dim sorted = From pair In dir Order By pair.Value
-        Dim sortedDictionary = sorted.ToDictionary(Function(p) p.Key, Function(p) p.Value)
-
-        binding = New BindingSource(sortedDictionary, Nothing)
-
-        cmbChartType.DataSource = binding
         cmbChartType.DisplayMember = "Value"
         cmbChartType.ValueMember = "Key"
-        cmbChartType.SelectedValue = Convert.ToInt32(SeriesChartType.Column)
+        cmbChartType.SelectedIndex = cmbChartType.FindStringExact("Column")
     End Sub '11
 
     Private Sub PopulateSelectYearCombo(Optional ByVal P_IsYrClosed As Boolean = 0)
@@ -3307,6 +3303,7 @@ Public Class frmMain
 
     Private Sub cmbSelectChart_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmbSelectChart.SelectedIndexChanged
         SelectChartCombo = cmbSelectChart.SelectedItem
+        PopulateChartTypeCombo(SelectChartCombo)
 
         btnGo.Enabled = True
         Label8.Visible = True
@@ -3330,6 +3327,7 @@ Public Class frmMain
             Label8.Text = "Plot PERIOD on [Category(X-Axis) Vs. Amount(Y-Axis)]"
             cmbListing.DataSource = mdlChart2.PopulateListingCombo
         ElseIf SelectChartCombo = "Chart 3A" OrElse SelectChartCombo = "Chart 3B" Then
+
             If Year(dtpFrom) = Year(dtpTo) Then
                 chkPeriodLevel.Enabled = False
                 chkPeriodLevel.Checked = False
