@@ -1130,7 +1130,7 @@ Public Class frmMain
         cmbChartType.SelectedIndex = cmbChartType.FindStringExact("Column")
     End Sub '11
 
-    Private Sub PopulateSelectYearCombo(Optional ByVal P_IsYrClosed As Boolean = 0)
+    Private Sub PopulateOpenCloseYearsListBoxes()
         Dim dt As New DataTable
         Dim Comm As SqlCommand
         Dim Params As SqlParameter
@@ -1145,7 +1145,7 @@ Public Class frmMain
                 Params.DbType = DbType.Date
                 Comm.Parameters.Add(Params)
 
-                Params = New SqlParameter("@P_IsYrClosed", P_IsYrClosed)
+                Params = New SqlParameter("@P_IsYrClosed", True)
                 Params.Direction = ParameterDirection.Input
                 Params.DbType = DbType.Boolean
                 Comm.Parameters.Add(Params)
@@ -1154,10 +1154,25 @@ Public Class frmMain
                 da.Fill(dt)
             End Using
 
-            cmbSelectYear.DataSource = dt
-            cmbSelectYear.DisplayMember = dt.Columns(0).ToString
-            cmbSelectYear.ValueMember = dt.Columns(0).ToString
-            cmbSelectYear.SelectedIndex = -1
+            'cmbSelectYear.DataSource = dt
+            'cmbSelectYear.DisplayMember = dt.Columns(0).ToString
+            'cmbSelectYear.ValueMember = dt.Columns(0).ToString
+            'cmbSelectYear.SelectedIndex = -1
+
+            lstboxOpenYears.Items.Clear()
+            lstboxClosedYears.Items.Clear()
+
+
+            Dim closedYearsList = dt.AsEnumerable.Where(Function(x) x.Field(Of Boolean)("IsYrClosed").Equals(True)).Select(Function(x) x.Item("Year#").ToString).ToList()
+            Dim openYearsList = dt.AsEnumerable.Where(Function(x) x.Field(Of Boolean)("IsYrClosed").Equals(False)).Select(Function(x) x.Item("Year#").ToString).ToList
+
+            If (Not closedYearsList Is Nothing AndAlso closedYearsList.Count > 0) Then
+                lstboxClosedYears.Items.AddRange(closedYearsList.ToArray)
+            End If
+
+            If (Not openYearsList Is Nothing AndAlso openYearsList.Count > 0) Then
+                lstboxOpenYears.Items.AddRange(openYearsList.ToArray)
+            End If
 
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
@@ -1640,10 +1655,12 @@ Public Class frmMain
             If Not String.IsNullOrEmpty(txtCSVBackupPath.Text) Then
                 CSVBackupPath = txtCSVBackupPath.Text
             End If
-            If rbCloseYr.Checked Or rbOpenYr.Checked Then
-                Call SaveEOY()
-                cmbSelectYear.SelectedItem = Nothing
-            End If
+            'If rbCloseYr.Checked Or rbOpenYr.Checked Then
+            '    Call SaveEOY()
+            '    cmbSelectYear.SelectedItem = Nothing
+            'End If
+
+            Call SaveEOY()
 
             ShowReminder = chkShowReminder.Checked
             ReminderText = txtReminder.Text
@@ -1709,8 +1726,8 @@ Public Class frmMain
 
 #Region "End Of Year"
 
-    Private Sub CheckOpenYears()
-        Call PopulateSelectYearCombo()
+    Private Sub CheckOpenClosedYears()
+        Call PopulateOpenCloseYearsListBoxes()
         Dim StrOpenYrs = BuildOpenOrClosedYrsStr(0)
 
         If Not StrOpenYrs Is Nothing Then
@@ -1781,10 +1798,6 @@ Public Class frmMain
                     End If
                 End Using
             End If
-
-            rbCloseYr.Checked = False
-            rbOpenYr.Checked = False
-            cmbSelectYear.Enabled = False
 
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
@@ -1931,7 +1944,7 @@ Public Class frmMain
                     If InStr(strMonthList, DatePart(DateInterval.Month, CDate(drGrid("Date")))) = 0 Then
                         strMonthList = strMonthList + DatePart(DateInterval.Month, CDate(drGrid("Date"))) + ","
 
-                        StrCommand = "SELECT E.dtDate [Date], C.sCategory, E.dAmount [Amount], E.sNotes [Notes] FROM tbl_ExpenditureDet E INNER JOIN tbl_CategoryList C " & _
+                        StrCommand = "SELECT E.dtDate [Date], C.sCategory, E.dAmount [Amount], E.sNotes [Notes] FROM tbl_ExpenditureDet E INNER JOIN tbl_CategoryList C " &
                                      "ON C.hKey = E.iCategory WHERE MONTH(dtDate) = " & DatePart(DateInterval.Month, CDate(drGrid("Date")))
 
                         Using Connection = GetConnection()
@@ -2174,8 +2187,8 @@ Public Class frmMain
         End If
 
 
-        If (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) AndAlso (Not DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
-        (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) AndAlso (Not DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges Is Nothing)) OrElse _
+        If (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabDetails) AndAlso (Not DirectCast(DataGridExpDet.DataSource, DataTable).GetChanges Is Nothing)) OrElse
+        (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) AndAlso (Not DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges Is Nothing)) OrElse
         (ImpensaTabControl.TabPages(LastTabIndex).Name = [Enum].GetName(GetType(Tabs), Tabs.TabCategories) AndAlso (Not DirectCast(DataGridCatList.DataSource, DataTable).GetChanges Is Nothing)) Then
             If ImpensaActionAlert(sMessage, MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) = Windows.Forms.DialogResult.Cancel Then
                 Result = Windows.Forms.DialogResult.Cancel
@@ -2300,8 +2313,8 @@ Public Class frmMain
         Call clsLibrary.DataImport()
 
         If ImportSucceessAndFailCnt > 0 Then
-            NotifyIcon.BalloonTipText = "Impensa.xlms imported successfully." & vbCrLf & TotalImportCnt & " Records Found." & vbCrLf & _
-                                        "IMPORT STATUS: Success: " & ImportSucceessCnt & " | " & "Failed: " & ImportFailedCnt & _
+            NotifyIcon.BalloonTipText = "Impensa.xlms imported successfully." & vbCrLf & TotalImportCnt & " Records Found." & vbCrLf &
+                                        "IMPORT STATUS: Success: " & ImportSucceessCnt & " | " & "Failed: " & ImportFailedCnt &
                                         " | " & "Skipped: " & ImportSkippedCnt
 
             NotifyIcon.ShowBalloonTip(100)
@@ -2572,7 +2585,7 @@ Public Class frmMain
 
             DataGridExpDet.Controls.Add(dtp)
 
-            Call CheckOpenYears()
+            Call CheckOpenClosedYears()
             Call CheckCurrentMonthThresholds()
 
             If (CDate(LastUsedTimeStamp).Month <> DateTime.Today.Month) Then
@@ -3394,13 +3407,13 @@ Public Class frmMain
         End If
     End Sub
 
-    Private Sub cmbSelectYear_DropDown(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSelectYear.DropDown
-        If rbCloseYr.Checked Then
-            Call PopulateSelectYearCombo(False)
-        ElseIf rbOpenYr.Checked Then
-            Call PopulateSelectYearCombo(True)
-        End If
-    End Sub
+    'Private Sub cmbSelectYear_DropDown(ByVal sender As Object, ByVal e As System.EventArgs)
+    '    If rbCloseYr.Checked Then
+    '        Call PopulateSelectYearCombo(False)
+    '    ElseIf rbOpenYr.Checked Then
+    '        Call PopulateSelectYearCombo(True)
+    '    End If
+    'End Sub
 
     Private Sub cmbSummaryType_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSummaryType.SelectionChangeCommitted
         SummaryType = cmbSummaryType.SelectedItem.key
@@ -3494,7 +3507,7 @@ Public Class frmMain
 #Region "LinkLabel Events"
     Private Sub LinkLabel1_LinkClicked(ByVal sender As System.Object, ByVal e As System.Windows.Forms.LinkLabelLinkClickedEventArgs) Handles LinkLabel1.LinkClicked
 
-        If ImpensaActionAlert("Changing connection details while application is running will reset the progress made (if any). Continue?", _
+        If ImpensaActionAlert("Changing connection details while application is running will reset the progress made (if any). Continue?",
                             MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) = Windows.Forms.DialogResult.OK Then
             frmLogin.ShowDialog()
             If IsLoginDetailsChanged Then
@@ -3514,17 +3527,17 @@ Public Class frmMain
 
 #Region "CheckBox And Radio Button Events"
 
-    Private Sub rbCloseYr_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbCloseYr.CheckedChanged
-        If rbCloseYr.Checked Then
-            cmbSelectYear.Enabled = True
-        End If
-    End Sub
+    'Private Sub rbCloseYr_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+    '    If rbCloseYr.Checked Then
+    '        cmbSelectYear.Enabled = True
+    '    End If
+    'End Sub
 
-    Private Sub rdOpenYr_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbOpenYr.CheckedChanged
-        If rbOpenYr.Checked Then
-            cmbSelectYear.Enabled = True
-        End If
-    End Sub
+    'Private Sub rdOpenYr_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs)
+    '    If rbOpenYr.Checked Then
+    '        cmbSelectYear.Enabled = True
+    '    End If
+    'End Sub
 
     Private Sub chkSort_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkSort.CheckedChanged
         If chkSort.Checked Then
@@ -3762,9 +3775,9 @@ Public Class frmMain
             End If
 
             If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSettings) Then
-                rbOpenYr.Checked = False
-                rbCloseYr.Checked = False
-                cmbSelectYear.Enabled = False
+                'rbOpenYr.Checked = False
+                'rbCloseYr.Checked = False
+                'cmbSelectYear.Enabled = False
                 btnSave.Enabled = True
             End If
 
@@ -3966,6 +3979,42 @@ Public Class frmMain
             If CInt(CStr(e.KeyChar)) = 0 Then
                 e.Handled = True
             End If
+        End If
+    End Sub
+
+    'Private Sub btnCloseYrAll_Click(sender As Object, e As EventArgs) Handles btnCloseYrAll.Click
+    '    If (lstboxOpenYears.Items.Count > 0) Then
+    '        For Each item In lstboxOpenYears.Items.Cast(Of String).ToList
+    '            lstboxOpenYears.Items.Remove(item)
+    '            lstboxClosedYears.Items.Add(item)
+    '        Next
+    '    End If
+    'End Sub
+
+    'Private Sub btnOpenYrAll_Click(sender As Object, e As EventArgs) Handles btnOpenYrAll.Click
+    '    If (lstboxClosedYears.Items.Count > 0) Then
+    '        For Each item In lstboxClosedYears.Items.Cast(Of String).ToList
+    '            lstboxClosedYears.Items.Remove(item)
+    '            lstboxOpenYears.Items.Add(item)
+    '        Next
+    '    End If
+    'End Sub
+
+    Private Sub btnCloseYr_Click(sender As Object, e As EventArgs) Handles btnCloseYr.Click
+        If (lstboxOpenYears.SelectedItems.Count > 0) Then
+            For Each item In lstboxOpenYears.SelectedItems.Cast(Of String).ToList
+                lstboxOpenYears.Items.Remove(item)
+                lstboxClosedYears.Items.Add(item)
+            Next
+        End If
+    End Sub
+
+    Private Sub btnOpenYr_Click(sender As Object, e As EventArgs) Handles btnOpenYr.Click
+        If (lstboxClosedYears.SelectedItems.Count > 0) Then
+            For Each item In lstboxClosedYears.SelectedItems.Cast(Of String).ToList
+                lstboxClosedYears.Items.Remove(item)
+                lstboxOpenYears.Items.Add(item)
+            Next
         End If
     End Sub
 #End Region

@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend1 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -120,9 +120,14 @@ Partial Class frmMain
         Me.dtpRecdKeeping = New System.Windows.Forms.DateTimePicker()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
-        Me.cmbSelectYear = New System.Windows.Forms.ComboBox()
-        Me.rbOpenYr = New System.Windows.Forms.RadioButton()
-        Me.rbCloseYr = New System.Windows.Forms.RadioButton()
+        Me.Label11 = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.btnOpenYrAll = New System.Windows.Forms.Button()
+        Me.btnCloseYr = New System.Windows.Forms.Button()
+        Me.btnOpenYr = New System.Windows.Forms.Button()
+        Me.btnCloseYrAll = New System.Windows.Forms.Button()
+        Me.lstboxClosedYears = New System.Windows.Forms.ListBox()
+        Me.lstboxOpenYears = New System.Windows.Forms.ListBox()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         Me.txtHighlightSummYr = New System.Windows.Forms.TextBox()
         Me.txtHighlightSummMth = New System.Windows.Forms.TextBox()
@@ -429,9 +434,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend1.Name = "Legend1"
-        Legend1.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend1)
+        Legend2.Name = "Legend1"
+        Legend2.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend2)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Chart_Analysis.Name = "Chart_Analysis"
@@ -1345,54 +1350,100 @@ Partial Class frmMain
         '
         'GroupBox3
         '
-        Me.GroupBox3.Controls.Add(Me.cmbSelectYear)
-        Me.GroupBox3.Controls.Add(Me.rbOpenYr)
-        Me.GroupBox3.Controls.Add(Me.rbCloseYr)
+        Me.GroupBox3.Controls.Add(Me.Label11)
+        Me.GroupBox3.Controls.Add(Me.Label10)
+        Me.GroupBox3.Controls.Add(Me.btnOpenYrAll)
+        Me.GroupBox3.Controls.Add(Me.btnCloseYr)
+        Me.GroupBox3.Controls.Add(Me.btnOpenYr)
+        Me.GroupBox3.Controls.Add(Me.btnCloseYrAll)
+        Me.GroupBox3.Controls.Add(Me.lstboxClosedYears)
+        Me.GroupBox3.Controls.Add(Me.lstboxOpenYears)
         Me.GroupBox3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.GroupBox3.Location = New System.Drawing.Point(9, 389)
         Me.GroupBox3.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.GroupBox3.Name = "GroupBox3"
         Me.GroupBox3.Padding = New System.Windows.Forms.Padding(4, 5, 4, 5)
-        Me.GroupBox3.Size = New System.Drawing.Size(496, 117)
+        Me.GroupBox3.Size = New System.Drawing.Size(496, 256)
         Me.GroupBox3.TabIndex = 1
         Me.GroupBox3.TabStop = False
-        Me.GroupBox3.Text = "End Of Year"
         '
-        'cmbSelectYear
+        'Label11
         '
-        Me.cmbSelectYear.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbSelectYear.FormattingEnabled = True
-        Me.cmbSelectYear.Location = New System.Drawing.Point(9, 71)
-        Me.cmbSelectYear.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
-        Me.cmbSelectYear.Name = "cmbSelectYear"
-        Me.cmbSelectYear.Size = New System.Drawing.Size(302, 28)
-        Me.cmbSelectYear.TabIndex = 2
+        Me.Label11.AutoSize = True
+        Me.Label11.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label11.Location = New System.Drawing.Point(258, 13)
+        Me.Label11.Name = "Label11"
+        Me.Label11.Size = New System.Drawing.Size(130, 22)
+        Me.Label11.TabIndex = 10
+        Me.Label11.Text = "Closed Years"
         '
-        'rbOpenYr
+        'Label10
         '
-        Me.rbOpenYr.AutoSize = True
-        Me.rbOpenYr.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.rbOpenYr.Location = New System.Drawing.Point(150, 34)
-        Me.rbOpenYr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
-        Me.rbOpenYr.Name = "rbOpenYr"
-        Me.rbOpenYr.Size = New System.Drawing.Size(113, 24)
-        Me.rbOpenYr.TabIndex = 1
-        Me.rbOpenYr.TabStop = True
-        Me.rbOpenYr.Text = "Open Year"
-        Me.rbOpenYr.UseVisualStyleBackColor = True
+        Me.Label10.AutoSize = True
+        Me.Label10.Font = New System.Drawing.Font("Microsoft Sans Serif", 9.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label10.Location = New System.Drawing.Point(87, 13)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(116, 22)
+        Me.Label10.TabIndex = 9
+        Me.Label10.Text = "Open Years"
         '
-        'rbCloseYr
+        'btnOpenYrAll
         '
-        Me.rbCloseYr.AutoSize = True
-        Me.rbCloseYr.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.rbCloseYr.Location = New System.Drawing.Point(9, 34)
-        Me.rbCloseYr.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
-        Me.rbCloseYr.Name = "rbCloseYr"
-        Me.rbCloseYr.Size = New System.Drawing.Size(116, 24)
-        Me.rbCloseYr.TabIndex = 0
-        Me.rbCloseYr.TabStop = True
-        Me.rbCloseYr.Text = "Close Year"
-        Me.rbCloseYr.UseVisualStyleBackColor = True
+        Me.btnOpenYrAll.Location = New System.Drawing.Point(209, 197)
+        Me.btnOpenYrAll.Name = "btnOpenYrAll"
+        Me.btnOpenYrAll.Size = New System.Drawing.Size(47, 37)
+        Me.btnOpenYrAll.TabIndex = 8
+        Me.btnOpenYrAll.Text = "<<"
+        Me.btnOpenYrAll.UseVisualStyleBackColor = True
+        Me.btnOpenYrAll.Visible = False
+        '
+        'btnCloseYr
+        '
+        Me.btnCloseYr.Location = New System.Drawing.Point(209, 103)
+        Me.btnCloseYr.Name = "btnCloseYr"
+        Me.btnCloseYr.Size = New System.Drawing.Size(47, 37)
+        Me.btnCloseYr.TabIndex = 7
+        Me.btnCloseYr.Text = ">"
+        Me.btnCloseYr.UseVisualStyleBackColor = True
+        '
+        'btnOpenYr
+        '
+        Me.btnOpenYr.Location = New System.Drawing.Point(209, 150)
+        Me.btnOpenYr.Name = "btnOpenYr"
+        Me.btnOpenYr.Size = New System.Drawing.Size(47, 37)
+        Me.btnOpenYr.TabIndex = 6
+        Me.btnOpenYr.Text = "<"
+        Me.btnOpenYr.UseVisualStyleBackColor = True
+        '
+        'btnCloseYrAll
+        '
+        Me.btnCloseYrAll.Location = New System.Drawing.Point(209, 56)
+        Me.btnCloseYrAll.Name = "btnCloseYrAll"
+        Me.btnCloseYrAll.Size = New System.Drawing.Size(47, 37)
+        Me.btnCloseYrAll.TabIndex = 5
+        Me.btnCloseYrAll.Text = ">>"
+        Me.btnCloseYrAll.UseVisualStyleBackColor = True
+        Me.btnCloseYrAll.Visible = False
+        '
+        'lstboxClosedYears
+        '
+        Me.lstboxClosedYears.FormattingEnabled = True
+        Me.lstboxClosedYears.ItemHeight = 20
+        Me.lstboxClosedYears.Location = New System.Drawing.Point(262, 37)
+        Me.lstboxClosedYears.Name = "lstboxClosedYears"
+        Me.lstboxClosedYears.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
+        Me.lstboxClosedYears.Size = New System.Drawing.Size(120, 204)
+        Me.lstboxClosedYears.TabIndex = 4
+        '
+        'lstboxOpenYears
+        '
+        Me.lstboxOpenYears.FormattingEnabled = True
+        Me.lstboxOpenYears.ItemHeight = 20
+        Me.lstboxOpenYears.Location = New System.Drawing.Point(83, 37)
+        Me.lstboxOpenYears.Name = "lstboxOpenYears"
+        Me.lstboxOpenYears.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended
+        Me.lstboxOpenYears.Size = New System.Drawing.Size(120, 204)
+        Me.lstboxOpenYears.TabIndex = 3
         '
         'GroupBox2
         '
@@ -1940,9 +1991,6 @@ Partial Class frmMain
     Friend WithEvents GroupBox2 As System.Windows.Forms.GroupBox
     Friend WithEvents txtHighlightDet As System.Windows.Forms.TextBox
     Friend WithEvents GroupBox3 As System.Windows.Forms.GroupBox
-    Friend WithEvents rbOpenYr As System.Windows.Forms.RadioButton
-    Friend WithEvents rbCloseYr As System.Windows.Forms.RadioButton
-    Friend WithEvents cmbSelectYear As System.Windows.Forms.ComboBox
     Friend WithEvents LinkLabel1 As System.Windows.Forms.LinkLabel
     Friend WithEvents GroupBox5 As System.Windows.Forms.GroupBox
     Friend WithEvents dtpRecdKeeping As System.Windows.Forms.DateTimePicker
@@ -2051,4 +2099,12 @@ Partial Class frmMain
     Friend WithEvents chkExcelDelRows As System.Windows.Forms.CheckBox
     Friend WithEvents Label36 As System.Windows.Forms.Label
     Friend WithEvents Timer_Import As Timer
+    Friend WithEvents btnOpenYrAll As Button
+    Friend WithEvents btnCloseYr As Button
+    Friend WithEvents btnOpenYr As Button
+    Friend WithEvents btnCloseYrAll As Button
+    Friend WithEvents lstboxClosedYears As ListBox
+    Friend WithEvents lstboxOpenYears As ListBox
+    Friend WithEvents Label11 As Label
+    Friend WithEvents Label10 As Label
 End Class

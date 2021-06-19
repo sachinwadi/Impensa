@@ -987,7 +987,7 @@ BEGIN
 		CONTINUE
 	 END
 	DELETE FROM tbl_EOY WHERE Year# < YEAR(@P_StartDate) AND IsYrClosed = 0
-	SELECT Year# FROM tbl_EOY WHERE IsYrClosed = @P_IsYrClosed AND Year# >= YEAR(@P_StartDate) ORDER BY Year#
+	SELECT Year#, IsYrClosed FROM tbl_EOY WHERE IsYrClosed = @P_IsYrClosed AND Year# >= YEAR(@P_StartDate) ORDER BY Year#
 END
 GO
 /*############################################################################################################################################################*/
