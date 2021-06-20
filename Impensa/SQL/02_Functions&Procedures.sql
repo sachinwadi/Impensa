@@ -970,7 +970,7 @@ IF OBJECT_ID('sp_PopulateSelectYearCombo') IS NOT NULL
 	DROP PROCEDURE sp_PopulateSelectYearCombo
 GO
 
-CREATE PROCEDURE sp_PopulateSelectYearCombo(@P_StartDate DATE, @P_IsYrClosed BIT = 0)
+CREATE PROCEDURE sp_PopulateSelectYearCombo(@P_StartDate DATE)
 AS
 BEGIN
 	 DECLARE @YrDiff INT = YEAR(GETDATE()) - YEAR(@P_StartDate), @Counter INT = 0
@@ -986,8 +986,10 @@ BEGIN
 	
 		CONTINUE
 	 END
+
 	DELETE FROM tbl_EOY WHERE Year# < YEAR(@P_StartDate) AND IsYrClosed = 0
-	SELECT Year#, IsYrClosed FROM tbl_EOY WHERE IsYrClosed = @P_IsYrClosed AND Year# >= YEAR(@P_StartDate) ORDER BY Year#
+
+	SELECT Year#, IsYrClosed FROM tbl_EOY WHERE Year# >= YEAR(@P_StartDate) ORDER BY Year#
 END
 GO
 /*############################################################################################################################################################*/

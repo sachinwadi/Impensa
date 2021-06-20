@@ -122,10 +122,8 @@ Partial Class frmMain
         Me.GroupBox3 = New System.Windows.Forms.GroupBox()
         Me.Label11 = New System.Windows.Forms.Label()
         Me.Label10 = New System.Windows.Forms.Label()
-        Me.btnOpenYrAll = New System.Windows.Forms.Button()
         Me.btnCloseYr = New System.Windows.Forms.Button()
         Me.btnOpenYr = New System.Windows.Forms.Button()
-        Me.btnCloseYrAll = New System.Windows.Forms.Button()
         Me.lstboxClosedYears = New System.Windows.Forms.ListBox()
         Me.lstboxOpenYears = New System.Windows.Forms.ListBox()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
@@ -1352,10 +1350,8 @@ Partial Class frmMain
         '
         Me.GroupBox3.Controls.Add(Me.Label11)
         Me.GroupBox3.Controls.Add(Me.Label10)
-        Me.GroupBox3.Controls.Add(Me.btnOpenYrAll)
         Me.GroupBox3.Controls.Add(Me.btnCloseYr)
         Me.GroupBox3.Controls.Add(Me.btnOpenYr)
-        Me.GroupBox3.Controls.Add(Me.btnCloseYrAll)
         Me.GroupBox3.Controls.Add(Me.lstboxClosedYears)
         Me.GroupBox3.Controls.Add(Me.lstboxOpenYears)
         Me.GroupBox3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
@@ -1387,19 +1383,9 @@ Partial Class frmMain
         Me.Label10.TabIndex = 9
         Me.Label10.Text = "Open Years"
         '
-        'btnOpenYrAll
-        '
-        Me.btnOpenYrAll.Location = New System.Drawing.Point(209, 197)
-        Me.btnOpenYrAll.Name = "btnOpenYrAll"
-        Me.btnOpenYrAll.Size = New System.Drawing.Size(47, 37)
-        Me.btnOpenYrAll.TabIndex = 8
-        Me.btnOpenYrAll.Text = "<<"
-        Me.btnOpenYrAll.UseVisualStyleBackColor = True
-        Me.btnOpenYrAll.Visible = False
-        '
         'btnCloseYr
         '
-        Me.btnCloseYr.Location = New System.Drawing.Point(209, 103)
+        Me.btnCloseYr.Location = New System.Drawing.Point(209, 99)
         Me.btnCloseYr.Name = "btnCloseYr"
         Me.btnCloseYr.Size = New System.Drawing.Size(47, 37)
         Me.btnCloseYr.TabIndex = 7
@@ -1408,22 +1394,12 @@ Partial Class frmMain
         '
         'btnOpenYr
         '
-        Me.btnOpenYr.Location = New System.Drawing.Point(209, 150)
+        Me.btnOpenYr.Location = New System.Drawing.Point(209, 146)
         Me.btnOpenYr.Name = "btnOpenYr"
         Me.btnOpenYr.Size = New System.Drawing.Size(47, 37)
         Me.btnOpenYr.TabIndex = 6
         Me.btnOpenYr.Text = "<"
         Me.btnOpenYr.UseVisualStyleBackColor = True
-        '
-        'btnCloseYrAll
-        '
-        Me.btnCloseYrAll.Location = New System.Drawing.Point(209, 56)
-        Me.btnCloseYrAll.Name = "btnCloseYrAll"
-        Me.btnCloseYrAll.Size = New System.Drawing.Size(47, 37)
-        Me.btnCloseYrAll.TabIndex = 5
-        Me.btnCloseYrAll.Text = ">>"
-        Me.btnCloseYrAll.UseVisualStyleBackColor = True
-        Me.btnCloseYrAll.Visible = False
         '
         'lstboxClosedYears
         '
@@ -2099,10 +2075,8 @@ Partial Class frmMain
     Friend WithEvents chkExcelDelRows As System.Windows.Forms.CheckBox
     Friend WithEvents Label36 As System.Windows.Forms.Label
     Friend WithEvents Timer_Import As Timer
-    Friend WithEvents btnOpenYrAll As Button
     Friend WithEvents btnCloseYr As Button
     Friend WithEvents btnOpenYr As Button
-    Friend WithEvents btnCloseYrAll As Button
     Friend WithEvents lstboxClosedYears As ListBox
     Friend WithEvents lstboxOpenYears As ListBox
     Friend WithEvents Label11 As Label

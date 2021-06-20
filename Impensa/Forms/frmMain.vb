@@ -1,9 +1,6 @@
 ﻿#Region "References"
 Imports System.Data.SqlClient
 Imports System.Windows.Forms.DataVisualization.Charting
-Imports System.Collections.Generic
-Imports System.Linq
-Imports System.Text
 Imports System.Text.RegularExpressions
 Imports System.IO
 Imports System.Globalization
@@ -343,11 +340,6 @@ Public Class frmMain
                     BgWorker_Email.RunWorkerAsync()
                 End If
             End If
-
-            'If Not String.IsNullOrEmpty(CSVBackupPath) Then
-            '    Call CreateMonthlyCSV()
-            '    Call CreateAdhocCSV()
-            'End If
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
@@ -781,7 +773,7 @@ Public Class frmMain
             Dim CategoryColIndex As Integer = DataGridExpSumm.Columns("Category").Index
             Dim TotalColIndex As Integer = DataGridExpSumm.Columns("Total").Index
             Dim ApplyColorFormatting As Boolean
-           
+
 
             If dtBudget.Rows.Count > 0 Then
                 For ColId As Integer = CategoryColIndex + 1 To TotalColIndex - 1
@@ -1145,19 +1137,9 @@ Public Class frmMain
                 Params.DbType = DbType.Date
                 Comm.Parameters.Add(Params)
 
-                Params = New SqlParameter("@P_IsYrClosed", True)
-                Params.Direction = ParameterDirection.Input
-                Params.DbType = DbType.Boolean
-                Comm.Parameters.Add(Params)
-
                 da = New SqlDataAdapter(Comm)
                 da.Fill(dt)
             End Using
-
-            'cmbSelectYear.DataSource = dt
-            'cmbSelectYear.DisplayMember = dt.Columns(0).ToString
-            'cmbSelectYear.ValueMember = dt.Columns(0).ToString
-            'cmbSelectYear.SelectedIndex = -1
 
             lstboxOpenYears.Items.Clear()
             lstboxClosedYears.Items.Clear()
@@ -1166,6 +1148,8 @@ Public Class frmMain
             Dim closedYearsList = dt.AsEnumerable.Where(Function(x) x.Field(Of Boolean)("IsYrClosed").Equals(True)).Select(Function(x) x.Item("Year#").ToString).ToList()
             Dim openYearsList = dt.AsEnumerable.Where(Function(x) x.Field(Of Boolean)("IsYrClosed").Equals(False)).Select(Function(x) x.Item("Year#").ToString).ToList
 
+            openYearsList.Add(Date.Now.Year.ToString)
+
             If (Not closedYearsList Is Nothing AndAlso closedYearsList.Count > 0) Then
                 lstboxClosedYears.Items.AddRange(closedYearsList.ToArray)
             End If
@@ -1173,7 +1157,6 @@ Public Class frmMain
             If (Not openYearsList Is Nothing AndAlso openYearsList.Count > 0) Then
                 lstboxOpenYears.Items.AddRange(openYearsList.ToArray)
             End If
-
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
             ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
@@ -1655,10 +1638,6 @@ Public Class frmMain
             If Not String.IsNullOrEmpty(txtCSVBackupPath.Text) Then
                 CSVBackupPath = txtCSVBackupPath.Text
             End If
-            'If rbCloseYr.Checked Or rbOpenYr.Checked Then
-            '    Call SaveEOY()
-            '    cmbSelectYear.SelectedItem = Nothing
-            'End If
 
             Call SaveEOY()
 
@@ -1674,7 +1653,6 @@ Public Class frmMain
                 Call ResetFilters(P_bCallRefreshGrids:=False)
             End If
 
-            'Call StartImportService()
             SaveValidationFailed = False
             Return True
         Catch ex As Exception
@@ -1775,29 +1753,20 @@ Public Class frmMain
     End Function '16
 
     Private Sub SaveEOY()
-        Dim StrCommand As String = ""
-
         Try
-            If Not cmbSelectYear.SelectedValue Is Nothing Then
+            Dim closedYearsStr = "'" & String.Join("','", lstboxClosedYears.Items.Cast(Of String).ToList) & "'"
+            Dim openYearStr = "'" & String.Join("','", lstboxOpenYears.Items.Cast(Of String).ToList) & "'"
 
-                StrCommand = "UPDATE tbl_EOY SET IsYrClosed = " & IIf(rbCloseYr.Checked, 1, 0) & " WHERE Year# = " & cmbSelectYear.SelectedValue
+            Dim StrCommandClosedYrs As String = "UPDATE tbl_EOY SET IsYrClosed = 1 WHERE Year# IN (" & closedYearsStr & ")"
+            Dim StrCommandOpenYrs As String = "UPDATE tbl_EOY SET IsYrClosed = 0 WHERE Year# IN (" & openYearStr & ")"
 
-                Using Connection = GetConnection()
-                    Cmd = New SqlCommand(StrCommand, Connection)
-                    Cmd.ExecuteNonQuery()
+            Using Connection = GetConnection()
+                Cmd = New SqlCommand(StrCommandClosedYrs, Connection)
+                Cmd.ExecuteNonQuery()
 
-                    If rbCloseYr.Checked Then
-                        StrCommand = "SELECT E.dtDate [Date], C.sCategory, E.dAmount [Amount], E.sNotes [Notes] FROM tbl_ExpenditureDet E INNER JOIN tbl_CategoryList C ON C.hKey = E.iCategory AND C.IsObsolete = 0 WHERE YEAR (dtDate) = " & cmbSelectYear.SelectedValue
-                        da = New SqlDataAdapter(StrCommand, Connection)
-                        dt = New DataTable
-                        da.Fill(dt)
-
-                        If dt.Rows.Count > 0 Then
-                            Call CreateCSV(dt, "Data_" & cmbSelectYear.SelectedValue & "Y#.csv", CSVCreationFrequency.Annually)
-                        End If
-                    End If
-                End Using
-            End If
+                Cmd = New SqlCommand(StrCommandOpenYrs, Connection)
+                Cmd.ExecuteNonQuery()
+            End Using
 
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
@@ -1869,7 +1838,6 @@ Public Class frmMain
 #Region "CSV"
     Private Sub CreateCSV(ByVal P_dt As DataTable, ByVal P_FileName As String, ByVal P_Frequency As CSVCreationFrequency)
         Dim CSVHeader As String = "Date, Category, Amount, Notes"
-        Dim CurrentLine As String = ""
         Dim FilePath As String = CSVBackupPath + "\" + P_FileName
 
         Try
@@ -1891,7 +1859,7 @@ Public Class frmMain
                 Writer.WriteLine(CSVHeader)
             Else
                 While Not Reader.EndOfStream
-                    CurrentLine = Reader.ReadLine.ToString
+                    Dim CurrentLine As String = Reader.ReadLine.ToString
                     If CurrentLine.ToString.Contains(CSVHeader) Then
                         Reader.Close()
                         Writer = New StreamWriter(FilePath, True)
@@ -1917,9 +1885,8 @@ Public Class frmMain
     End Sub '28
 
     Private Sub CreateMonthlyCSV()
-        Dim StrCommand As String = ""
+        Dim StrCommand As String = "SELECT E.dtDate [Date], C.sCategory, E.dAmount [Amount], E.sNotes [Notes] FROM tbl_ExpenditureDet E INNER JOIN tbl_CategoryList C ON C.hKey = E.iCategory WHERE MONTH(dtDate) = " & (DatePart(DateInterval.Month, DateTime.Today) - 1)
 
-        StrCommand = "SELECT E.dtDate [Date], C.sCategory, E.dAmount [Amount], E.sNotes [Notes] FROM tbl_ExpenditureDet E INNER JOIN tbl_CategoryList C ON C.hKey = E.iCategory WHERE MONTH(dtDate) = " & (DatePart(DateInterval.Month, DateTime.Today) - 1)
         Using Connection = GetConnection()
             da = New SqlDataAdapter(StrCommand, Connection)
             dt = New DataTable
@@ -2134,8 +2101,6 @@ Public Class frmMain
             End If
         End If
         MyBase.SetVisibleCore(value)
-
-        'Call StartImportService()
     End Sub
 
     Private Sub GetConnectionInfo()
@@ -2935,7 +2900,7 @@ Public Class frmMain
             If (DataGridExpDet("hKey", e.RowIndex).Value Is DBNull.Value And Not DataGridExpDet("Date", e.RowIndex).EditedFormattedValue Is DBNull.Value And Not String.IsNullOrEmpty(DataGridExpDet("iCategory", e.RowIndex).EditedFormattedValue) And Not String.IsNullOrEmpty(DataGridExpDet("Amount", e.RowIndex).EditedFormattedValue)) Then
                 dr = dtDetailGrid.NewRow
 
-                dr("Date") = Microsoft.VisualBasic.Strings.Replace(DateTime.Today, "-", "/")
+                dr("Date") = Replace(DateTime.Today, "-", "/")
                 dr("IsReadOnly") = 0
                 dr("IsDummy") = 1
                 dr("IsDummyRowAdded") = 0
@@ -3067,8 +3032,8 @@ Public Class frmMain
                         If SearchStr Is Nothing Then
                             If Not (SummaryType = SummaryTypes.RunningTotals Or SummaryType = SummaryTypes.AllInOne) Then
                                 DataGridExpSumm.Cursor = Cursors.Hand
-                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine & _
-                                    "Forecast Amount: " & Format(dtGridSummaryAll.Select("Category = '" & DataGridExpSumm("Category", e.RowIndex).Value & "'").First.Item(DataGridExpSumm.Columns(e.ColumnIndex).Name & "_BDG"), "#,##0.00") & vbNewLine & _
+                                DataGridExpSumm(e.ColumnIndex, e.RowIndex).ToolTipText = "Double click this cell to get the detailed breakdown of this summary." & vbNewLine &
+                                    "Forecast Amount: " & Format(dtGridSummaryAll.Select("Category = '" & DataGridExpSumm("Category", e.RowIndex).Value & "'").First.Item(DataGridExpSumm.Columns(e.ColumnIndex).Name & "_BDG"), "#,##0.00") & vbNewLine &
                                     "Count: " & dtGridSummaryAll.Select("Category = '" & DataGridExpSumm("Category", e.RowIndex).Value & "'").First.Item(DataGridExpSumm.Columns(e.ColumnIndex).Name & "_CNT")
                             End If
                         End If
@@ -3198,8 +3163,8 @@ Public Class frmMain
     Private Sub txtSearch_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtSearch.Click
 
         If ShowSearchAlert Then
-            ImpensaAlert("""Search"" function may not show itemised amounts for older data which doesn’t have" & _
-                         " notes in the form ""Item1(Amount1), Item2(Amount2),...ItemN(AmountN)"" format. For older data, aggregate amount" & _
+            ImpensaAlert("""Search"" function may not show itemised amounts for older data which doesn’t have" &
+                         " notes in the form ""Item1(Amount1), Item2(Amount2),...ItemN(AmountN)"" format. For older data, aggregate amount" &
                          " of all the items mentioned together will be shown instead.", MsgBoxStyle.OkOnly + MsgBoxStyle.Information)
             ShowSearchAlert = False
         End If
@@ -3318,12 +3283,12 @@ Public Class frmMain
         SelectChartCombo = cmbSelectChart.SelectedItem
         PopulateChartTypeCombo(SelectChartCombo)
 
-        btnGo.Enabled = True
+        btnGo.Enabled = False
         Label8.Visible = True
         chkLBYears.Enabled = True
 
-        If cmbSelectChart.SelectedIndex = -1 Then
-            btnGo.Enabled = False
+        If cmbSelectChart.SelectedIndex <> -1 AndAlso cmbChartType.SelectedIndex <> -1 AndAlso cmbListing.SelectedIndex <> -1 Then
+            btnGo.Enabled = True
         End If
 
         cmbListing.Enabled = True
@@ -3378,20 +3343,17 @@ Public Class frmMain
 
     Private Sub cmbChartType_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbChartType.SelectedIndexChanged
         ChartTypeCombo = cmbChartType.SelectedItem
-        If cmbChartType.SelectedIndex = -1 Then
-            btnGo.Enabled = False
-        Else
+        btnGo.Enabled = False
+        If cmbSelectChart.SelectedIndex <> -1 AndAlso cmbChartType.SelectedIndex <> -1 AndAlso cmbListing.SelectedIndex <> -1 Then
             btnGo.Enabled = True
         End If
     End Sub
 
     Private Sub cmbListing_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbListing.SelectedIndexChanged
         ListingCombo = cmbListing.SelectedItem
-
+        btnGo.Enabled = False
         If cmbListing.Enabled Then
-            If cmbListing.SelectedIndex = -1 Then
-                btnGo.Enabled = False
-            Else
+            If cmbSelectChart.SelectedIndex <> -1 AndAlso cmbChartType.SelectedIndex <> -1 AndAlso cmbListing.SelectedIndex <> -1 Then
                 btnGo.Enabled = True
             End If
         End If
@@ -3406,14 +3368,6 @@ Public Class frmMain
             Call PopulateThresholdGrid()
         End If
     End Sub
-
-    'Private Sub cmbSelectYear_DropDown(ByVal sender As Object, ByVal e As System.EventArgs)
-    '    If rbCloseYr.Checked Then
-    '        Call PopulateSelectYearCombo(False)
-    '    ElseIf rbOpenYr.Checked Then
-    '        Call PopulateSelectYearCombo(True)
-    '    End If
-    'End Sub
 
     Private Sub cmbSummaryType_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSummaryType.SelectionChangeCommitted
         SummaryType = cmbSummaryType.SelectedItem.key
@@ -3525,20 +3479,7 @@ Public Class frmMain
     End Sub
 #End Region
 
-#Region "CheckBox And Radio Button Events"
-
-    'Private Sub rbCloseYr_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-    '    If rbCloseYr.Checked Then
-    '        cmbSelectYear.Enabled = True
-    '    End If
-    'End Sub
-
-    'Private Sub rdOpenYr_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs)
-    '    If rbOpenYr.Checked Then
-    '        cmbSelectYear.Enabled = True
-    '    End If
-    'End Sub
-
+#Region "CheckBox And ListBox Events"
     Private Sub chkSort_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkSort.CheckedChanged
         If chkSort.Checked Then
             cmbSort.Enabled = True
@@ -3571,6 +3512,27 @@ Public Class frmMain
     Private Sub chkExcelDelRows_MouseHover(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkExcelDelRows.MouseHover
         tt = New ToolTip
         tt.SetToolTip(sender, "This will allow application to delete already successfully imported records older than 7 days.")
+    End Sub
+
+    Private Sub btnCloseYr_Click(sender As Object, e As EventArgs) Handles btnCloseYr.Click
+        If (lstboxOpenYears.SelectedItems.Count > 0) Then
+            For Each item In lstboxOpenYears.SelectedItems.Cast(Of String).ToList
+                If (item.Equals(Date.Now.Year.ToString)) Then
+                    Continue For
+                End If
+                lstboxOpenYears.Items.Remove(item)
+                lstboxClosedYears.Items.Add(item)
+            Next
+        End If
+    End Sub
+
+    Private Sub btnOpenYr_Click(sender As Object, e As EventArgs) Handles btnOpenYr.Click
+        If (lstboxClosedYears.SelectedItems.Count > 0) Then
+            For Each item In lstboxClosedYears.SelectedItems.Cast(Of String).ToList
+                lstboxClosedYears.Items.Remove(item)
+                lstboxOpenYears.Items.Add(item)
+            Next
+        End If
     End Sub
 #End Region
 
@@ -3748,8 +3710,6 @@ Public Class frmMain
                 Panel5.Visible = True
                 HighlightAmt = IIf(SummaryType = SummaryTypes.Monthly, HighlightSummMonthly, HighlightSummYearly)
                 pnlHighlight.Visible = True
-                'btnSave.Enabled = False
-                'btnExport.Enabled = False
                 tslblRecdCnt.Text = "Total Records Displayed: #" & IIf((DataGridExpSumm.Rows.Count - 1) < 0, 0, (DataGridExpSumm.Rows.Count - 1))
                 tslblRecdCnt.Visible = True
                 tslblSeperator2.Visible = True
@@ -3761,25 +3721,17 @@ Public Class frmMain
                 If InStr("Chart MTD, Chart YTD, Chart BKSDTD", SelectChartCombo) > 0 Then SelectChartCombo = Nothing
 
                 Call BuildYearsListString()
-                If cmbSelectChart.SelectedIndex <> -1 AndAlso cmbListing.SelectedIndex <> -1 Then
+                If cmbSelectChart.SelectedIndex <> -1 AndAlso cmbListing.SelectedIndex <> -1 AndAlso cmbListing.SelectedIndex <> -1 Then
                     btnGo.Enabled = True
                 End If
 
-                chkPeriodLevel.Text = "Period: " & CDate(dtpFrom).Day.ToString.PadLeft(2, "0") & "/" & MonthName(Month(dtpFrom)).ToString.Substring(0, 3) & " - " & _
+                chkPeriodLevel.Text = "Period: " & CDate(dtpFrom).Day.ToString.PadLeft(2, "0") & "/" & MonthName(Month(dtpFrom)).ToString.Substring(0, 3) & " - " &
                                                    CDate(dtpTo).Day.ToString.PadLeft(2, "0") & "/" & MonthName(Month(dtpTo)).ToString.Substring(0, 3)
-                'btnSave.Enabled = False
 
-                If CallSearchFunction = True Then
-                    Call SetDefaultPropValue(True)
-                End If
+                If CallSearchFunction = True Then Call SetDefaultPropValue(True)
             End If
 
-            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSettings) Then
-                'rbOpenYr.Checked = False
-                'rbCloseYr.Checked = False
-                'cmbSelectYear.Enabled = False
-                btnSave.Enabled = True
-            End If
+            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSettings) Then btnSave.Enabled = True
 
             If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
                 Call FormatDataGridThrLimits()
@@ -3906,10 +3858,6 @@ Public Class frmMain
     End Sub
 
     Private Sub BGWorker_DoWork(ByVal sender As Object, ByVal e As System.ComponentModel.DoWorkEventArgs) Handles BGWorker.DoWork
-        'Do While Not File.GetLastWriteTime(CSVBackupPath + "\Impensa.xlsm").ToString = ImportFileTimeStamp
-        'Call DataImport()
-        'Loop
-
         If Not File.GetLastWriteTime(CSVBackupPath + "\Impensa.xlsm").ToString = ImportFileTimeStamp Then
             Call DataImport()
         End If
@@ -3950,7 +3898,7 @@ Public Class frmMain
         If Dgv.CurrentCell.ColumnIndex = ColIndex Then
             If Not (Char.IsDigit(CChar(CStr(e.KeyChar))) = True _
                     Or (e.KeyChar = "." And Not (DgvTextBox.Text.Contains(".") Or DgvTextBox.Text.Length = 0)) _
-                    Or (Dgv.Name = "DataGridExpDet" And e.KeyChar = "-" And Not (DgvTextBox.Text.Contains("-") Or DgvTextBox.SelectionStart > 0)) _
+                    Or (Dgv.Name = "DataGridExpDet" And e.KeyChar = "-" And Not (DgvTextBox.Text.Contains("-") Or DgvTextBox.SelectionStart > 0))
                     ) Then
                 e.Handled = True
             Else
@@ -3979,42 +3927,6 @@ Public Class frmMain
             If CInt(CStr(e.KeyChar)) = 0 Then
                 e.Handled = True
             End If
-        End If
-    End Sub
-
-    'Private Sub btnCloseYrAll_Click(sender As Object, e As EventArgs) Handles btnCloseYrAll.Click
-    '    If (lstboxOpenYears.Items.Count > 0) Then
-    '        For Each item In lstboxOpenYears.Items.Cast(Of String).ToList
-    '            lstboxOpenYears.Items.Remove(item)
-    '            lstboxClosedYears.Items.Add(item)
-    '        Next
-    '    End If
-    'End Sub
-
-    'Private Sub btnOpenYrAll_Click(sender As Object, e As EventArgs) Handles btnOpenYrAll.Click
-    '    If (lstboxClosedYears.Items.Count > 0) Then
-    '        For Each item In lstboxClosedYears.Items.Cast(Of String).ToList
-    '            lstboxClosedYears.Items.Remove(item)
-    '            lstboxOpenYears.Items.Add(item)
-    '        Next
-    '    End If
-    'End Sub
-
-    Private Sub btnCloseYr_Click(sender As Object, e As EventArgs) Handles btnCloseYr.Click
-        If (lstboxOpenYears.SelectedItems.Count > 0) Then
-            For Each item In lstboxOpenYears.SelectedItems.Cast(Of String).ToList
-                lstboxOpenYears.Items.Remove(item)
-                lstboxClosedYears.Items.Add(item)
-            Next
-        End If
-    End Sub
-
-    Private Sub btnOpenYr_Click(sender As Object, e As EventArgs) Handles btnOpenYr.Click
-        If (lstboxClosedYears.SelectedItems.Count > 0) Then
-            For Each item In lstboxClosedYears.SelectedItems.Cast(Of String).ToList
-                lstboxClosedYears.Items.Remove(item)
-                lstboxOpenYears.Items.Add(item)
-            Next
         End If
     End Sub
 #End Region
