@@ -14,6 +14,7 @@ Imports System.Net.Mail
 Public Class frmMain
     Dim dtEmail As DataTable
     Dim oldAmountCellValue As Decimal = 0.0
+    Dim oldForecastAmountCellValue As Decimal = 0.0
 
 #Region "Enums"
     Private Enum CSVCreationFrequency
@@ -1051,11 +1052,19 @@ Public Class frmMain
 
     Private Sub SaveThresholds()
         Dim dc As SqlCommandBuilder
+
         Try
             If DataGridThrLimits.DataSource Is Nothing Then Exit Sub
 
             dt = New DataTable
             dt = DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges
+
+            For Each dr As DataRow In dt.Rows
+                If (New List(Of String) From {"TOTAL"}).Contains(dr("Category")) Then
+                    dr.AcceptChanges()
+                End If
+            Next
+
             If Not dt Is Nothing Then
                 Using Connection = GetConnection()
 
@@ -3096,11 +3105,47 @@ Public Class frmMain
             If DataGridThrLimits("IsReadOnly", e.RowIndex).Value Then
                 e.Cancel = True
             End If
+
+            'To trigger Change in Total and Grand Total
+            If DataGridThrLimits.CurrentCell.ColumnIndex = DataGridThrLimits.Columns("TAmount").Index Then
+                If DataGridThrLimits.CurrentCell.Value Is DBNull.Value Then
+                    oldForecastAmountCellValue = 0D
+                Else
+                    oldForecastAmountCellValue = Convert.ToDecimal(DataGridThrLimits.CurrentCell.Value)
+                End If
+
+            End If
         End If
     End Sub
 
     Private Sub DataGridThrLimits_CellEndEdit(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellEventArgs) Handles DataGridThrLimits.CellEndEdit
+        Dim currentAmountCellValue As Decimal = 0D
+
         DgvTextBox = Nothing
+
+        'Trigger Change in Total : START
+        If DataGridThrLimits.CurrentCell.ColumnIndex = DataGridThrLimits.Columns("TAmount").Index AndAlso Not DataGridThrLimits.CurrentCell.Value Is DBNull.Value Then
+            currentAmountCellValue = Convert.ToDecimal(DataGridThrLimits.CurrentCell.Value)
+        End If
+
+        If DataGridThrLimits.CurrentCell.ColumnIndex = DataGridThrLimits.Columns("TAmount").Index AndAlso Not oldForecastAmountCellValue = currentAmountCellValue Then
+            Dim totalRow = DataGridThrLimits.Rows.Cast(Of DataGridViewRow).Where(Function(x) (x.Cells("Category").Value.Equals("TOTAL"))).FirstOrDefault()
+            Dim changedAmountDiff = currentAmountCellValue - oldForecastAmountCellValue
+
+            DataGridThrLimits("Difference", e.RowIndex).Value = Math.Abs(DataGridThrLimits("SAmount", e.RowIndex).Value - DataGridThrLimits("TAmount", e.RowIndex).Value)
+            DataGridThrLimits("DifferenceSign", e.RowIndex).Value = DataGridThrLimits("SAmount", e.RowIndex).Value - DataGridThrLimits("TAmount", e.RowIndex).Value
+
+            If DataGridThrLimits("DifferenceSign", e.RowIndex).Value < 0 Then
+                DataGridThrLimits("Difference", e.RowIndex).Style.ForeColor = Color.Green
+            ElseIf DataGridThrLimits("DifferenceSign", e.RowIndex).Value > 0 Then
+                DataGridThrLimits("Difference", e.RowIndex).Style.ForeColor = Color.Red
+            End If
+
+            If Not DataGridThrLimits("hKey", e.RowIndex).Value Is DBNull.Value Then
+                DataGridThrLimits("TAmount", totalRow.Index).Value += changedAmountDiff
+            End If
+        End If
+        'END
     End Sub
 
     Private Sub DataGridThrLimits_EditingControlShowing(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewEditingControlShowingEventArgs) Handles DataGridThrLimits.EditingControlShowing
