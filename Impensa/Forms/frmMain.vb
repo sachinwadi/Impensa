@@ -3135,14 +3135,31 @@ Public Class frmMain
             DataGridThrLimits("Difference", e.RowIndex).Value = Math.Abs(DataGridThrLimits("SAmount", e.RowIndex).Value - DataGridThrLimits("TAmount", e.RowIndex).Value)
             DataGridThrLimits("DifferenceSign", e.RowIndex).Value = DataGridThrLimits("SAmount", e.RowIndex).Value - DataGridThrLimits("TAmount", e.RowIndex).Value
 
+
             If DataGridThrLimits("DifferenceSign", e.RowIndex).Value < 0 Then
                 DataGridThrLimits("Difference", e.RowIndex).Style.ForeColor = Color.Green
+                DataGridThrLimits("Category", e.RowIndex).Style.ForeColor = Color.Green
             ElseIf DataGridThrLimits("DifferenceSign", e.RowIndex).Value > 0 Then
                 DataGridThrLimits("Difference", e.RowIndex).Style.ForeColor = Color.Red
+                DataGridThrLimits("Category", e.RowIndex).Style.ForeColor = Color.Red
+            Else
+                DataGridThrLimits("Difference", e.RowIndex).Style.ForeColor = Color.Orange
+                DataGridThrLimits("Category", e.RowIndex).Style.ForeColor = Color.Orange
             End If
 
             If Not DataGridThrLimits("hKey", e.RowIndex).Value Is DBNull.Value Then
                 DataGridThrLimits("TAmount", totalRow.Index).Value += changedAmountDiff
+            End If
+
+            DataGridThrLimits("Difference", totalRow.Index).Value = Math.Abs(DataGridThrLimits("SAmount", totalRow.Index).Value - DataGridThrLimits("TAmount", totalRow.Index).Value)
+            DataGridThrLimits("DifferenceSign", totalRow.Index).Value = DataGridThrLimits("SAmount", totalRow.Index).Value - DataGridThrLimits("TAmount", totalRow.Index).Value
+
+            If DataGridThrLimits("DifferenceSign", totalRow.Index).Value < 0 Then
+                DataGridThrLimits("Difference", totalRow.Index).Style.ForeColor = Color.Green
+            ElseIf DataGridThrLimits("DifferenceSign", totalRow.Index).Value > 0 Then
+                DataGridThrLimits("Difference", totalRow.Index).Style.ForeColor = Color.Red
+            Else
+                DataGridThrLimits("Difference", totalRow.Index).Style.ForeColor = Color.Orange
             End If
         End If
         'END
