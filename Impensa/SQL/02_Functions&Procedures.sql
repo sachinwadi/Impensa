@@ -1065,7 +1065,7 @@ AS
 			  FROM X) Y
       ORDER  BY CASE WHEN Y.items IS NULL THEN 'zzz' 
 					 ELSE Y.items 
-				 END, Y.Sort, Y.sCategory, Y.dtDateOrderBy
+				 END, Y.Sort, Y.dtDateOrderBy, Y.sCategory
 END
 GO
 /*############################################################################################################################################################*/

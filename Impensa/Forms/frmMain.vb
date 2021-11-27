@@ -2147,7 +2147,8 @@ Public Class frmMain
                 Reader.Read()
                 tslblMTD.Text = "MTD Total: Rs. " & Format(Reader.GetValue(0), "#,##0.00")
                 tslblYTD.Text = "YTD Total: Rs. " & Format(Reader.GetValue(1), "#,##0.00")
-                tslblBKSDTD.Text = "(" & CDate(RecordKeepingStartDate).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) & " - " & Today.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) & ") Total: Rs. " & Format(Reader.GetValue(2), "#,##0.00")
+                'tslblBKSDTD.Text = "(" & CDate(RecordKeepingStartDate).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) & " - " & Today.Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) & ") Total: Rs. " & Format(Reader.GetValue(2), "#,##0.00")
+                tslblBKSDTD.Text = "ITD Total: Rs. " & Format(Reader.GetValue(2), "#,##0.00")
             End If
             Reader.Close()
         End Using
