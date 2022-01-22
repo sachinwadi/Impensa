@@ -120,7 +120,7 @@ BEGIN
 	DECLARE @SubString VARCHAR(10),
 			@Amount MONEY
 
-	IF (ISNULL(@P_SearchStr, '') = '' OR CHARINDEX(',', @P_sNotes) = 0 OR CHARINDEX('(', @P_sNotes) = 0)
+	IF (ISNULL(@P_SearchStr, '') = '' OR CHARINDEX('(', @P_sNotes) = 0)
 		RETURN @P_dAmount
 	ELSE 
 	BEGIN
@@ -191,9 +191,9 @@ BEGIN
 				 WHEN (X.hKey = 999999999 AND X.dtDate = '2100-01-01') THEN 'GRAND TOTAL'
 				 ELSE CONVERT(VARCHAR,X.dtDate,103) 
 			END [Date], 
-			X.dAmount Amount, 
 			X.iCategory, 
-			X.sCategory, 
+			X.sCategory,
+			X.dAmount Amount, 			
 			X.sNotes Notes, 
 			X.IsReadOnly, 
 			X.IsDummy, 
@@ -1056,7 +1056,7 @@ AS
 	SELECT	Y.Sort, Y.hKey, 
 			CASE WHEN (Y.Sort = 3 AND Y.hKey IS NULL AND Y.dtDate = 'TOTAL' AND Y.Notes IS NULL) THEN 'GRAND TOTAL' 
 				 ELSE Y.dtDate 
-			 END [Date], Y.iCategory, Y.SearchAmt [Amount], Y.Notes, Y.IsReadOnly, NULL [bDelete], 0 [IsDummy], 0 [IsDummyRowAdded], Y.CategoryName [CategoryName]
+			 END [Date], Y.iCategory, Y.sCategory, Y.SearchAmt [Amount], Y.Notes, Y.IsReadOnly, NULL [bDelete], 0 [IsDummy], 0 [IsDummyRowAdded], Y.CategoryName [CategoryName]
 	  FROM (SELECT X.Sort, X.hKey, X.dtDate, X.iCategory, X.SearchAmt,
 				   CASE WHEN X.Sort = 3 THEN (SELECT 'Count = '+ CONVERT(VARCHAR,MAX(Y.RowNum)) FROM X Y WHERE Y.items  = X.items GROUP BY Y.items) 
 						ELSE X.sNotes 

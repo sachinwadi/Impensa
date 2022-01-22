@@ -179,8 +179,8 @@ Public Class frmMain
             DataGridExpDet.Columns("CategoryName").Visible = False
             DataGridExpDet.Columns("DateOriginal").Visible = False
             DataGridExpDet.Columns("bDelete").DisplayIndex = 0
-            DataGridExpDet.Columns("iCategory").DisplayIndex = 3
-            DataGridExpDet.Columns("Notes").DisplayIndex = 5
+            'DataGridExpDet.Columns("iCategory").DisplayIndex = 3
+            'DataGridExpDet.Columns("Notes").DisplayIndex = 5
 
             DataGridExpDet.Columns("Amount").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
             DataGridExpDet.Columns("Amount").DefaultCellStyle.Format = "#,##0.00"
@@ -395,7 +395,7 @@ Public Class frmMain
             DataGridExpDet.Columns("IsDummyRowAdded").Visible = False
             DataGridExpDet.Columns("IsReadOnly").Visible = False
             DataGridExpDet.Columns("CategoryName").Visible = False
-
+            DataGridExpDet.Columns("sCategory").Visible = False
             DataGridExpDet.Columns("bDelete").DisplayIndex = 0
             DataGridExpDet.Columns("iCategory").DisplayIndex = 4
             DataGridExpDet.Columns("Amount").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
@@ -405,6 +405,7 @@ Public Class frmMain
             DataGridExpDet.Columns("Amount").HeaderText = "Amount (Rs.)"
             DataGridExpDet.Columns("Amount").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight
             DataGridExpDet.Columns("Notes").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleLeft
+            DataGridExpDet.Columns("sCategory").HeaderText = "Category"
 
             Call FormatSearchResults()
 
