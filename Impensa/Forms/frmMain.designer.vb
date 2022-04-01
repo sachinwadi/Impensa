@@ -24,7 +24,7 @@ Partial Class frmMain
     Private Sub InitializeComponent()
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
-        Dim Legend2 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
+        Dim Legend4 As System.Windows.Forms.DataVisualization.Charting.Legend = New System.Windows.Forms.DataVisualization.Charting.Legend()
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.cmbPeriod = New System.Windows.Forms.ComboBox()
         Me.Label18 = New System.Windows.Forms.Label()
@@ -170,6 +170,7 @@ Partial Class frmMain
         Me.btnExport = New System.Windows.Forms.Button()
         Me.BgWorker_Email = New System.ComponentModel.BackgroundWorker()
         Me.Timer_Import = New System.Windows.Forms.Timer(Me.components)
+        Me.btnManualImport = New System.Windows.Forms.Button()
         Me.Panel1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.TabCategories.SuspendLayout()
@@ -255,7 +256,7 @@ Partial Class frmMain
         'LinkLabel2
         '
         Me.LinkLabel2.AutoSize = True
-        Me.LinkLabel2.Location = New System.Drawing.Point(110, 669)
+        Me.LinkLabel2.Location = New System.Drawing.Point(104, 669)
         Me.LinkLabel2.Margin = New System.Windows.Forms.Padding(4, 0, 4, 0)
         Me.LinkLabel2.Name = "LinkLabel2"
         Me.LinkLabel2.Size = New System.Drawing.Size(99, 20)
@@ -432,9 +433,9 @@ Partial Class frmMain
         Me.Chart_Analysis.BorderlineColor = System.Drawing.Color.Black
         Me.Chart_Analysis.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid
         Me.Chart_Analysis.Dock = System.Windows.Forms.DockStyle.Fill
-        Legend2.Name = "Legend1"
-        Legend2.TextWrapThreshold = 0
-        Me.Chart_Analysis.Legends.Add(Legend2)
+        Legend4.Name = "Legend1"
+        Legend4.TextWrapThreshold = 0
+        Me.Chart_Analysis.Legends.Add(Legend4)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
         Me.Chart_Analysis.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Chart_Analysis.Name = "Chart_Analysis"
@@ -870,10 +871,10 @@ Partial Class frmMain
         Me.btnSave.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.btnSave.Enabled = False
         Me.btnSave.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnSave.Location = New System.Drawing.Point(314, 711)
+        Me.btnSave.Location = New System.Drawing.Point(314, 705)
         Me.btnSave.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnSave.Name = "btnSave"
-        Me.btnSave.Size = New System.Drawing.Size(248, 35)
+        Me.btnSave.Size = New System.Drawing.Size(248, 46)
         Me.btnSave.TabIndex = 5
         Me.btnSave.Text = "Save"
         Me.btnSave.UseVisualStyleBackColor = True
@@ -1009,7 +1010,7 @@ Partial Class frmMain
         'chkExcelDelRows
         '
         Me.chkExcelDelRows.AutoSize = True
-        Me.chkExcelDelRows.Location = New System.Drawing.Point(6, 55)
+        Me.chkExcelDelRows.Location = New System.Drawing.Point(9, 55)
         Me.chkExcelDelRows.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkExcelDelRows.Name = "chkExcelDelRows"
         Me.chkExcelDelRows.RightToLeft = System.Windows.Forms.RightToLeft.Yes
@@ -1533,12 +1534,12 @@ Partial Class frmMain
         Me.chkShowAllDet.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.chkShowAllDet.AutoSize = True
         Me.chkShowAllDet.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.chkShowAllDet.Location = New System.Drawing.Point(1196, 719)
+        Me.chkShowAllDet.Location = New System.Drawing.Point(1196, 716)
         Me.chkShowAllDet.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.chkShowAllDet.Name = "chkShowAllDet"
-        Me.chkShowAllDet.Size = New System.Drawing.Size(184, 24)
+        Me.chkShowAllDet.Size = New System.Drawing.Size(108, 24)
         Me.chkShowAllDet.TabIndex = 13
-        Me.chkShowAllDet.Text = "Show All Records"
+        Me.chkShowAllDet.Text = "Show All"
         Me.chkShowAllDet.UseVisualStyleBackColor = True
         Me.chkShowAllDet.Visible = False
         '
@@ -1546,7 +1547,7 @@ Partial Class frmMain
         '
         Me.Label20.AutoSize = True
         Me.Label20.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.Label20.Location = New System.Drawing.Point(-2, 18)
+        Me.Label20.Location = New System.Drawing.Point(9, 18)
         Me.Label20.Margin = New System.Windows.Forms.Padding(0)
         Me.Label20.Name = "Label20"
         Me.Label20.Size = New System.Drawing.Size(181, 20)
@@ -1556,7 +1557,7 @@ Partial Class frmMain
         'txtHighlight
         '
         Me.txtHighlight.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtHighlight.Location = New System.Drawing.Point(184, 12)
+        Me.txtHighlight.Location = New System.Drawing.Point(189, 15)
         Me.txtHighlight.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtHighlight.MaxLength = 6
         Me.txtHighlight.Name = "txtHighlight"
@@ -1569,7 +1570,7 @@ Partial Class frmMain
         Me.pnlHighlight.Controls.Add(Me.btnHighlight)
         Me.pnlHighlight.Controls.Add(Me.Label20)
         Me.pnlHighlight.Controls.Add(Me.txtHighlight)
-        Me.pnlHighlight.Location = New System.Drawing.Point(826, 700)
+        Me.pnlHighlight.Location = New System.Drawing.Point(826, 698)
         Me.pnlHighlight.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.pnlHighlight.Name = "pnlHighlight"
         Me.pnlHighlight.Size = New System.Drawing.Size(360, 60)
@@ -1579,10 +1580,10 @@ Partial Class frmMain
         '
         Me.btnHighlight.AutoSize = True
         Me.btnHighlight.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnHighlight.Location = New System.Drawing.Point(297, 11)
+        Me.btnHighlight.Location = New System.Drawing.Point(297, 13)
         Me.btnHighlight.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnHighlight.Name = "btnHighlight"
-        Me.btnHighlight.Size = New System.Drawing.Size(64, 46)
+        Me.btnHighlight.Size = New System.Drawing.Size(43, 30)
         Me.btnHighlight.TabIndex = 4
         Me.btnHighlight.Text = "Go"
         Me.btnHighlight.UseVisualStyleBackColor = True
@@ -1838,10 +1839,10 @@ Partial Class frmMain
         Me.btnExport.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.btnExport.Enabled = False
         Me.btnExport.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnExport.Location = New System.Drawing.Point(570, 711)
+        Me.btnExport.Location = New System.Drawing.Point(570, 705)
         Me.btnExport.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnExport.Name = "btnExport"
-        Me.btnExport.Size = New System.Drawing.Size(248, 35)
+        Me.btnExport.Size = New System.Drawing.Size(248, 46)
         Me.btnExport.TabIndex = 22
         Me.btnExport.Text = "Export To PDF"
         Me.btnExport.UseVisualStyleBackColor = True
@@ -1854,12 +1855,23 @@ Partial Class frmMain
         Me.Timer_Import.Enabled = True
         Me.Timer_Import.Interval = 300000
         '
+        'btnManualImport
+        '
+        Me.btnManualImport.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnManualImport.Image = CType(resources.GetObject("btnManualImport.Image"), System.Drawing.Image)
+        Me.btnManualImport.Location = New System.Drawing.Point(224, 705)
+        Me.btnManualImport.Name = "btnManualImport"
+        Me.btnManualImport.Size = New System.Drawing.Size(84, 46)
+        Me.btnManualImport.TabIndex = 23
+        Me.btnManualImport.UseVisualStyleBackColor = True
+        '
         'frmMain
         '
         Me.AcceptButton = Me.btnSubmit
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1875, 888)
+        Me.Controls.Add(Me.btnManualImport)
         Me.Controls.Add(Me.btnExport)
         Me.Controls.Add(Me.chkShowAllDet)
         Me.Controls.Add(Me.Panel10)
@@ -2081,4 +2093,5 @@ Partial Class frmMain
     Friend WithEvents lstboxOpenYears As ListBox
     Friend WithEvents Label11 As Label
     Friend WithEvents Label10 As Label
+    Friend WithEvents btnManualImport As Button
 End Class

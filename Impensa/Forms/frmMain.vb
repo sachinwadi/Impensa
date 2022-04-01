@@ -179,7 +179,7 @@ Public Class frmMain
             DataGridExpDet.Columns("CategoryName").Visible = False
             DataGridExpDet.Columns("DateOriginal").Visible = False
             DataGridExpDet.Columns("bDelete").DisplayIndex = 0
-            'DataGridExpDet.Columns("iCategory").DisplayIndex = 3
+            DataGridExpDet.Columns("iCategory").DisplayIndex = 3
             'DataGridExpDet.Columns("Notes").DisplayIndex = 5
 
             DataGridExpDet.Columns("Amount").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
@@ -2278,7 +2278,7 @@ Public Class frmMain
         Application.Exit()
     End Sub
 
-    Private Sub DataImport()
+    Private Function DataImport(Optional bManualImport As Boolean = False) As Boolean
         ImportFailedCnt = 0
         LastFailedCnt = 0
         ImportSkippedCnt = 0
@@ -2286,16 +2286,32 @@ Public Class frmMain
         TotalImportCnt = 0
         ImportSucceessAndFailCnt = 0
 
-        Call clsLibrary.DataImport()
+        Try
+            Call clsLibrary.DataImport()
+        Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+            Return False
+        End Try
 
-        If ImportSucceessAndFailCnt > 0 Then
-            NotifyIcon.BalloonTipText = "Impensa.xlms imported successfully." & vbCrLf & TotalImportCnt & " Records Found." & vbCrLf &
+        Dim ImportMessage As String = "Impensa.xlms imported successfully." & vbCrLf & TotalImportCnt & " Records Found." & vbCrLf &
                                         "IMPORT STATUS: Success: " & ImportSucceessCnt & " | " & "Failed: " & ImportFailedCnt &
                                         " | " & "Skipped: " & ImportSkippedCnt
 
-            NotifyIcon.ShowBalloonTip(100)
+        If ImportSucceessAndFailCnt > 0 Then
+            If Not bManualImport Then
+                NotifyIcon.BalloonTipText = ImportMessage
+                NotifyIcon.ShowBalloonTip(100)
+            Else
+                ImpensaAlert(ImportMessage, MsgBoxStyle.Information)
+            End If
+            Return True
+        ElseIf bManualImport Then
+            ImpensaAlert("Nothing to import.", MsgBoxStyle.Information)
         End If
-    End Sub
+
+        Return False
+    End Function
 
     Private Sub PopulateUnpaidBillsCurrentMonth()
         Try
@@ -2725,6 +2741,34 @@ Public Class frmMain
         ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
             Call ExportGridToPDF(DataGridThrLimits)
         End If
+    End Sub
+
+    Private Sub btnManualImport_MouseHover(sender As Object, e As EventArgs) Handles btnManualImport.MouseHover
+        tt = New ToolTip()
+        tt.SetToolTip(sender, "Import Records")
+    End Sub
+
+    Private Sub btnManualImport_Click(sender As Object, e As EventArgs) Handles btnManualImport.Click
+        Try
+            If Not File.GetLastWriteTime(CSVBackupPath + "\Impensa.xlsm").ToString = ImportFileTimeStamp Then
+                Panel5.BringToFront()
+                Panel5.Visible = True
+                Label15.Text = "Import is in progress..."
+                Panel5.Refresh()
+
+                If DataImport(True) Then
+                    Call RefreshGrids()
+                End If
+            Else
+                ImpensaAlert("Nothing to import.", MsgBoxStyle.Information)
+            End If
+        Catch ex As Exception
+            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
+            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+        Finally
+            Panel5.SendToBack()
+            Panel5.Visible = False
+        End Try
     End Sub
 #End Region
 
@@ -3995,4 +4039,6 @@ Public Class frmMain
     End Sub
 #End Region
 #End Region
+
+
 End Class
