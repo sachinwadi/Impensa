@@ -1733,6 +1733,9 @@ Public Class frmMain
                             dt = New DataTable
                             da.Fill(dt)
 
+                            lstboxOpenYears.Items.Remove(OpenYrs(i))
+                            lstboxClosedYears.Items.Add(OpenYrs(i))
+
                             If dt.Rows.Count > 0 Then
                                 Call CreateCSV(dt, "Data_" & OpenYrs(i) & "Y#.csv", CSVCreationFrequency.Annually)
                             End If
