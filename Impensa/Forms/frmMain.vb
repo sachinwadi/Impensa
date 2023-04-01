@@ -2100,21 +2100,21 @@ Public Class frmMain
 #End Region
 
 #Region "OtherMethods"
-    Protected Overrides Sub SetVisibleCore(ByVal value As Boolean)
-        Dim Args As String() = Environment.GetCommandLineArgs
-        If Array.IndexOf(Args, "Startup") > -1 Then
-            If Not Me.IsHandleCreated Then
-                FirstTimeLoadInBkg = True
-                Me.CreateHandle()
-                value = False
-                NotifyIcon.BalloonTipText = "Impensa is running in background."
-                NotifyIcon.ShowBalloonTip(100)
-            Else
-                FirstTimeLoadInBkg = False
-            End If
-        End If
-        MyBase.SetVisibleCore(value)
-    End Sub
+    'Protected Overrides Sub SetVisibleCore(ByVal value As Boolean)
+    '    Dim Args As String() = Environment.GetCommandLineArgs
+    '    If Array.IndexOf(Args, "Startup") > -1 Then
+    '        If Not Me.IsHandleCreated Then
+    '            FirstTimeLoadInBkg = True
+    '            Me.CreateHandle()
+    '            value = False
+    '            NotifyIcon.BalloonTipText = "Impensa is running in background."
+    '            NotifyIcon.ShowBalloonTip(100)
+    '        Else
+    '            FirstTimeLoadInBkg = False
+    '        End If
+    '    End If
+    '    MyBase.SetVisibleCore(value)
+    'End Sub
 
     Private Sub GetConnectionInfo()
         Try
@@ -2610,11 +2610,15 @@ Public Class frmMain
     End Sub
 
     Private Sub frmMain_FormClosing(ByVal sender As Object, ByVal e As System.Windows.Forms.FormClosingEventArgs) Handles Me.FormClosing
-        If e.CloseReason = CloseReason.UserClosing Then
+        'If e.CloseReason = CloseReason.UserClosing Then
+        '    e.Cancel = True
+        '    Me.Hide()
+        '    NotifyIcon.BalloonTipText = "Impensa is running in background."
+        '    NotifyIcon.ShowBalloonTip(100)
+        'End If
+
+        If ImpensaActionAlert("Are you sure you want to exit?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = Windows.Forms.DialogResult.No Then
             e.Cancel = True
-            Me.Hide()
-            NotifyIcon.BalloonTipText = "Impensa is running in background."
-            NotifyIcon.ShowBalloonTip(100)
         End If
     End Sub
 
