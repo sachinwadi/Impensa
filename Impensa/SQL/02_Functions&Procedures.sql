@@ -45,7 +45,11 @@ AS
 	RETURN (SELECT DISTINCT e.iCategory 
 	          FROM tbl_ExpenditureDet e 
 			       INNER JOIN tbl_CategoryList c ON c.hKey = e.iCategory
-		     WHERE e.dtDate NOT BETWEEN @P_FromDate AND @P_ToDate
+		     WHERE NOT EXISTS (SELECT 1 
+								 FROM tbl_ExpenditureDet e1 
+								WHERE e.iCategory = e1.iCategory 
+								  AND e1.dtDate BETWEEN @P_FromDate AND @P_ToDate)
+			    -- e.dtDate NOT BETWEEN @P_FromDate AND @P_ToDate
 		       AND c.IsObsolete = 1)
 GO
 /*############################################################################################################################################################*/

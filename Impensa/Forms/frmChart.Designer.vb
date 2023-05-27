@@ -40,21 +40,23 @@ Partial Class frmChart
         Legend1.Name = "Legend1"
         Me.Chart_Analysis.Legends.Add(Legend1)
         Me.Chart_Analysis.Location = New System.Drawing.Point(0, 0)
+        Me.Chart_Analysis.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Chart_Analysis.Name = "Chart_Analysis"
-        Me.Chart_Analysis.Size = New System.Drawing.Size(724, 413)
+        Me.Chart_Analysis.Size = New System.Drawing.Size(1086, 635)
         Me.Chart_Analysis.TabIndex = 0
         Me.Chart_Analysis.Text = "Chart1"
         '
         'ChartContextMenu
         '
+        Me.ChartContextMenu.ImageScalingSize = New System.Drawing.Size(24, 24)
         Me.ChartContextMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PrintToolStripMenuItem})
         Me.ChartContextMenu.Name = "ContextMenuStrip1"
-        Me.ChartContextMenu.Size = New System.Drawing.Size(100, 26)
+        Me.ChartContextMenu.Size = New System.Drawing.Size(121, 36)
         '
         'PrintToolStripMenuItem
         '
         Me.PrintToolStripMenuItem.Name = "PrintToolStripMenuItem"
-        Me.PrintToolStripMenuItem.Size = New System.Drawing.Size(99, 22)
+        Me.PrintToolStripMenuItem.Size = New System.Drawing.Size(120, 32)
         Me.PrintToolStripMenuItem.Text = "Print"
         '
         'PrintDocument
@@ -66,15 +68,15 @@ Partial Class frmChart
         '
         'frmChart
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(724, 413)
+        Me.ClientSize = New System.Drawing.Size(1086, 635)
         Me.ContextMenuStrip = Me.ChartContextMenu
         Me.Controls.Add(Me.Chart_Analysis)
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
+        Me.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.Name = "frmChart"
         Me.Text = "Impensa"
-        Me.TopMost = True
         Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         CType(Me.Chart_Analysis, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ChartContextMenu.ResumeLayout(False)
