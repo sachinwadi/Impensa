@@ -1060,7 +1060,7 @@ AS
 	SELECT	Y.Sort, Y.hKey, 
 			CASE WHEN (Y.Sort = 3 AND Y.hKey IS NULL AND Y.dtDate = 'TOTAL' AND Y.Notes IS NULL) THEN 'GRAND TOTAL' 
 				 ELSE Y.dtDate 
-			 END [Date], Y.iCategory, Y.sCategory, Y.SearchAmt [Amount], Y.Notes, Y.IsReadOnly, NULL [bDelete], 0 [IsDummy], 0 [IsDummyRowAdded], Y.CategoryName [CategoryName]
+			 END [Date], Y.iCategory, Y.sCategory, Y.SearchAmt [Amount], Y.Notes, Y.IsReadOnly, NULL [bDelete], 0 [IsDummy], 0 [IsDummyRowAdded], Y.CategoryName [CategoryName], NULL [DateOriginal]
 	  FROM (SELECT X.Sort, X.hKey, X.dtDate, X.iCategory, X.SearchAmt,
 				   CASE WHEN X.Sort = 3 THEN (SELECT 'Count = '+ CONVERT(VARCHAR,MAX(Y.RowNum)) FROM X Y WHERE Y.items  = X.items GROUP BY Y.items) 
 						ELSE X.sNotes 

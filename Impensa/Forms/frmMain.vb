@@ -356,6 +356,7 @@ Public Class frmMain
         Dim dc_DelChk As New DataGridViewCheckBoxColumn
 
         Try
+            DataGridExpDet.ReadOnly = True
             DoNotChkRowAdded = True
             DataGridExpDet.DataSource = Nothing
             DataGridExpDet.Columns.Clear()
