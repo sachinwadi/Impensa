@@ -356,7 +356,6 @@ Public Class frmMain
         Dim dc_DelChk As New DataGridViewCheckBoxColumn
 
         Try
-            DataGridExpDet.ReadOnly = True
             DoNotChkRowAdded = True
             DataGridExpDet.DataSource = Nothing
             DataGridExpDet.Columns.Clear()
@@ -2844,6 +2843,11 @@ Public Class frmMain
 
             DgvTextBox = Nothing
             DgvComboBox = Nothing
+
+            'Change in total with Search String not working. Hence skip total calculation
+            If (SearchStr <> Nothing) Then
+                Return
+            End If
 
             'Trigger Change in Total and Grand Total : START
             If DataGridExpDet.CurrentCell.ColumnIndex = DataGridExpDet.Columns("Amount").Index AndAlso Not DataGridExpDet.CurrentCell.Value Is DBNull.Value Then
