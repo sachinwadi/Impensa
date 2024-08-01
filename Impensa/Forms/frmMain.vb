@@ -2850,11 +2850,9 @@ Public Class frmMain
             End If
 
             If DataGridExpDet.CurrentCell.ColumnIndex = DataGridExpDet.Columns("Amount").Index AndAlso Not oldAmountCellValue = currentAmountCellValue Then
-                Dim riGrandTotal As Integer
-                Dim totalRow = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) (x.Cells("DateOriginal").Value.Equals(DataGridExpDet("Date", e.RowIndex).Value) And x.Cells("Date").Value.Equals("TOTAL"))).FirstOrDefault()
-                Dim dataGridViewRowCollection = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) x.Cells("DateOriginal").Value.Equals("01/01/2100") And x.Cells("Date").Value.Equals("GRAND TOTAL"))
 
-                If dataGridViewRowCollection.Any Then riGrandTotal = dataGridViewRowCollection.First().Index
+                Dim totalRow = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) (x.Cells("DateOriginal").Value.Equals(DataGridExpDet("Date", e.RowIndex).Value) And x.Cells("Date").Value.Equals("TOTAL"))).FirstOrDefault()
+                Dim riGrandTotal = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) (x.Cells("DateOriginal").Value.Equals("01/01/2100") And x.Cells("Date").Value.Equals("GRAND TOTAL"))).First().Index
 
                 Dim changedAmountDiff = currentAmountCellValue - oldAmountCellValue
 
@@ -2869,7 +2867,7 @@ Public Class frmMain
             'END
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+            'ImpensaAlert(ex.Message, MsgBoxStyle.Critical) ''''supress error
         End Try
     End Sub
 
