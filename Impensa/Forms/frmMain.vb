@@ -396,6 +396,7 @@ Public Class frmMain
             DataGridExpDet.Columns("IsReadOnly").Visible = False
             DataGridExpDet.Columns("CategoryName").Visible = False
             DataGridExpDet.Columns("sCategory").Visible = False
+            DataGridExpDet.Columns("DateOriginal").Visible = False
             DataGridExpDet.Columns("bDelete").DisplayIndex = 0
             DataGridExpDet.Columns("iCategory").DisplayIndex = 4
             DataGridExpDet.Columns("Amount").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
@@ -2849,8 +2850,11 @@ Public Class frmMain
             End If
 
             If DataGridExpDet.CurrentCell.ColumnIndex = DataGridExpDet.Columns("Amount").Index AndAlso Not oldAmountCellValue = currentAmountCellValue Then
+                Dim riGrandTotal As Integer
                 Dim totalRow = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) (x.Cells("DateOriginal").Value.Equals(DataGridExpDet("Date", e.RowIndex).Value) And x.Cells("Date").Value.Equals("TOTAL"))).FirstOrDefault()
-                Dim riGrandTotal = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) (x.Cells("DateOriginal").Value.Equals("01/01/2100") And x.Cells("Date").Value.Equals("GRAND TOTAL"))).First().Index
+                Dim dataGridViewRowCollection = DataGridExpDet.Rows.Cast(Of DataGridViewRow).Where(Function(x) x.Cells("DateOriginal").Value.Equals("01/01/2100") And x.Cells("Date").Value.Equals("GRAND TOTAL"))
+
+                If dataGridViewRowCollection.Any Then riGrandTotal = dataGridViewRowCollection.First().Index
 
                 Dim changedAmountDiff = currentAmountCellValue - oldAmountCellValue
 
