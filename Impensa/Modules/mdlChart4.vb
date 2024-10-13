@@ -1,5 +1,4 @@
-﻿Imports System.Collections.Generic
-Imports System.Data.SqlClient
+﻿Imports System.Data.SqlClient
 Imports Impensa.clsLibrary
 
 ' Yearly Comparision

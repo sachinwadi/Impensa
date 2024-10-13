@@ -1,8 +1,8 @@
-﻿Imports System.Text
-Imports Impensa.clsLibrary
+﻿Imports System.Globalization
 Imports System.Net
 Imports System.Net.Mail
-Imports System.Globalization
+Imports System.Text
+Imports Impensa.clsLibrary
 
 Public Class clsEmailGenerator
 

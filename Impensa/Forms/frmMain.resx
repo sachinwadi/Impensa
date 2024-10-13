@@ -258,6 +258,18 @@
   <metadata name="tmrAlert.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 3</value>
   </metadata>
+  <data name="btnHighlight.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        BwAAAAcBuCGw2wAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAEvSURBVEhLYxgF
+        QwcE7NZT89uj7wjl0gZ4bdPtDTxq+N9nl/5C9+266lBh6gKPLdo9/gcN/vvtN/jvvVvvte9uvVqPbWZ8
+        UGnqAM+tOl1++wz+e6zX+e+1Vfe//wGD/z479a757NKLZahnYIIqowzALdmgA8dAS/777tUH0bu9tuja
+        QZWSD7BZAsYbdcAWee/U/+mzR3+a1xZNeagW0gFOS0AYGISem3X/+4GCcJfec++dumX2q7R4oFqJB3gt
+        gWGgZd7b9MCJA2jZea/tOmGhq7TYoEYQBkRZAsJAi0A48JgROBj99hhoQY0gDMjxiedW7XDq+QQ5TnbT
+        Ik7QU9deKqcueD7ZRe18AgwamuV4jLJrr16tyypjfqg0dQBdSmFQfeK7U88Jyh0FwwowMAAA1qcnlzd6
+        IQAAAAAASUVORK5CYII=
+</value>
+  </data>
   <metadata name="StatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>114, 3</value>
   </metadata>

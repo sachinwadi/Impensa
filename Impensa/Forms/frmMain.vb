@@ -1,13 +1,13 @@
 ﻿#Region "References"
 Imports System.Data.SqlClient
-Imports System.Windows.Forms.DataVisualization.Charting
-Imports System.Text.RegularExpressions
-Imports System.IO
 Imports System.Globalization
+Imports System.IO
+Imports System.Net.Mail
+Imports System.Text.RegularExpressions
+Imports System.Windows.Forms.DataVisualization.Charting
 Imports Impensa.clsLibrary
 Imports iTextSharp.text
 Imports iTextSharp.text.pdf
-Imports System.Net.Mail
 
 #End Region
 
@@ -285,60 +285,65 @@ Public Class frmMain
                 Label15.Text = "Saving Records..."
                 Panel5.Refresh()
 
-                If dtGrid.Select("iCategory IS NOT NULL").Length > 0 Then
-                    dtEmail = dtGrid.Select("iCategory IS NOT NULL").CopyToDataTable
-                End If
+                If ValidateExpensesRecords() Then
 
-                For Each dr As DataRow In dtGrid.Rows
-                    If dr.RowState = DataRowState.Modified AndAlso dr("hKey") Is DBNull.Value Then
-                        dr.AcceptChanges()
-                        If Not String.IsNullOrEmpty(dr("iCategory").ToString) Then
-                            dr.SetAdded()
-                        End If
+                    If dtGrid.Select("iCategory IS NOT NULL").Length > 0 Then
+                        dtEmail = dtGrid.Select("iCategory IS NOT NULL").CopyToDataTable
                     End If
-
-                    If (New List(Of String) From {"TOTAL", "GRAND TOTAL"}).Contains(dr("Date")) Then
-                        dr.AcceptChanges()
-                    End If
-
-                    If dr("hKey") Is DBNull.Value And dr("Amount") Is DBNull.Value Then
-                        lst.Add(RowCounter)
-                    End If
-
-                    RowCounter += 1
-
-                    If dr("Notes").ToString.Trim.EndsWith("#") Then
-                        dr("Notes") = dr("Notes").Substring(0, dr("Notes").LastIndexOf("#"))
-                    End If
-                Next
-
-                For Each lstItem As Integer In lst
-                    dtGrid.Rows.RemoveAt(lstItem)
-                Next
-
-                Using Connection = GetConnection()
-                    da = New SqlDataAdapter("SELECT hKey, dtDate [Date], iCategory, dAmount [Amount], sNotes [Notes] FROM tbl_ExpenditureDet", Connection)
-                    dc = New SqlCommandBuilder(da)
-
 
                     For Each dr As DataRow In dtGrid.Rows
-                        If Not (IsDBNull(dr.Item("bDelete"))) Then
-                            If (Convert.ToBoolean(dr.Item("bDelete"))) Then
-                                dr.Delete()
+                        If dr.RowState = DataRowState.Modified AndAlso dr("hKey") Is DBNull.Value Then
+                            dr.AcceptChanges()
+                            If Not String.IsNullOrEmpty(dr("iCategory").ToString) Then
+                                dr.SetAdded()
                             End If
+                        End If
+
+                        If (New List(Of String) From {"TOTAL", "GRAND TOTAL"}).Contains(dr("Date")) Then
+                            dr.AcceptChanges()
+                        End If
+
+                        If dr("hKey") Is DBNull.Value And dr("Amount") Is DBNull.Value Then
+                            lst.Add(RowCounter)
+                        End If
+
+                        RowCounter += 1
+
+                        If dr("Notes").ToString.Trim.EndsWith("#") Then
+                            dr("Notes") = dr("Notes").Substring(0, dr("Notes").LastIndexOf("#"))
                         End If
                     Next
 
-                    da.Update(dtGrid)
-
-                End Using
-
-                ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
-                Call RefreshGrids()
+                    For Each lstItem As Integer In lst
+                        dtGrid.Rows.RemoveAt(lstItem)
+                    Next
 
 
-                If SendEmails AndAlso Not dtEmail Is Nothing AndAlso Not BgWorker_Email.IsBusy Then
-                    BgWorker_Email.RunWorkerAsync()
+
+                    Using Connection = GetConnection()
+                        da = New SqlDataAdapter("SELECT hKey, dtDate [Date], iCategory, dAmount [Amount], sNotes [Notes] FROM tbl_ExpenditureDet", Connection)
+                        dc = New SqlCommandBuilder(da)
+
+
+                        For Each dr As DataRow In dtGrid.Rows
+                            If Not (IsDBNull(dr.Item("bDelete"))) Then
+                                If (Convert.ToBoolean(dr.Item("bDelete"))) Then
+                                    dr.Delete()
+                                End If
+                            End If
+                        Next
+
+                        da.Update(dtGrid)
+
+                    End Using
+
+                    ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
+                    Call RefreshGrids()
+
+
+                    If SendEmails AndAlso Not dtEmail Is Nothing AndAlso Not BgWorker_Email.IsBusy Then
+                        BgWorker_Email.RunWorkerAsync()
+                    End If
                 End If
             End If
         Catch ex As Exception
@@ -349,6 +354,41 @@ Public Class frmMain
             Panel5.Visible = False
         End Try
     End Sub '1
+
+    Private Function ValidateExpensesRecords() As Boolean
+        Dim dtGrid As DataTable
+
+        dtGrid = DirectCast(DataGridExpDet.DataSource, DataTable)
+
+        Dim duplicates = From row In dtGrid.AsEnumerable()
+                         Where Not row.IsNull("iCategory")
+                         Group row By key = New With {
+                             Key .Field1 = row.Field(Of String)("CategoryName"),
+                             Key .Field2 = row.Field(Of String)("Date")
+                         } Into Group
+                         Where Group.Count() > 1
+                         Select New With {
+                             .Field1 = key.Field1,
+                             .Field2 = key.Field2,
+                             .Count = Group.Count()
+                         }
+
+        If duplicates.Any() Then
+            Dim duplicateMessage As String = "Duplicate entries found:" & Environment.NewLine & Environment.NewLine
+
+            For Each dup In duplicates
+                duplicateMessage &= $"[Category]: {dup.Field1}, [Date]: {dup.Field2}, Count: {dup.Count}" & Environment.NewLine
+            Next
+
+            duplicateMessage &= Environment.NewLine & "Make sure there should be unique combination of [Category] and [Date]."
+
+            ImpensaAlert(duplicateMessage, MsgBoxStyle.Critical)
+        Else
+            Return True
+        End If
+
+        Return False
+    End Function
 
     Private Sub PopulateSearchResults()
         Dim strSQL As String = ""
@@ -856,31 +896,31 @@ Public Class frmMain
         cmbThrMonth.SelectedIndex = -1
     End Sub '13
 
-    Private Sub CheckCurrentMonthThresholds()
-        Dim Reader As SqlDataReader
-        Dim dtThr As New DataTable
-        Dim StrCommand As String = ""
-        Try
-            Me.TopMost = True
-            StrCommand = "SELECT TOP(1) COUNT(*) cnt, dtMonth FROM tbl_ExpThresholds WHERE dtMonth BETWEEN '" & Format(DateSerial(Today.Year, (Today.Month - 1), 1), "yyyy-MM-dd") & "' AND '" & Format(DateSerial(Today.Year, Today.Month, 1), "yyyy-MM-dd") & "' AND TAmount > 0 GROUP BY dtMonth ORDER BY dtMonth DESC"
-            Using Connection = GetConnection()
-                Cmd = New SqlCommand(StrCommand, GetConnection())
-                Reader = Cmd.ExecuteReader
+    'Private Sub CheckCurrentMonthThresholds()
+    '    Dim Reader As SqlDataReader
+    '    Dim dtThr As New DataTable
+    '    Dim StrCommand As String = ""
+    '    Try
+    '        Me.TopMost = True
+    '        StrCommand = "SELECT TOP(1) COUNT(*) cnt, dtMonth FROM tbl_ExpThresholds WHERE dtMonth BETWEEN '" & Format(DateSerial(Today.Year, (Today.Month - 1), 1), "yyyy-MM-dd") & "' AND '" & Format(DateSerial(Today.Year, Today.Month, 1), "yyyy-MM-dd") & "' AND TAmount > 0 GROUP BY dtMonth ORDER BY dtMonth DESC"
+    '        Using Connection = GetConnection()
+    '            Cmd = New SqlCommand(StrCommand, GetConnection())
+    '            Reader = Cmd.ExecuteReader
 
-                If Reader.Read Then
-                    If Not Reader.GetValue(1) = Format(DateSerial(Today.Year, Today.Month, 1), "yyyy-MM-dd") Then
-                        ImpensaAlert("Last month's forecast amounts are being copied over to this month. To change the Forecast amounts for this month go to ""Monthly Forecast"" Tab", MsgBoxStyle.OkOnly + MsgBoxStyle.Information)
-                    End If
-                End If
-                Reader.Close()
-            End Using
-        Catch ex As Exception
-            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-        Finally
-            Me.TopMost = False
-        End Try
-    End Sub '39
+    '            If Reader.Read Then
+    '                If Not Reader.GetValue(1) = Format(DateSerial(Today.Year, Today.Month, 1), "yyyy-MM-dd") Then
+    '                    ImpensaAlert("Last month's forecast amounts are being copied over to this month. To change the Forecast amounts for this month go to ""Monthly Forecast"" Tab", MsgBoxStyle.OkOnly + MsgBoxStyle.Information)
+    '                End If
+    '            End If
+    '            Reader.Close()
+    '        End Using
+    '    Catch ex As Exception
+    '        Call clsLibrary.GenerateErrorLog(ex.StackTrace)
+    '        ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+    '    Finally
+    '        Me.TopMost = False
+    '    End Try
+    'End Sub '39
 
     Private Function GetThresholdData(ByVal P_Month As Date) As DataTable
         Dim dt As New DataTable
@@ -941,148 +981,148 @@ Public Class frmMain
         Return dt
     End Function '40
 
-    Private Sub PopulateThresholdGrid(Optional ByVal P_BudgetBuckets As BudgetBuckets = 0)
-        Dim dr As DataRow
-        Dim dv As New DataView
-        Dim ThrAmtTotal As Double = 0
-        Dim SpentAmtTotal As Double = 0
-        Dim DiffAmtTotal As Double = 0
-        Try
-            DataGridThrLimits.DataSource = Nothing
-            DataGridThrLimits.Columns.Clear()
+    'Private Sub PopulateThresholdGrid(Optional ByVal P_BudgetBuckets As BudgetBuckets = 0)
+    '    Dim dr As DataRow
+    '    Dim dv As New DataView
+    '    Dim ThrAmtTotal As Double = 0
+    '    Dim SpentAmtTotal As Double = 0
+    '    Dim DiffAmtTotal As Double = 0
+    '    Try
+    '        DataGridThrLimits.DataSource = Nothing
+    '        DataGridThrLimits.Columns.Clear()
 
-            Label15.Text = "Loading Monthly Forecast..."
-            Panel5.Refresh()
+    '        Label15.Text = "Loading Monthly Forecast..."
+    '        Panel5.Refresh()
 
-            Using Connection = GetConnection()
-                dtThresholdData = New DataTable
-                dtThresholdData = GetThresholdData(ThresholdMonth)
-            End Using
+    '        Using Connection = GetConnection()
+    '            dtThresholdData = New DataTable
+    '            dtThresholdData = GetThresholdData(ThresholdMonth)
+    '        End Using
 
-            If dtThresholdData.Rows.Count = 0 Then Exit Sub
+    '        If dtThresholdData.Rows.Count = 0 Then Exit Sub
 
-            tslblRecdCnt.Text = "Total Records Displayed: #" & dtThresholdData.Select("hKey IS NOT NULL").ToArray.Count
+    '        tslblRecdCnt.Text = "Total Records Displayed: #" & dtThresholdData.Select("hKey IS NOT NULL").ToArray.Count
 
-            dv = dtThresholdData.DefaultView
+    '        dv = dtThresholdData.DefaultView
 
-            dv.RowFilter = Nothing
+    '        dv.RowFilter = Nothing
 
-            If P_BudgetBuckets = BudgetBuckets.OverBudgetCats Then
-                dv.RowFilter = "DifferenceSign > 0"
-            ElseIf P_BudgetBuckets = BudgetBuckets.AtParCats Then
-                dv.RowFilter = "DifferenceSign = 0"
-            ElseIf P_BudgetBuckets = BudgetBuckets.UnderBudgetCats Then
-                dv.RowFilter = "DifferenceSign < 0"
-            End If
+    '        If P_BudgetBuckets = BudgetBuckets.OverBudgetCats Then
+    '            dv.RowFilter = "DifferenceSign > 0"
+    '        ElseIf P_BudgetBuckets = BudgetBuckets.AtParCats Then
+    '            dv.RowFilter = "DifferenceSign = 0"
+    '        ElseIf P_BudgetBuckets = BudgetBuckets.UnderBudgetCats Then
+    '            dv.RowFilter = "DifferenceSign < 0"
+    '        End If
 
-            dtThresholdData = dv.ToTable
-            dr = dtThresholdData.NewRow
+    '        dtThresholdData = dv.ToTable
+    '        dr = dtThresholdData.NewRow
 
-            For Each dr1 As DataRow In dtThresholdData.Rows
-                ThrAmtTotal += dr1("TAmount")
-                SpentAmtTotal += dr1("SAmount")
-                DiffAmtTotal += dr1("DifferenceSign")
-            Next
+    '        For Each dr1 As DataRow In dtThresholdData.Rows
+    '            ThrAmtTotal += dr1("TAmount")
+    '            SpentAmtTotal += dr1("SAmount")
+    '            DiffAmtTotal += dr1("DifferenceSign")
+    '        Next
 
-            dr("CateGory") = "TOTAL"
-            dr("TAmount") = ThrAmtTotal
-            dr("SAmount") = SpentAmtTotal
-            dr("Difference") = Math.Abs(DiffAmtTotal)
-            dr("IsReadOnly") = 1
-            dtThresholdData.Rows.Add(dr)
+    '        dr("CateGory") = "TOTAL"
+    '        dr("TAmount") = ThrAmtTotal
+    '        dr("SAmount") = SpentAmtTotal
+    '        dr("Difference") = Math.Abs(DiffAmtTotal)
+    '        dr("IsReadOnly") = 1
+    '        dtThresholdData.Rows.Add(dr)
 
-            DataGridThrLimits.DataSource = dtThresholdData
-            dtThresholdData.AcceptChanges()
+    '        DataGridThrLimits.DataSource = dtThresholdData
+    '        dtThresholdData.AcceptChanges()
 
-            dv.RowFilter = Nothing
+    '        dv.RowFilter = Nothing
 
-            dv.RowFilter = " Category <> 'TOTAL' AND DifferenceSign > 0"
-            tsMenuOBCats.Text = "Over Budget: #" & dv.ToTable.Rows.Count
+    '        dv.RowFilter = " Category <> 'TOTAL' AND DifferenceSign > 0"
+    '        tsMenuOBCats.Text = "Over Budget: #" & dv.ToTable.Rows.Count
 
-            dv.RowFilter = "Category <> 'TOTAL' AND DifferenceSign = 0"
-            tsMenuAPCats.Text = "At Par: #" & dv.ToTable.Rows.Count
+    '        dv.RowFilter = "Category <> 'TOTAL' AND DifferenceSign = 0"
+    '        tsMenuAPCats.Text = "At Par: #" & dv.ToTable.Rows.Count
 
-            dv.RowFilter = "Category <> 'TOTAL' AND DifferenceSign < 0"
-            tsMenuUBCats.Text = "Under Budget: #" & dv.ToTable.Rows.Count
+    '        dv.RowFilter = "Category <> 'TOTAL' AND DifferenceSign < 0"
+    '        tsMenuUBCats.Text = "Under Budget: #" & dv.ToTable.Rows.Count
 
-            DataGridThrLimits.Columns("TAmount").HeaderText = "Amount Forecast (Rs.)"
-            DataGridThrLimits.Columns("SAmount").HeaderText = "Amount Spent (Rs.)"
-            DataGridThrLimits.Columns("DifferenceSign").Visible = False
+    '        DataGridThrLimits.Columns("TAmount").HeaderText = "Amount Forecast (Rs.)"
+    '        DataGridThrLimits.Columns("SAmount").HeaderText = "Amount Spent (Rs.)"
+    '        DataGridThrLimits.Columns("DifferenceSign").Visible = False
 
-            DataGridThrLimits.AllowUserToAddRows = False
-            DataGridThrLimits.AllowUserToResizeRows = False
-            DataGridThrLimits.AutoResizeColumns()
-            DataGridThrLimits.DefaultCellStyle.WrapMode = DataGridViewTriState.True
-            DataGridThrLimits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+    '        DataGridThrLimits.AllowUserToAddRows = False
+    '        DataGridThrLimits.AllowUserToResizeRows = False
+    '        DataGridThrLimits.AutoResizeColumns()
+    '        DataGridThrLimits.DefaultCellStyle.WrapMode = DataGridViewTriState.True
+    '        DataGridThrLimits.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
 
-            For i As Integer = 0 To DataGridThrLimits.Columns.Count - 1
-                DataGridThrLimits.Columns(i).SortMode = DataGridViewColumnSortMode.NotSortable
-                DataGridThrLimits.Columns(i).HeaderCell.Style.Font = New System.Drawing.Font(ImpensaFont, FontStyle.Bold)
-                DataGridThrLimits.Columns(i).DefaultCellStyle.Font = ImpensaFont
+    '        For i As Integer = 0 To DataGridThrLimits.Columns.Count - 1
+    '            DataGridThrLimits.Columns(i).SortMode = DataGridViewColumnSortMode.NotSortable
+    '            DataGridThrLimits.Columns(i).HeaderCell.Style.Font = New System.Drawing.Font(ImpensaFont, FontStyle.Bold)
+    '            DataGridThrLimits.Columns(i).DefaultCellStyle.Font = ImpensaFont
 
-                DataGridThrLimits.Columns("TAmount").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight
-                DataGridThrLimits.Columns("TAmount").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
-                DataGridThrLimits.Columns("TAmount").DefaultCellStyle.Format = "#,##0.00"
+    '            DataGridThrLimits.Columns("TAmount").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight
+    '            DataGridThrLimits.Columns("TAmount").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+    '            DataGridThrLimits.Columns("TAmount").DefaultCellStyle.Format = "#,##0.00"
 
-                DataGridThrLimits.Columns("SAmount").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight
-                DataGridThrLimits.Columns("SAmount").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
-                DataGridThrLimits.Columns("SAmount").DefaultCellStyle.Format = "#,##0.00"
+    '            DataGridThrLimits.Columns("SAmount").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight
+    '            DataGridThrLimits.Columns("SAmount").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+    '            DataGridThrLimits.Columns("SAmount").DefaultCellStyle.Format = "#,##0.00"
 
-                DataGridThrLimits.Columns("Difference").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight
-                DataGridThrLimits.Columns("Difference").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
-                DataGridThrLimits.Columns("Difference").DefaultCellStyle.Format = "#,##0.00"
+    '            DataGridThrLimits.Columns("Difference").HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleRight
+    '            DataGridThrLimits.Columns("Difference").DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+    '            DataGridThrLimits.Columns("Difference").DefaultCellStyle.Format = "#,##0.00"
 
-            Next
+    '        Next
 
-            DataGridThrLimits.Columns("hKey").Visible = False
-            DataGridThrLimits.Columns("iCateGory").Visible = False
-            DataGridThrLimits.Columns("dtMonth").Visible = False
-            DataGridThrLimits.Columns("IsReadOnly").Visible = False
+    '        DataGridThrLimits.Columns("hKey").Visible = False
+    '        DataGridThrLimits.Columns("iCateGory").Visible = False
+    '        DataGridThrLimits.Columns("dtMonth").Visible = False
+    '        DataGridThrLimits.Columns("IsReadOnly").Visible = False
 
-            DataGridThrLimits.Columns("Category").ReadOnly = True
-            DataGridThrLimits.Columns("sAmount").ReadOnly = True
-            DataGridThrLimits.Columns("Difference").ReadOnly = True
+    '        DataGridThrLimits.Columns("Category").ReadOnly = True
+    '        DataGridThrLimits.Columns("sAmount").ReadOnly = True
+    '        DataGridThrLimits.Columns("Difference").ReadOnly = True
 
-            Call FormatDataGridThrLimits()
-            Call BuildExpenseTicker(ToDate.YTD)
-            Call BuildExpenseTicker(ToDate.MTD)
-        Catch ex As Exception
-            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-        End Try
-    End Sub '14
+    '        Call FormatDataGridThrLimits()
+    '        'Call BuildExpenseTicker(ToDate.YTD)
+    '        'Call BuildExpenseTicker(ToDate.MTD)
+    '    Catch ex As Exception
+    '        Call clsLibrary.GenerateErrorLog(ex.StackTrace)
+    '        ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+    '    End Try
+    'End Sub '14
 
-    Private Sub SaveThresholds()
-        Dim dc As SqlCommandBuilder
+    'Private Sub SaveThresholds()
+    '    Dim dc As SqlCommandBuilder
 
-        Try
-            If DataGridThrLimits.DataSource Is Nothing Then Exit Sub
+    '    Try
+    '        If DataGridThrLimits.DataSource Is Nothing Then Exit Sub
 
-            dt = New DataTable
-            dt = DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges
+    '        dt = New DataTable
+    '        dt = DirectCast(DataGridThrLimits.DataSource, DataTable).GetChanges
 
-            For Each dr As DataRow In dt.Rows
-                If (New List(Of String) From {"TOTAL"}).Contains(dr("Category")) Then
-                    dr.AcceptChanges()
-                End If
-            Next
+    '        For Each dr As DataRow In dt.Rows
+    '            If (New List(Of String) From {"TOTAL"}).Contains(dr("Category")) Then
+    '                dr.AcceptChanges()
+    '            End If
+    '        Next
 
-            If Not dt Is Nothing Then
-                Using Connection = GetConnection()
+    '        If Not dt Is Nothing Then
+    '            Using Connection = GetConnection()
 
-                    da = New SqlDataAdapter("SELECT hKey, dtMonth, iCategory, TAmount FROM tbl_ExpThresholds", Connection)
-                    dc = New SqlCommandBuilder(da)
-                    da.Update(dt)
+    '                da = New SqlDataAdapter("SELECT hKey, dtMonth, iCategory, TAmount FROM tbl_ExpThresholds", Connection)
+    '                dc = New SqlCommandBuilder(da)
+    '                da.Update(dt)
 
-                    Call PopulateThresholdGrid()
-                    ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
-                End Using
-            End If
-        Catch ex As Exception
-            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-        End Try
-    End Sub '6
+    '                'Call PopulateThresholdGrid()
+    '                ImpensaAlert("Your Changes Have Been Saved.", MsgBoxStyle.Information + MsgBoxStyle.OkOnly)
+    '            End Using
+    '        End If
+    '    Catch ex As Exception
+    '        Call clsLibrary.GenerateErrorLog(ex.StackTrace)
+    '        ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+    '    End Try
+    'End Sub '6
 
     Private Sub FormatDataGridThrLimits()
         For Each dr1 As DataGridViewRow In DataGridThrLimits.Rows
@@ -1976,58 +2016,58 @@ Public Class frmMain
 
     End Sub
 
-    Private Sub BuildExpenseTicker(ByVal P_ToDateFactor As ToDate)
-        Dim Params As SqlParameter
-        Dim Comm As SqlCommand
-        Dim strTicker As String = ""
-        Try
-            Using Connection = GetConnection()
-                Comm = New SqlCommand("sp_GetExpensesTicker", Connection)
-                Comm.CommandType = CommandType.StoredProcedure
+    'Private Sub BuildExpenseTicker(ByVal P_ToDateFactor As ToDate)
+    '    Dim Params As SqlParameter
+    '    Dim Comm As SqlCommand
+    '    Dim strTicker As String = ""
+    '    Try
+    '        Using Connection = GetConnection()
+    '            Comm = New SqlCommand("sp_GetExpensesTicker", Connection)
+    '            Comm.CommandType = CommandType.StoredProcedure
 
-                Params = New SqlParameter("@P_FromDate", IIf(P_ToDateFactor = ToDate.MTD, New DateTime(Today.Year, Today.Month, 1), New DateTime(Today.Year, 1, 1)))
-                Params.Direction = ParameterDirection.Input
-                Params.DbType = DbType.Date
-                Comm.Parameters.Add(Params)
+    '            Params = New SqlParameter("@P_FromDate", IIf(P_ToDateFactor = ToDate.MTD, New DateTime(Today.Year, Today.Month, 1), New DateTime(Today.Year, 1, 1)))
+    '            Params.Direction = ParameterDirection.Input
+    '            Params.DbType = DbType.Date
+    '            Comm.Parameters.Add(Params)
 
-                Params = New SqlParameter("@P_ToDate", IIf(P_ToDateFactor = ToDate.MTD, New DateTime(Today.Year, Today.Month, 1).AddMonths(1).AddDays(-1), New DateTime(Today.Year, 12, 31)))
-                Params.Direction = ParameterDirection.Input
-                Params.DbType = DbType.Date
-                Comm.Parameters.Add(Params)
+    '            Params = New SqlParameter("@P_ToDate", IIf(P_ToDateFactor = ToDate.MTD, New DateTime(Today.Year, Today.Month, 1).AddMonths(1).AddDays(-1), New DateTime(Today.Year, 12, 31)))
+    '            Params.Direction = ParameterDirection.Input
+    '            Params.DbType = DbType.Date
+    '            Comm.Parameters.Add(Params)
 
-                dt = New DataTable
-                da = New SqlDataAdapter(Comm)
-                da.Fill(dt)
-            End Using
+    '            dt = New DataTable
+    '            da = New SqlDataAdapter(Comm)
+    '            da.Fill(dt)
+    '        End Using
 
-            For Each dr As DataRow In dt.Rows
-                strTicker = strTicker & dr("Category") & " - Rs. " & Format(dr("Amount"), "#,##0.00") & " / Rs. " & Format(dr("TAmount"), "#,##0.00") & ";" & Space(5)
-            Next
+    '        For Each dr As DataRow In dt.Rows
+    '            strTicker = strTicker & dr("Category") & " - Rs. " & Format(dr("Amount"), "#,##0.00") & " / Rs. " & Format(dr("TAmount"), "#,##0.00") & ";" & Space(5)
+    '        Next
 
-            If P_ToDateFactor = ToDate.MTD Then
-                RchTB_MTDTicker.Text = strTicker
-                Dim g As Graphics = RchTB_MTDTicker.CreateGraphics
-                Dim sz As SizeF = TextRenderer.MeasureText(g, RchTB_MTDTicker.Text, RchTB_MTDTicker.Font, RchTB_MTDTicker.ClientSize, TextFormatFlags.SingleLine)
-                'To keep both YTD and MTD tickers in sync, setting MTD ticker length = YTD ticker length
-                RchTB_MTDTicker.Width = RchTB_YTDTicker.Width
+    '        If P_ToDateFactor = ToDate.MTD Then
+    '            RchTB_MTDTicker.Text = strTicker
+    '            Dim g As Graphics = RchTB_MTDTicker.CreateGraphics
+    '            Dim sz As SizeF = TextRenderer.MeasureText(g, RchTB_MTDTicker.Text, RchTB_MTDTicker.Font, RchTB_MTDTicker.ClientSize, TextFormatFlags.SingleLine)
+    '            'To keep both YTD and MTD tickers in sync, setting MTD ticker length = YTD ticker length
+    '            RchTB_MTDTicker.Width = RchTB_YTDTicker.Width
 
-            Else
-                RchTB_YTDTicker.Text = strTicker
-                Dim g As Graphics = RchTB_YTDTicker.CreateGraphics
-                Dim sz As SizeF = TextRenderer.MeasureText(g, RchTB_YTDTicker.Text, RchTB_YTDTicker.Font, RchTB_YTDTicker.ClientSize, TextFormatFlags.SingleLine)
-                RchTB_YTDTicker.Width = CInt(Math.Ceiling(sz.Width))
-            End If
+    '        Else
+    '            RchTB_YTDTicker.Text = strTicker
+    '            Dim g As Graphics = RchTB_YTDTicker.CreateGraphics
+    '            Dim sz As SizeF = TextRenderer.MeasureText(g, RchTB_YTDTicker.Text, RchTB_YTDTicker.Font, RchTB_YTDTicker.ClientSize, TextFormatFlags.SingleLine)
+    '            RchTB_YTDTicker.Width = CInt(Math.Ceiling(sz.Width))
+    '        End If
 
-            If P_ToDateFactor = ToDate.MTD Then
-                Call SetTickerTextColor(RchTB_MTDTicker, dt)
-            Else
-                Call SetTickerTextColor(RchTB_YTDTicker, dt)
-            End If
-        Catch ex As Exception
-            Call clsLibrary.GenerateErrorLog(ex.StackTrace)
-            ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
-        End Try
-    End Sub '37
+    '        If P_ToDateFactor = ToDate.MTD Then
+    '            Call SetTickerTextColor(RchTB_MTDTicker, dt)
+    '        Else
+    '            Call SetTickerTextColor(RchTB_YTDTicker, dt)
+    '        End If
+    '    Catch ex As Exception
+    '        Call clsLibrary.GenerateErrorLog(ex.StackTrace)
+    '        ImpensaAlert(ex.Message, MsgBoxStyle.Critical)
+    '    End Try
+    'End Sub '37
 
     Private Sub SetTickerTextColor(ByVal P_RchTB As RichTextBox, ByVal dt As DataTable)
         For Each dr As DataRow In dt.Rows
@@ -2201,15 +2241,15 @@ Public Class frmMain
             Call ResetAllTabs()
             Call ShowTDLableDetails()
             Call PopulateCategoryGrid()
-            Call PopulateThresholdMonthCombo()
+            'Call PopulateThresholdMonthCombo()
             Call PopulateUnpaidBillsCurrentMonth()
             Call PopulateUnpaidBillsPreviousMonth()
 
-            If ThresholdCurrentMonthIndex <> -1 Then
-                ThresholdMonth = cmbThrMonth.Items(ThresholdCurrentMonthIndex).Key
-                cmbThrMonth.SelectedIndex = ThresholdCurrentMonthIndex
-                Call PopulateThresholdGrid()
-            End If
+            'If ThresholdCurrentMonthIndex <> -1 Then
+            '    ThresholdMonth = cmbThrMonth.Items(ThresholdCurrentMonthIndex).Key
+            '    cmbThrMonth.SelectedIndex = ThresholdCurrentMonthIndex
+            '    Call PopulateThresholdGrid()
+            'End If
 
             If Not SearchStr Is Nothing OrElse CallSearchFunction Then
                 Call PopulateSearchResults()
@@ -2221,8 +2261,8 @@ Public Class frmMain
                 Call SetDefaultPropValue()
             End If
 
-            Call BuildExpenseTicker(ToDate.MTD)
-            Call BuildExpenseTicker(ToDate.YTD)
+            'Call BuildExpenseTicker(ToDate.MTD)
+            'Call BuildExpenseTicker(ToDate.YTD)
             Call PopulateExpenditureSummaryGrid()
         Catch ex As Exception
             Call clsLibrary.GenerateErrorLog(ex.StackTrace)
@@ -2582,7 +2622,8 @@ Public Class frmMain
             DataGridExpDet.Controls.Add(dtp)
 
             Call CheckOpenClosedYears()
-            Call CheckCurrentMonthThresholds()
+            ImpensaTabControl.TabPages.Remove(TabBudget) 'hide monthly forcast tab
+            'Call CheckCurrentMonthThresholds()
 
             If (CDate(LastUsedTimeStamp).Month <> DateTime.Today.Month) Then
                 Call InsertCategoryPrevMonthOccurrences()
@@ -2640,8 +2681,8 @@ Public Class frmMain
                 Call GetConfig()
                 Call RefreshGrids()
             End If
-        ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
-            Call SaveThresholds()
+            'ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
+            'Call SaveThresholds()
         End If
     End Sub
 
@@ -2746,8 +2787,8 @@ Public Class frmMain
             Call ExportGridToPDF(DataGridExpDet)
         ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) Then
             Call ExportGridToPDF(DataGridExpSumm)
-        ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
-            Call ExportGridToPDF(DataGridThrLimits)
+            'ElseIf ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
+            'Call ExportGridToPDF(DataGridThrLimits)
         End If
     End Sub
 
@@ -2781,6 +2822,7 @@ Public Class frmMain
 #End Region
 
 #Region "DataGrid Events"
+
 #Region "DataGridExpDet Events"
     Private Sub DataGridExpDet_CellBeginEdit(ByVal sender As Object, ByVal e As System.Windows.Forms.DataGridViewCellCancelEventArgs) Handles DataGridExpDet.CellBeginEdit
         Try
@@ -3274,6 +3316,7 @@ Public Class frmMain
         End If
     End Sub
 #End Region
+
 #End Region
 
 #Region "TextBox Events"
@@ -3329,6 +3372,7 @@ Public Class frmMain
 
     Private Sub txtHighlightSummMth_TextChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles txtHighlightSummMth.TextChanged
         Dim digitsOnly As Regex = New Regex("[^\d]")
+        txtHighlightSummMth.Text = digitsOnly.Replace(txtHighlightSummMth.Text, "")
         txtHighlightSummMth.Text = digitsOnly.Replace(txtHighlightSummMth.Text, "")
     End Sub
 
@@ -3476,15 +3520,15 @@ Public Class frmMain
         End If
     End Sub
 
-    Private Sub cmbThrMonth_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbThrMonth.SelectionChangeCommitted
-        If cmbThrMonth.SelectedIndex = -1 Then
-            DataGridThrLimits.DataSource = Nothing
-            DataGridThrLimits.Columns.Clear()
-        Else
-            ThresholdMonth = cmbThrMonth.SelectedItem.Key
-            Call PopulateThresholdGrid()
-        End If
-    End Sub
+    'Private Sub cmbThrMonth_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbThrMonth.SelectionChangeCommitted
+    '    If cmbThrMonth.SelectedIndex = -1 Then
+    '        DataGridThrLimits.DataSource = Nothing
+    '        DataGridThrLimits.Columns.Clear()
+    '    Else
+    '        ThresholdMonth = cmbThrMonth.SelectedItem.Key
+    '        Call PopulateThresholdGrid()
+    '    End If
+    'End Sub
 
     Private Sub cmbSummaryType_SelectionChangeCommitted(ByVal sender As Object, ByVal e As System.EventArgs) Handles cmbSummaryType.SelectionChangeCommitted
         SummaryType = cmbSummaryType.SelectedItem.key
@@ -3739,21 +3783,21 @@ Public Class frmMain
         tt.Dispose()
     End Sub
 
-    Private Sub tslblRecdCnt_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tslblRecdCnt.Click
-        Call PopulateThresholdGrid()
-    End Sub
+    'Private Sub tslblRecdCnt_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tslblRecdCnt.Click
+    '    Call PopulateThresholdGrid()
+    'End Sub
 
-    Private Sub tsMenuAPCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuAPCats.Click
-        Call PopulateThresholdGrid(BudgetBuckets.AtParCats)
-    End Sub
+    'Private Sub tsMenuAPCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuAPCats.Click
+    '    Call PopulateThresholdGrid(BudgetBuckets.AtParCats)
+    'End Sub
 
-    Private Sub tsMenuOBCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuOBCats.Click
-        Call PopulateThresholdGrid(BudgetBuckets.OverBudgetCats)
-    End Sub
+    'Private Sub tsMenuOBCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuOBCats.Click
+    '    Call PopulateThresholdGrid(BudgetBuckets.OverBudgetCats)
+    'End Sub
 
-    Private Sub tsMenuUBCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuUBCats.Click
-        Call PopulateThresholdGrid(BudgetBuckets.UnderBudgetCats)
-    End Sub
+    'Private Sub tsMenuUBCats_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles tsMenuUBCats.Click
+    '    Call PopulateThresholdGrid(BudgetBuckets.UnderBudgetCats)
+    'End Sub
 #End Region
 
 #Region "Other Control Events"
@@ -3850,20 +3894,20 @@ Public Class frmMain
 
             If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSettings) Then btnSave.Enabled = True
 
-            If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
-                Call FormatDataGridThrLimits()
-                tslblRecdCnt.Text = "Total Records Displayed: #" & (DataGridThrLimits.Rows.Count - 1)
-                tslblRecdCnt.IsLink = True
-                tslblRecdCnt.LinkBehavior = LinkBehavior.SystemDefault
-                tslblRecdCnt.Visible = True
-                tslblSeperator2.Visible = True
-                btnExport.Enabled = True
-                btnSave.Enabled = True
+            'If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabBudget) Then
+            '    Call FormatDataGridThrLimits()
+            '    tslblRecdCnt.Text = "Total Records Displayed: #" & (DataGridThrLimits.Rows.Count - 1)
+            '    tslblRecdCnt.IsLink = True
+            '    tslblRecdCnt.LinkBehavior = LinkBehavior.SystemDefault
+            '    tslblRecdCnt.Visible = True
+            '    tslblSeperator2.Visible = True
+            '    btnExport.Enabled = True
+            '    btnSave.Enabled = True
 
-                If ThresholdCurrentMonthIndex <> -1 Then
-                    tsCmbBudgetBuckets.Visible = True
-                End If
-            End If
+            '    If ThresholdCurrentMonthIndex <> -1 Then
+            '        tsCmbBudgetBuckets.Visible = True
+            '    End If
+            'End If
 
             If ImpensaTabControl.SelectedTab.Name = [Enum].GetName(GetType(Tabs), Tabs.TabSummary) And SummaryType = SummaryTypes.AllInOne Then
                 pnlHighlight.Enabled = False
@@ -4047,7 +4091,6 @@ Public Class frmMain
         End If
     End Sub
 #End Region
+
 #End Region
-
-
 End Class

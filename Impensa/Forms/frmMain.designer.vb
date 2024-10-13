@@ -1557,11 +1557,12 @@ Partial Class frmMain
         'txtHighlight
         '
         Me.txtHighlight.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.txtHighlight.Location = New System.Drawing.Point(189, 15)
+        Me.txtHighlight.Location = New System.Drawing.Point(189, 13)
         Me.txtHighlight.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.txtHighlight.MaxLength = 6
+        Me.txtHighlight.Multiline = True
         Me.txtHighlight.Name = "txtHighlight"
-        Me.txtHighlight.Size = New System.Drawing.Size(100, 26)
+        Me.txtHighlight.Size = New System.Drawing.Size(100, 30)
         Me.txtHighlight.TabIndex = 3
         '
         'pnlHighlight
@@ -1578,14 +1579,13 @@ Partial Class frmMain
         '
         'btnHighlight
         '
-        Me.btnHighlight.AutoSize = True
         Me.btnHighlight.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.btnHighlight.Location = New System.Drawing.Point(297, 13)
+        Me.btnHighlight.Image = CType(resources.GetObject("btnHighlight.Image"), System.Drawing.Image)
+        Me.btnHighlight.Location = New System.Drawing.Point(297, 8)
         Me.btnHighlight.Margin = New System.Windows.Forms.Padding(4, 5, 4, 5)
         Me.btnHighlight.Name = "btnHighlight"
-        Me.btnHighlight.Size = New System.Drawing.Size(43, 30)
+        Me.btnHighlight.Size = New System.Drawing.Size(57, 40)
         Me.btnHighlight.TabIndex = 4
-        Me.btnHighlight.Text = "Go"
         Me.btnHighlight.UseVisualStyleBackColor = True
         '
         'StatusStrip
@@ -1763,6 +1763,7 @@ Partial Class frmMain
         Me.Label23.Size = New System.Drawing.Size(308, 23)
         Me.Label23.TabIndex = 18
         Me.Label23.Text = "YTD Summary  (Actual / Forecast):"
+        Me.Label23.Visible = False
         '
         'Label24
         '
@@ -1775,6 +1776,7 @@ Partial Class frmMain
         Me.Label24.Size = New System.Drawing.Size(308, 23)
         Me.Label24.TabIndex = 19
         Me.Label24.Text = "MTD Summary (Actual / Forecast):"
+        Me.Label24.Visible = False
         '
         'tmrTicker
         '

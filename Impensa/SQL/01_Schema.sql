@@ -22,6 +22,13 @@ ADD CONSTRAINT UQ_Dt_Cat_Amt UNIQUE (dtDate, iCategory, dAmount)
 END
 GO
 
+IF OBJECT_ID('UQ_Dt_Cat') IS NULL 
+BEGIN
+ALTER TABLE tbl_ExpenditureDet
+ADD CONSTRAINT UQ_Dt_Cat UNIQUE (dtDate, iCategory)
+END
+GO
+
 IF OBJECT_ID('Temp_ImportData') IS NULL 
 BEGIN
 	CREATE TABLE Temp_ImportData

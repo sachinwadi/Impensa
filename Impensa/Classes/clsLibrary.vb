@@ -1,17 +1,13 @@
 ﻿#Region "References"
-Imports System.Data.SqlClient
-Imports System.Configuration
-Imports System.Reflection
-Imports System.Drawing.Drawing2D
-Imports System.Drawing
-Imports System.Text
 Imports System.Data.OleDb
-Imports System.IO
-Imports System.Collections.Generic
+Imports System.Data.SqlClient
 Imports System.Globalization
-Imports excel = Microsoft.Office.Interop.Excel
-Imports System.Runtime.InteropServices
+Imports System.IO
 Imports System.Net.Mail
+Imports System.Reflection
+Imports System.Runtime.InteropServices
+Imports System.Text
+Imports excel = Microsoft.Office.Interop.Excel
 
 #End Region
 

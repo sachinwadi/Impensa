@@ -1,5 +1,5 @@
-﻿Imports Impensa.clsLibrary
-Imports System.Drawing.Printing
+﻿Imports System.Drawing.Printing
+Imports Impensa.clsLibrary
 
 Public Class frmChart
     Dim bitmap As Bitmap
